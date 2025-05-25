@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { PagelayoutComponent } from '../../components/pagelayout/pagelayout.component';
+import { PagelayoutComponent } from '../../components/layout/pagelayout/pagelayout.component';
 
 @Component({
   selector: 'app-home',

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CtaButtonComponent } from '../cta-button/cta-button.component';
+import { CtaButtonComponent } from '../../ui/cta-button/cta-button.component';
 
 @Component({
   selector: 'app-navbar',
