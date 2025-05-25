@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 //import { toast } from 'sonner';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 interface SpeechRecognitionEvent extends Event {
   results: SpeechRecognitionResultList;
@@ -56,7 +57,8 @@ declare global {
   styleUrls: ['./create-note.component.scss'],
 })
 export class CreateNoteComponent implements OnDestroy {
-  private platformId = inject(PLATFORM_ID);
+  #platformId = inject(PLATFORM_ID);
+  #deviceService = inject(DeviceDetectorService);
 
   readonly noteCreated = output<{
     title: string;
@@ -66,12 +68,13 @@ export class CreateNoteComponent implements OnDestroy {
 
   #isSpeechRecognitionSupported(): boolean {
     return (
-      isPlatformBrowser(this.platformId) && 'webkitSpeechRecognition' in window
+      isPlatformBrowser(this.#platformId) && 'webkitSpeechRecognition' in window
     );
   }
 
-  readonly hasSpeechRecognition = computed(() =>
-    this.#isSpeechRecognitionSupported()
+  readonly hasSpeechRecognition = computed(
+    () =>
+      this.#isSpeechRecognitionSupported() && this.#deviceService.isDesktop()
   );
 
   /** UI state as signals */
