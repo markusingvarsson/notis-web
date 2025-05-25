@@ -1,0 +1,44 @@
+<!-- File: src/app/note-card/note-card.component.html -->
+<app-card
+  [className]="
+    'hover:shadow-md transition-shadow duration-200 ' +
+    'cursor-pointer h-[220px] flex flex-col'
+  "
+  (click)="select()"
+>
+  <app-card-header [className]="'p-4 pb-2 space-y-0'">
+    <div class="flex justify-between items-start">
+      <app-card-title [className]="'text-lg font-medium truncate'">
+        {{ note().title }}
+      </app-card-title>
+      <div class="flex gap-1">
+        <!-- <app-button
+          [className]="'h-7 w-7'"
+          [isCta]="false"
+          variant="ghost"
+          size="icon"
+          (click)="edit($event)"
+        >
+          <app-icon-pencil size="14"></app-icon-pencil>
+        </app-button> -->
+        <!-- <ng-container *ngIf="onDelete()">
+          <app-button
+            [className]="'h-7 w-7 text-destructive hover:text-destructive'"
+            variant="ghost"
+            size="icon"
+            (click)="delete($event)"
+          >
+            <app-icon-trash size="14"></app-icon-trash>
+          </app-button> -->
+        <!-- </ng-container> -->
+      </div>
+    </div>
+    <p class="text-xs text-muted-foreground">{{ timeAgo() }}</p>
+  </app-card-header>
+
+  <app-card-content [className]="'p-4 pt-2 flex-1 overflow-hidden'">
+    <p class="text-sm text-muted-foreground line-clamp-6">
+      {{ preview() }}
+    </p>
+  </app-card-content>
+</app-card>
