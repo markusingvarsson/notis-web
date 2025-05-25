@@ -20,5 +20,7 @@ import { NoteCardComponent } from '../../domain/notes/components/note-card/note-
   styleUrl: './notes.component.scss',
 })
 export class NotesComponent {
-  select = signal(() => undefined);
+  select = signal(() => {
+    console.log('select');
+  });
 }
