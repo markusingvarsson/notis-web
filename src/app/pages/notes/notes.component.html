@@ -1,17 +1,13 @@
 <app-pagelayout [fullWidth]="true" [withFooter]="false">
-  <app-note-card
-    [note]="{
-      id: '1',
-      title: 'Hello',
-      content:
-        'llolte stlo ltestl oltes tloltestlo ltestlolte stvasdsadas dsadasdads aloltes tloltestlo ltestlolte stloltes tloltestlo ltest olte st',
-      updatedAt: '2024-05-20'
-    }"
-    [onSelect]="select()"
-  />
-  <!--<app-card className="my-extra-shadow">
-    <app-card-header>Header content</app-card-header>
-    <app-card-content>Main body</app-card-content>
-    <app-card-footer>Footer actions</app-card-footer>
-  </app-card>-->
+  <div
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 p-4"
+  >
+    @for (note of notes(); track note.id) {
+    <app-note-card
+      [note]="note"
+      (edit)="onEdit($event)"
+      (delete)="onDelete($event)"
+    ></app-note-card>
+    }
+  </div>
 </app-pagelayout>

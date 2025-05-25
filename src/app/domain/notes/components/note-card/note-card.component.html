@@ -1,10 +1,8 @@
-<!-- File: src/app/note-card/note-card.component.html -->
 <app-card
   [className]="
     'hover:shadow-md transition-shadow duration-200 ' +
     'cursor-pointer h-[220px] flex flex-col'
   "
-  (click)="select()"
 >
   <app-card-header [className]="'p-4 pb-2 space-y-0'">
     <div class="flex justify-between items-start">
@@ -12,25 +10,51 @@
         {{ note().title }}
       </app-card-title>
       <div class="flex gap-1">
-        <!-- <app-button
+        <app-button
           [className]="'h-7 w-7'"
-          [isCta]="false"
           variant="ghost"
           size="icon"
-          (click)="edit($event)"
+          (click)="onEdit($event)"
         >
-          <app-icon-pencil size="14"></app-icon-pencil>
-        </app-button> -->
-        <!-- <ng-container *ngIf="onDelete()">
-          <app-button
-            [className]="'h-7 w-7 text-destructive hover:text-destructive'"
-            variant="ghost"
-            size="icon"
-            (click)="delete($event)"
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
           >
-            <app-icon-trash size="14"></app-icon-trash>
-          </app-button> -->
-        <!-- </ng-container> -->
+            <!-- Eraser cap -->
+            <path d="M16.5 3.5l3 3-2 2-3-3 2-2Z" />
+            <!-- Pencil body & tip -->
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" />
+          </svg>
+        </app-button>
+        <app-button
+          [className]="'h-7 w-7 text-destructive hover:text-destructive'"
+          variant="ghost"
+          size="icon"
+          (click)="onDelete($event)"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="3 6 5 6 21 6" />
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+            <path d="M10 11v6" />
+            <path d="M14 11v6" />
+            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
+          </svg>
+        </app-button>
       </div>
     </div>
     <p class="text-xs text-muted-foreground">{{ timeAgo() }}</p>

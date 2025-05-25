@@ -1,6 +1,6 @@
 // File: src/app/note-card/note-card.component.ts
 import { CommonModule } from '@angular/common';
-import { Component, input, computed } from '@angular/core';
+import { Component, input, computed, output } from '@angular/core';
 import { formatDistanceToNow } from 'date-fns';
 import { CardComponent } from '../../../../components/ui/card/card.component';
 import { ButtonComponent } from '../../../../components/ui/button/button.component';
@@ -25,8 +25,6 @@ export interface Note {
     CardTitleComponent,
     CardContentComponent,
     ButtonComponent,
-    //    IconPencilComponent,
-    //   IconTrashComponent,
   ],
   templateUrl: './note-card.component.html',
   styleUrls: ['./note-card.component.scss'],
@@ -34,8 +32,8 @@ export interface Note {
 export class NoteCardComponent {
   /** Inputs as signals */
   readonly note = input.required<Note>();
-  readonly onSelect = input.required<(id: string) => void>();
-  readonly onDelete = input<(id: string) => void>();
+  readonly edit = output<Note>();
+  readonly delete = output<Note>();
 
   /** Computed values */
   readonly timeAgo = computed(() =>
@@ -44,17 +42,15 @@ export class NoteCardComponent {
   readonly preview = computed(() => truncateContent(this.note().content, 150));
 
   /** Event handlers */
-  select = () => this.onSelect()(this.note().id);
-  edit = (e: Event) => {
+  onEdit(e: Event) {
     e.stopPropagation();
-    this.onSelect()(this.note().id);
-  };
-  delete = (e: Event) => {
+    this.edit.emit(this.note());
+  }
+
+  onDelete(e: Event) {
     e.stopPropagation();
-    if (this.onDelete()) {
-      // this.onDelete()(this.note().id);
-    }
-  };
+    this.delete.emit(this.note());
+  }
 }
 const truncateContent = (content: string, maxLength: number = 150) => {
   if (content.length <= maxLength) return content;
