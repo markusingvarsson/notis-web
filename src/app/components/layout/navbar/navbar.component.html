@@ -15,12 +15,14 @@
     <div class="flex items-center gap-6">
       <a
         routerLink="/"
-        class="text-[var(--tw-primary-dark)] hover:text-[var(--tw-primary)] transition-colors duration-200"
+        class="text-[var(--tw-primary-dark)] hover:text-[var(--tw-primary)]"
       >
         Home
       </a>
 
-      <app-button [variant]="'cta'" buttonName="Notes" link="/notes" />
+      <app-button link="/notes">
+        <span class="font-bold text-white"> Notes </span>
+      </app-button>
     </div>
   </div>
 </nav>

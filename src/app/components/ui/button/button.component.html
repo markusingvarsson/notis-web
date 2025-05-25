@@ -1,3 +1,13 @@
-<a [routerLink]="link()" [class]="buttonClasses()">
-  {{ buttonName() }}
+<ng-template #projectedContent>
+  <ng-content></ng-content>
+</ng-template>
+
+@if (link()) {
+<a [routerLink]="link()" [class]="classes()" [attr.aria-disabled]="disabled()">
+  <ng-container *ngTemplateOutlet="projectedContent"></ng-container>
 </a>
+} @else {
+<button type="button" [class]="classes()" [disabled]="disabled()">
+  <ng-container *ngTemplateOutlet="projectedContent"></ng-container>
+</button>
+}
