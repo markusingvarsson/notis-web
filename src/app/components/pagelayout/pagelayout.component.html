@@ -1,0 +1,13 @@
+<div class="min-h-screen flex flex-col">
+  <app-navbar></app-navbar>
+  <main
+    class="flex-1 pt-16"
+    [ngClass]="{ 'container mx-auto px-4': !fullWidth() }"
+  >
+    <ng-content></ng-content>
+  </main>
+
+  @if(withFooter()) {
+  <app-footer />
+  }
+</div>

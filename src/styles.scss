@@ -38,12 +38,4 @@ html, body {
   }
 }
 
-@layer utilities {
-  .bg-primary      { background-color: var(--tw-primary) }
-  .bg-primary-light{ background-color: var(--tw-primary-light) }
-  .text-primary    { color:            var(--tw-primary) }
-  .bg-bg           { background-color: var(--tw-bg) }
-  .border-default  { border-color:     var(--tw-border) }
-  .bg-highlight    { background-color: var(--tw-highlight) }
-  .bg-success      { background-color: var(--tw-success) }
-}
+
