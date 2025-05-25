@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
-import { Note, NoteCardComponent } from '../note-card/note-card.component';
+import { NoteCardComponent } from '../note-card/note-card.component';
 import { NotesStorageService } from '../../services/notes-storage.service';
+import { Note } from '../..';
 
 @Component({
   selector: 'app-note-list',

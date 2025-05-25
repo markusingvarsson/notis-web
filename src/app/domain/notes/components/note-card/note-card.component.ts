@@ -7,13 +7,7 @@ import { ButtonComponent } from '../../../../components/ui/button/button.compone
 import { CardContentComponent } from '../../../../components/ui/card/components/card-content/card-content.component';
 import { CardHeaderComponent } from '../../../../components/ui/card/components/card-header/card-header.component';
 import { CardTitleComponent } from '../../../../components/ui/card/components/card-title/card-title.component';
-
-export interface Note {
-  id: string;
-  title: string;
-  content: string;
-  updatedAt: string;
-}
+import { Note } from '../..';
 
 @Component({
   selector: 'app-note-card',

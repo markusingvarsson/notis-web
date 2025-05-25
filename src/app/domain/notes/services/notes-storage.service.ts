@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
-import { Note } from '../components/note-card/note-card.component';
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID, inject } from '@angular/core';
+import { Note } from '..';
 
 @Injectable({
   providedIn: 'root',
