@@ -1,0 +1,53 @@
+  <nav class="fixed top-0 w-full z-50 transition-all duration-300 bg-transparent">
+      <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+       <!-- Logo--> 
+        <a routerLink="/" class="flex items-center gap-2">
+          <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-purple-400">Notely</span>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex items-center gap-6">
+            @for(link of navLinks; track $index ) {
+            <a
+              [routerLink]=[link.href]
+              class="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {{link.title}}
+          </a>
+          }
+          <button>
+            <a routerLink="/notes" class="ml-2">
+              Get Started
+            </a>
+          </button>
+        </div>
+
+        <!-- Mobile Navigation --> 
+         <!--<Sheet>
+          <SheetTrigger asChild class="md:hidden">
+            <Button variant="ghost" size="icon">
+              <Menu class="h-5 w-5" />
+              <span class="sr-only">Toggle menu</span>
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right">
+            <div class="flex flex-col gap-6 mt-10">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.title}
+                  routerLink{link.href}
+                  class="text-lg font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  {link.title}
+                </Link>
+              ))}
+              <Button asChild class="mt-4">
+                <Link routerLink"/notes">
+                  Get Started
+                </Link>
+              </Button>
+            </div>
+          </SheetContent>
+        </Sheet> -->
+      </div>
+    </nav>

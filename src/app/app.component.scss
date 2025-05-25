@@ -1,0 +1,18 @@
+/* app.component.scss */
+:host {
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;          /* full viewport height */
+    min-height: 100vh;          /* full viewport height */
+  }
+  
+  app-navbar {
+    flex: 0 0 auto;             /* natural height, no grow */
+  }
+  
+  main {
+    flex: 1 1 auto;             /* take remaining space */
+    padding: var(--spacing);
+    background: var(--bg-color);
+  }
+  
