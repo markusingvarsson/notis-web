@@ -11,8 +11,8 @@ import { CreateNoteComponent } from '../../domain/notes/components/create-note/c
   styleUrls: ['./notes.component.scss'],
 })
 export class NotesComponent {
-  onCreateNote = (title: string, content: string, audioBlob?: Blob) => {
+  onCreateNote(event: { title: string; content: string; audioBlob?: Blob }) {
     // TODO: Implement note creation logic
-    console.log('Creating note:', { title, content, audioBlob });
-  };
+    console.log('Creating note:', event);
+  }
 }

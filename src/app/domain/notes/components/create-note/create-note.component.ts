@@ -1,6 +1,6 @@
 // File: src/app/quick-note-input/quick-note-input.component.ts
 import { CommonModule } from '@angular/common';
-import { Component, computed, signal, input, OnDestroy } from '@angular/core';
+import { Component, computed, signal, OnDestroy, output } from '@angular/core';
 //import { toast } from 'sonner';
 
 interface SpeechRecognitionEvent extends Event {
@@ -48,10 +48,11 @@ declare global {
 })
 export class CreateNoteComponent implements OnDestroy {
   /** Callback when note is created */
-  readonly onCreateNote =
-    input.required<
-      (title: string, content: string, audioBlob?: Blob) => void
-    >();
+  readonly noteCreated = output<{
+    title: string;
+    content: string;
+    audioBlob?: Blob;
+  }>();
 
   /** UI state as signals */
   readonly isRecording = signal(false);
@@ -165,7 +166,7 @@ export class CreateNoteComponent implements OnDestroy {
         return;
       }
       const title = `Audio Note - ${new Date().toLocaleDateString()}`;
-      this.onCreateNote()(title, '', blob);
+      this.noteCreated.emit({ title, content: '', audioBlob: blob });
       //toast.success('Audio note saved!');
       console.info('Audio note saved!');
     } else {
@@ -177,7 +178,7 @@ export class CreateNoteComponent implements OnDestroy {
       }
       let title = txt.split('\n')[0].slice(0, 50);
       if (txt.length > 50) title = title.slice(0, 47) + '...';
-      this.onCreateNote()(title, txt);
+      this.noteCreated.emit({ title, content: txt });
       //toast.success('Text note saved!');
       console.info('Text note saved!');
     }
