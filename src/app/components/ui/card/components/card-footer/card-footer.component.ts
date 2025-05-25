@@ -1,11 +1,10 @@
 // File: src/app/card/card-footer.component.ts
-import { CommonModule } from '@angular/common';
 import { Component, signal, computed, input } from '@angular/core';
 
 @Component({
   selector: 'app-card-footer',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './card-footer.component.html',
   styleUrls: ['./card-footer.component.scss'],
 })

@@ -1,11 +1,10 @@
 // File: src/app/card/card-title.component.ts
-import { CommonModule } from '@angular/common';
 import { Component, signal, computed, input } from '@angular/core';
 
 @Component({
   selector: 'app-card-title',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './card-title.component.html',
   styleUrls: ['./card-title.component.scss'],
 })

@@ -1,11 +1,10 @@
 // File: src/app/card/card-header.component.ts
-import { CommonModule } from '@angular/common';
 import { Component, signal, computed, input } from '@angular/core';
 
 @Component({
   selector: 'app-card-header',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './card-header.component.html',
   styleUrls: ['./card-header.component.scss'],
 })

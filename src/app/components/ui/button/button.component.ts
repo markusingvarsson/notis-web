@@ -1,6 +1,6 @@
 // File: src/app/button/button.component.ts
-import { CommonModule } from '@angular/common';
 import { Component, signal, computed, input } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 type Variant =
@@ -14,7 +14,8 @@ type Size = 'default' | 'sm' | 'lg' | 'icon';
 
 @Component({
   selector: 'app-button',
-  imports: [CommonModule, RouterLink],
+  standalone: true,
+  imports: [NgTemplateOutlet, RouterLink],
   templateUrl: './button.component.html',
   styleUrls: ['./button.component.scss'],
 })
@@ -53,7 +54,7 @@ export class ButtonComponent {
       this.base(),
       this.variants[this.variant()],
       this.sizes[this.size()],
-      this.className,
+      this.className(),
     ].filter(Boolean);
     return parts.join(' ');
   });

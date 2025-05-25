@@ -1,5 +1,4 @@
 // File: src/app/note-card/note-card.component.ts
-import { CommonModule } from '@angular/common';
 import { Component, input, computed, output } from '@angular/core';
 import { formatDistanceToNow } from 'date-fns';
 import { CardComponent } from '../../../../components/ui/card/card.component';
@@ -13,7 +12,6 @@ import { Note } from '../..';
   selector: 'app-note-card',
   standalone: true,
   imports: [
-    CommonModule,
     CardComponent,
     CardHeaderComponent,
     CardTitleComponent,
@@ -53,6 +51,7 @@ export class NoteCardComponent {
     this.delete.emit(this.note());
   }
 }
+
 const truncateContent = (content: string, maxLength = 150) => {
   if (content.length <= maxLength) return content;
   return content.substring(0, maxLength) + '...';
