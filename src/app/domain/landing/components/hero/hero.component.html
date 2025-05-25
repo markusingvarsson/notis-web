@@ -13,16 +13,12 @@
       <div
         class="mt-10 flex flex-col sm:flex-row gap-4 justify-center animate-fade-in"
       >
-        <app-cta-button
+        <app-button
           [isCta]="true"
           [buttonName]="'Start taking notes'"
           [link]="'/notes'"
         />
-        <app-cta-button
-          [isCta]="false"
-          [buttonName]="'Learn more'"
-          [link]="'/'"
-        />
+        <app-button [isCta]="false" [buttonName]="'Learn more'" [link]="'/'" />
       </div>
     </div>
   </div>

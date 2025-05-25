@@ -2,12 +2,12 @@ import { Component, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-cta-button',
+  selector: 'app-button',
   imports: [RouterLink],
-  templateUrl: './cta-button.component.html',
-  styleUrl: './cta-button.component.scss',
+  templateUrl: './button.component.html',
+  styleUrl: './button.component.scss',
 })
-export class CtaButtonComponent {
+export class ButtonComponent {
   link = input.required<string>();
   buttonName = input.required<string>();
   isCta = input.required<boolean>();

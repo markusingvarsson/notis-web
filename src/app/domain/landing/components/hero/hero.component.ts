@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { CtaButtonComponent } from '../../../../components/ui/cta-button/cta-button.component';
+import { ButtonComponent } from '../../../../components/ui/button/button.component';
 
 @Component({
   selector: 'app-hero',
-  imports: [CtaButtonComponent],
+  imports: [ButtonComponent],
   templateUrl: './hero.component.html',
   styleUrl: './hero.component.scss',
 })
