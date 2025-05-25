@@ -32,7 +32,6 @@ export interface Note {
 export class NoteCardComponent {
   /** Inputs as signals */
   readonly note = input.required<Note>();
-  readonly edit = output<Note>();
   readonly delete = output<Note>();
 
   /** Computed values */
@@ -40,12 +39,6 @@ export class NoteCardComponent {
     formatDistanceToNow(new Date(this.note().updatedAt), { addSuffix: true })
   );
   readonly preview = computed(() => truncateContent(this.note().content, 150));
-
-  /** Event handlers */
-  onEdit(e: Event) {
-    e.stopPropagation();
-    this.edit.emit(this.note());
-  }
 
   onDelete(e: Event) {
     e.stopPropagation();

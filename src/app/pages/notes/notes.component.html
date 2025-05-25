@@ -5,7 +5,6 @@
     @for (note of notes(); track note.id) {
     <app-note-card
       [note]="note"
-      (edit)="onEdit($event)"
       (delete)="onDelete($event)"
     ></app-note-card>
     }

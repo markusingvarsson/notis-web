@@ -1,9 +1,5 @@
 import { Component, signal } from '@angular/core';
 import { PagelayoutComponent } from '../../components/layout/pagelayout/pagelayout.component';
-import { CardFooterComponent } from '../../components/ui/card/components/card-footer/card-footer.component';
-import { CardContentComponent } from '../../components/ui/card/components/card-content/card-content.component';
-import { CardHeaderComponent } from '../../components/ui/card/components/card-header/card-header.component';
-import { CardComponent } from '../../components/ui/card/card.component';
 import {
   Note,
   NoteCardComponent,
@@ -11,14 +7,7 @@ import {
 
 @Component({
   selector: 'app-notes',
-  imports: [
-    PagelayoutComponent,
-    NoteCardComponent,
-    CardFooterComponent,
-    CardContentComponent,
-    CardHeaderComponent,
-    CardComponent,
-  ],
+  imports: [PagelayoutComponent, NoteCardComponent],
   templateUrl: './notes.component.html',
   styleUrl: './notes.component.scss',
 })
@@ -86,11 +75,7 @@ export class NotesComponent {
     },
   ]);
 
-  onEdit($event: Note) {
-    console.log('edit', $event);
-  }
-
-  onDelete($event: Note) {
-    console.log('delete', $event);
+  onDelete(note: Note) {
+    this.notes.update((notes) => notes.filter((n) => n.id !== note.id));
   }
 }
