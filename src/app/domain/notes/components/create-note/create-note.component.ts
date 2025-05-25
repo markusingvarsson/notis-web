@@ -1,6 +1,15 @@
 // File: src/app/quick-note-input/quick-note-input.component.ts
 import { CommonModule } from '@angular/common';
-import { Component, computed, signal, OnDestroy, output } from '@angular/core';
+import {
+  Component,
+  computed,
+  signal,
+  OnDestroy,
+  PLATFORM_ID,
+  output,
+  inject,
+} from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 //import { toast } from 'sonner';
 
 interface SpeechRecognitionEvent extends Event {
@@ -47,18 +56,31 @@ declare global {
   styleUrls: ['./create-note.component.scss'],
 })
 export class CreateNoteComponent implements OnDestroy {
-  /** Callback when note is created */
+  private platformId = inject(PLATFORM_ID);
+
   readonly noteCreated = output<{
     title: string;
     content: string;
     audioBlob?: Blob;
   }>();
 
+  #isSpeechRecognitionSupported(): boolean {
+    return (
+      isPlatformBrowser(this.platformId) && 'webkitSpeechRecognition' in window
+    );
+  }
+
+  readonly hasSpeechRecognition = computed(() =>
+    this.#isSpeechRecognitionSupported()
+  );
+
   /** UI state as signals */
   readonly isRecording = signal(false);
   readonly audioBlob = signal<Blob | null>(null);
   readonly transcriptText = signal('');
-  readonly saveMode = signal<'audio' | 'text'>('text');
+  readonly saveMode = signal<'audio' | 'text'>(
+    this.#isSpeechRecognitionSupported() ? 'text' : 'audio'
+  );
   readonly isPlaying = signal(false);
 
   /** Refs for recorder, audio & recognition */
