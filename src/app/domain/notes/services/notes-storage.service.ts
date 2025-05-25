@@ -189,4 +189,51 @@ export class NotesStorageService {
       };
     });
   }
+
+  async createNote(
+    title: string,
+    content: string,
+    audioBlob?: Blob
+  ): Promise<void> {
+    let note: Note;
+
+    if (audioBlob) {
+      // Convert blob to URL
+      const audioUrl = URL.createObjectURL(audioBlob);
+
+      if (content) {
+        // Create a text and audio note
+        note = {
+          id: crypto.randomUUID(),
+          title,
+          type: 'textAndAudio',
+          content,
+          audioUrl,
+          duration: 0, // TODO: Calculate actual duration
+          updatedAt: new Date().toISOString(),
+        };
+      } else {
+        // Create an audio-only note
+        note = {
+          id: crypto.randomUUID(),
+          title,
+          type: 'audio',
+          audioUrl,
+          duration: 0, // TODO: Calculate actual duration
+          updatedAt: new Date().toISOString(),
+        };
+      }
+    } else {
+      // Create a text-only note
+      note = {
+        id: crypto.randomUUID(),
+        title,
+        type: 'text',
+        content,
+        updatedAt: new Date().toISOString(),
+      };
+    }
+
+    await this.addNote(note);
+  }
 }
