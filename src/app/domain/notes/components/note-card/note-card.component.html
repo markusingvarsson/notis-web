@@ -4,17 +4,25 @@
     'cursor-pointer h-[220px] flex flex-col'
   "
 >
-  <app-card-header [className]="'p-4 pb-2 space-y-0'">
-    <div class="flex justify-between items-start">
-      <app-card-title [className]="'text-lg font-medium truncate'">
-        {{ note().title }}
-      </app-card-title>
-      <div class="flex gap-1">
+  <app-card-header [className]="'px-4 pt-4 pb-2'">
+    <div class="flex items-center w-full">
+      <!-- Title container with strict width control -->
+      <div class="min-w-0 flex-1 mr-2">
+        <app-card-title
+          [className]="'text-lg font-medium truncate leading-snug block'"
+        >
+          {{ note().title }}
+        </app-card-title>
+      </div>
+
+      <!-- Fixed width button container -->
+      <div class="flex items-center gap-1 flex-shrink-0">
         <app-button
-          [className]="'h-7 w-7'"
+          [className]="'h-7 w-7 p-1'"
           variant="ghost"
           size="icon"
           (click)="onEdit($event)"
+          aria-label="Edit note"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -26,17 +34,17 @@
             stroke-linecap="round"
             stroke-linejoin="round"
           >
-            <!-- Eraser cap -->
             <path d="M16.5 3.5l3 3-2 2-3-3 2-2Z" />
-            <!-- Pencil body & tip -->
             <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" />
           </svg>
         </app-button>
         <app-button
-          [className]="'h-7 w-7 text-destructive hover:text-destructive'"
+          *ngIf="onDelete"
+          [className]="'h-7 w-7 p-1 text-destructive hover:text-destructive'"
           variant="ghost"
           size="icon"
           (click)="onDelete($event)"
+          aria-label="Delete note"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -57,10 +65,12 @@
         </app-button>
       </div>
     </div>
-    <p class="text-xs text-muted-foreground">{{ timeAgo() }}</p>
+
+    <!-- Moved time label outside the flex for better spacing -->
+    <p class="mt-2 text-xs text-muted-foreground">{{ timeAgo() }}</p>
   </app-card-header>
 
-  <app-card-content [className]="'p-4 pt-2 flex-1 overflow-hidden'">
+  <app-card-content [className]="'px-4 pt-2 pb-4 flex-1 overflow-hidden'">
     <p class="text-sm text-muted-foreground line-clamp-6">
       {{ preview() }}
     </p>
