@@ -32,7 +32,21 @@ export class NoteCardComponent {
   readonly timeAgo = computed(() =>
     formatDistanceToNow(new Date(this.note().updatedAt), { addSuffix: true })
   );
-  readonly preview = computed(() => truncateContent(this.note().content, 150));
+  readonly preview = computed(() => {
+    const note = this.note();
+    switch (note.type) {
+      case 'text':
+        return truncateContent(note.content, 150);
+      case 'audio':
+        return `Audio recording (${note.duration}s)`;
+      case 'textAndAudio':
+        return `${truncateContent(note.content, 150)} + Audio (${
+          note.duration
+        }s)`;
+      default:
+        return 'Unknown note type';
+    }
+  });
 
   onDelete(e: Event) {
     e.stopPropagation();
