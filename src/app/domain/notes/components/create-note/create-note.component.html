@@ -1,15 +1,15 @@
 <!-- File: src/app/quick-note-input/quick-note-input.component.html -->
-<div class="bg-card rounded-lg shadow-sm p-6 mb-8 border">
+<div class="bg-[var(--tw-bg-light)] rounded-lg shadow-sm p-6 mb-8 border border-[var(--tw-border-light)]">
     <div class="text-center mb-6">
-      <h2 class="text-xl font-semibold mb-2">Create a new note</h2>
-      <p class="text-sm text-muted-foreground">
+      <h2 class="text-xl font-semibold mb-2 text-[var(--tw-primary-dark)]">Create a new note</h2>
+      <p class="text-sm text-[var(--tw-border-dark)]">
         Record your thoughts with voice
       </p>
     </div>
   
     <!-- Save Mode -->
     <div class="mb-6">
-      <span class="text-sm font-medium mb-3 block">Save as:</span>
+      <span class="text-sm font-medium mb-3 block text-[var(--tw-primary-dark)]">Save as:</span>
       <div class="flex gap-6">
         <label class="flex items-center space-x-2" for="save-text">
           <input
@@ -19,7 +19,7 @@
             (change)="saveMode.set('text')"
             class="cursor-pointer"
           />
-          <span class="text-sm">Transcribed Text</span>
+          <span class="text-sm text-[var(--tw-primary-dark)]">Transcribed Text</span>
         </label>
         <label class="flex items-center space-x-2" for="save-audio">
           <input
@@ -29,7 +29,7 @@
             (change)="saveMode.set('audio')"
             class="cursor-pointer"
           />
-          <span class="text-sm">Audio Recording</span>
+          <span class="text-sm text-[var(--tw-primary-dark)]">Audio Recording</span>
         </label>
       </div>
     </div>
@@ -42,11 +42,11 @@
           'h-16 w-16 rounded-full flex items-center justify-center transition-colors ' +
           (isRecording() 
             ? 'bg-red-500 hover:bg-red-600 animate-pulse' 
-            : 'bg-[var(--tw-primary)] hover:bg-[var(--tw-primary)]/90')
+            : 'bg-[var(--tw-primary)] hover:bg-[var(--tw-primary-light)]')
         "
       >
         <ng-container *ngIf="isRecording(); else micOn">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none"
                stroke="currentColor" stroke-width="2" stroke-linecap="round"
                stroke-linejoin="round">
             <path d="M9 10v6a3 3 0 0 0 6 0v-6" />
@@ -54,7 +54,7 @@
           </svg>
         </ng-container>
         <ng-template #micOn>
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none"
                stroke="currentColor" stroke-width="2" stroke-linecap="round"
                stroke-linejoin="round">
             <path d="M12 1v4" />
@@ -63,30 +63,30 @@
           </svg>
         </ng-template>
       </button>
-      <p class="text-sm text-muted-foreground">{{ recordLabel() }}</p>
+      <p class="text-sm text-[var(--tw-border-dark)]">{{ recordLabel() }}</p>
     </div>
   
     <!-- Preview -->
-    <div *ngIf="audioBlob() || transcriptText()" class="bg-muted/20 rounded-lg p-4 mb-4">
+    <div *ngIf="audioBlob() || transcriptText()" class="bg-[var(--tw-bg)] rounded-lg p-4 mb-4">
       <div *ngIf="saveMode() === 'audio' && audioBlob()" class="flex items-center gap-3">
         <button
           (click)="playAudio()"
           [class]="
             'inline-flex items-center gap-1 text-sm font-medium ' +
             (isPlaying() 
-              ? 'px-3 py-1 rounded border border-[var(--tw-border)]' 
-              : 'px-3 py-1 rounded border border-[var(--tw-border)]')
+              ? 'px-3 py-1 rounded border border-[var(--tw-border)] text-[var(--tw-primary-dark)]' 
+              : 'px-3 py-1 rounded border border-[var(--tw-border)] text-[var(--tw-primary-dark)]')
           "
         >
           <span *ngIf="!isPlaying()">▶️</span>
           <span *ngIf="isPlaying()">⏸️</span>
           {{ isPlaying() ? 'Pause' : 'Play' }}
         </button>
-        <span class="text-sm text-muted-foreground">Audio recorded</span>
+        <span class="text-sm text-[var(--tw-border-dark)]">Audio recorded</span>
       </div>
       <div *ngIf="saveMode() === 'text' && transcriptText()">
-        <span class="text-xs text-muted-foreground mb-2 block">Transcription:</span>
-        <p class="text-sm bg-[var(--tw-bg-light)] p-3 rounded border min-h-[60px]">
+        <span class="text-xs text-[var(--tw-border-dark)] mb-2 block">Transcription:</span>
+        <p class="text-sm bg-[var(--tw-bg-light)] p-3 rounded border border-[var(--tw-border-light)] min-h-[60px] text-[var(--tw-primary-dark)]">
           {{ transcriptText() || 'Transcribing...' }}
         </p>
       </div>
@@ -96,13 +96,13 @@
     <div *ngIf="audioBlob() || transcriptText()" class="flex gap-2 justify-end">
       <button
         (click)="clearRecording()"
-        class="px-3 py-1 rounded border border-[var(--tw-border)] text-sm"
+        class="px-3 py-1 rounded border border-[var(--tw-border)] text-sm text-[var(--tw-primary-dark)] hover:bg-[var(--tw-bg)]"
       >
         Clear
       </button>
       <button
         (click)="handleSave()"
-        class="inline-flex items-center gap-1 px-3 py-1 bg-[var(--tw-primary)] text-white rounded text-sm"
+        class="inline-flex items-center gap-1 px-3 py-1 bg-[var(--tw-primary)] hover:bg-[var(--tw-primary-light)] text-white rounded text-sm"
       >
         💾 Save Note
       </button>

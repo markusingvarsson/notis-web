@@ -102,6 +102,7 @@ export class CreateNoteComponent implements OnDestroy {
             .map((r) => r[0].transcript)
             .join('');
           this.transcriptText.set(txt);
+          console.log(txt);
         };
         this.recognition.onerror = () =>
           //toast.error('Speech recognition error');
