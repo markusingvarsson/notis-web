@@ -1,6 +1,6 @@
 // File: src/app/button/button.component.ts
 import { CommonModule } from '@angular/common';
-import { Component, Input, signal, computed, input } from '@angular/core';
+import { Component, signal, computed, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 type Variant =

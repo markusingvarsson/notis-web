@@ -53,7 +53,7 @@ export class NoteCardComponent {
     this.delete.emit(this.note());
   }
 }
-const truncateContent = (content: string, maxLength: number = 150) => {
+const truncateContent = (content: string, maxLength = 150) => {
   if (content.length <= maxLength) return content;
   return content.substring(0, maxLength) + '...';
 };
