@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Home page - highest priority as it's the main entry point -->
+  <url>
+    <loc>https://notis.nu/</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Notes page - high priority as it's a main feature -->
+  <url>
+    <loc>https://notis.nu/notes</loc>
+    <lastmod>2024-03-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+</urlset> 
