@@ -13,16 +13,4 @@ export const routes: Routes = [
         (mod) => mod.NotesComponent
       ),
   },
-  {
-    path: 'about',
-    loadComponent: () =>
-      import('./feature/about/about.component').then(
-        (mod) => mod.AboutComponent
-      ),
-  },
-  {
-    path: 'faq',
-    loadComponent: () =>
-      import('./feature/faq/faq.component').then((mod) => mod.FaqComponent),
-  },
 ];

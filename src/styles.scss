@@ -1,7 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-/* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
-/* styles.scss */
+
 html, body {
   margin: 0;
   padding: 0;
@@ -10,122 +8,42 @@ html, body {
   background: var(--bg-color);
   color: var(--fg-color);
 }
+/* Define your secure-notes palette */
+@layer base {
+  :root {
+    /* Primary (teal-blue) */
+    --tw-primary-light:  #5EA8B5;
+    --tw-primary:        #367D8C; /* your main accent */
+    --tw-primary-dark:   #1B2B3C;
 
- //:root {
-   //--bg-color: #f5f7fa;
-   //--fg-color: #333;
-   //--primary:   #0066ff;
-   //--secondary: #ff6600;
-   //--spacing:   1rem;
- //}
- //
- //@layer base {
-   //:root {
-     //--background: 220 33% 98%;
-     //--foreground: 240 10% 20%;
- //
-     //--card: 0 0% 100%;
-     //--card-foreground: 240 10% 20%;
- //
-     //--popover: 0 0% 100%;
-     //--popover-foreground: 240 10% 20%;
- //
-     //--primary: 260 84% 70%;
-     //--primary-foreground: 0 0% 100%;
- //
-     //--secondary: 220 14% 96%;
-     //--secondary-foreground: 240 10% 20%;
- //
-     //--muted: 220 14% 96%;
-     //--muted-foreground: 240 5% 45%;
- //
-     //--accent: 220 14% 96%;
-     //--accent-foreground: 240 10% 20%;
- //
-     //--destructive: 0 84% 60%;
-     //--destructive-foreground: 0 0% 100%;
- //
-     //--border: 220 13% 91%;
-     //--input: 220 13% 91%;
-     //--ring: 260 84% 70%;
- //
-     //--radius: 0.5rem;
- //
-     //--sidebar-background: 0 0% 100%;
-     //--sidebar-foreground: 240 10% 20%;
-     //--sidebar-primary: 260 84% 70%;
-     //--sidebar-primary-foreground: 0 0% 100%;
-     //--sidebar-accent: 220 14% 96%;
-     //--sidebar-accent-foreground: 240 10% 20%;
-     //--sidebar-border: 220 13% 91%;
-     //--sidebar-ring: 260 84% 70%;
-   //}
- //
-   //.dark {
-     //--background: 240 10% 10%;
-     //--foreground: 0 0% 94%;
- //
-     //--card: 240 10% 12%;
-     //--card-foreground: 0 0% 94%;
- //
-     //--popover: 240 10% 12%;
-     //--popover-foreground: 0 0% 94%;
- //
-     //--primary: 260 84% 70%;
-     //--primary-foreground: 0 0% 100%;
- //
-     //--secondary: 240 5% 18%;
-     //--secondary-foreground: 0 0% 94%;
- //
-     //--muted: 240 5% 18%;
-     //--muted-foreground: 240 5% 65%;
- //
-     //--accent: 240 5% 18%;
-     //--accent-foreground: 0 0% 94%;
- //
-     //--destructive: 0 62% 50%;
-     //--destructive-foreground: 0 0% 94%;
- //
-     //--border: 240 5% 18%;
-     //--input: 240 5% 18%;
-     //--ring: 260 84% 70%;
- //
-     //--sidebar-background: 240 10% 12%;
-     //--sidebar-foreground: 0 0% 94%;
-     //--sidebar-primary: 260 84% 70%;
-     //--sidebar-primary-foreground: 0 0% 100%;
-     //--sidebar-accent: 240 5% 18%;
-     //--sidebar-accent-foreground: 0 0% 94%;
-     //--sidebar-border: 240 5% 18%;
-     //--sidebar-ring: 260 84% 70%;
-   //}
- //}
- //
- //@layer base {
-   //* {
-     //@apply border-border;
-   //}
- //
-   //body {
-     //@apply bg-background text-foreground font-sans;
-   //}
- //}
- //
- //@layer components {
-   //.heading-xl {
-     //@apply text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight;
-   //}
-   //
-   //.heading-lg {
-     //@apply text-3xl sm:text-4xl font-bold;
-   //}
-   //
-   //.heading-md {
-     //@apply text-2xl sm:text-3xl font-bold;
-   //}
-   //
-   //.heading-sm {
-     //@apply text-xl sm:text-2xl font-bold;
-   //}
- //}
- //
+    /* Background (paper-white) */
+    --tw-bg-light:       #FFFFFF;
+    --tw-bg:             #F0F3F6;
+    --tw-bg-dark:        #BCC4CC;
+
+    /* Border / Divider */
+    --tw-border-light:   #E3E6E9;
+    --tw-border:         #BCC4CC;
+    --tw-border-dark:    #6E7A89;
+
+    /* Highlight (sand) */
+    --tw-highlight-light:#F9EACB;
+    --tw-highlight:      #F0D17A;
+    --tw-highlight-dark: #D1B377;
+
+    /* Success */
+    --tw-success-light:  #66A884;
+    --tw-success:        #3E8C5D;
+    --tw-success-dark:   #255A3C;
+  }
+}
+
+@layer utilities {
+  .bg-primary      { background-color: var(--tw-primary) }
+  .bg-primary-light{ background-color: var(--tw-primary-light) }
+  .text-primary    { color:            var(--tw-primary) }
+  .bg-bg           { background-color: var(--tw-bg) }
+  .border-default  { border-color:     var(--tw-border) }
+  .bg-highlight    { background-color: var(--tw-highlight) }
+  .bg-success      { background-color: var(--tw-success) }
+}

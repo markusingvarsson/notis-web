@@ -8,11 +8,11 @@
   
   app-navbar {
     flex: 0 0 auto;             /* natural height, no grow */
+    height: 64px;
   }
   
   main {
     flex: 1 1 auto;             /* take remaining space */
-    padding: var(--spacing);
     background: var(--bg-color);
   }
   
