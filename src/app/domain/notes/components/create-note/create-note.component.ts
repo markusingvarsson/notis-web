@@ -108,7 +108,7 @@ export class CreateNoteComponent implements OnDestroy {
       const chunks: BlobPart[] = [];
       recorder.ondataavailable = (e: BlobEvent) => chunks.push(e.data);
       recorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/wav' });
+        const blob = new Blob(chunks, { type: 'audio/webm' });
         this.audioBlob.set(blob);
         stream.getTracks().forEach((t) => t.stop());
       };
