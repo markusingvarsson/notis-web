@@ -26,3 +26,27 @@ export interface TextAndAudioNote extends BaseNote {
 }
 
 export type Note = TextNote | AudioNote | TextAndAudioNote;
+
+export interface TextNoteCreated {
+  type: 'text';
+  title: string;
+  content: string;
+}
+
+export interface AudioNoteCreated {
+  type: 'audio';
+  title: string;
+  audioBlob: Blob;
+}
+
+export interface TextAndAudioNoteCreated {
+  type: 'textAndAudio';
+  title: string;
+  content: string;
+  audioBlob: Blob;
+}
+
+export type NoteCreated =
+  | TextNoteCreated
+  | AudioNoteCreated
+  | TextAndAudioNoteCreated;

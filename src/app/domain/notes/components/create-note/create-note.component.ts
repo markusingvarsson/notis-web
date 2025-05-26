@@ -12,6 +12,7 @@ import {
 import { isPlatformBrowser } from '@angular/common';
 //import { toast } from 'sonner';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { NoteCreated } from '../..';
 
 interface SpeechRecognitionEvent extends Event {
   results: SpeechRecognitionResultList;
@@ -60,11 +61,7 @@ export class CreateNoteComponent implements OnDestroy {
   #platformId = inject(PLATFORM_ID);
   #deviceService = inject(DeviceDetectorService);
 
-  readonly noteCreated = output<{
-    title: string;
-    content: string;
-    audioBlob?: Blob;
-  }>();
+  readonly noteCreated = output<NoteCreated>();
 
   #isSpeechRecognitionSupported(): boolean {
     return (
@@ -184,34 +181,55 @@ export class CreateNoteComponent implements OnDestroy {
   }
 
   handleSave(): void {
-    if (this.saveMode() === 'audio') {
-      const blob = this.audioBlob();
-      if (!blob) {
-        //toast.error('Please record audio first');
-        console.error('Please record audio first');
-        return;
+    switch (this.saveMode()) {
+      case 'audio': {
+        const blob = this.audioBlob();
+        if (!blob) {
+          console.error('Please record audio first');
+          return;
+        }
+        const title = `Audio Note - ${new Date().toLocaleDateString()}`;
+        const content = this.transcriptText().trim();
+
+        if (content) {
+          // Create a text and audio note
+          this.noteCreated.emit({
+            type: 'textAndAudio',
+            title,
+            content,
+            audioBlob: blob,
+          });
+        } else {
+          // Create an audio-only note
+          this.noteCreated.emit({
+            type: 'audio',
+            title,
+            audioBlob: blob,
+          });
+        }
+        console.info('Note saved!');
+        break;
       }
-      const title = `Audio Note - ${new Date().toLocaleDateString()}`;
-      this.noteCreated.emit({ title, content: '', audioBlob: blob });
-      //toast.success('Audio note saved!');
-      console.info('Audio note saved!');
-    } else {
-      const txt = this.transcriptText().trim();
-      if (!txt) {
-        //toast.error('Please record for transcription');
-        console.error('Please record for transcription');
-        return;
+      case 'text': {
+        const txt = this.transcriptText().trim();
+        if (!txt) {
+          console.error('Please record for transcription');
+          return;
+        }
+        let title = txt.split('\n')[0].slice(0, 50);
+        if (txt.length > 50) title = title.slice(0, 47) + '...';
+        this.noteCreated.emit({
+          type: 'text',
+          title,
+          content: txt,
+        });
+        console.info('Text note saved!');
+        break;
       }
-      let title = txt.split('\n')[0].slice(0, 50);
-      if (txt.length > 50) title = title.slice(0, 47) + '...';
-      this.noteCreated.emit({ title, content: txt });
-      //toast.success('Text note saved!');
-      console.info('Text note saved!');
     }
     // reset
     this.audioBlob.set(null);
     this.transcriptText.set('');
-    this.isPlaying.set(false);
   }
 
   clearRecording(): void {

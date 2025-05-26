@@ -17,6 +17,37 @@
 
       <!-- Fixed width button container -->
       <div class="flex items-center gap-1 flex-shrink-0">
+        <!-- Play button for audio notes -->
+        @if (hasAudio()) {
+        <app-button
+          [className]="'h-7 w-7 p-1'"
+          variant="ghost"
+          size="icon"
+          (click)="togglePlay($event)"
+          [ariaLabel]="isPlaying() ? 'Pause audio' : 'Play audio'"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+          @if (!isPlaying()) {
+            <path
+              d="M5 3l14 9-14 9V3z"
+            />
+          } @else {
+              <path
+              d="M6 4h4v16H6zM14 4h4v16h-4z"
+            />
+          }
+          </svg>
+        </app-button>
+        }
         <app-button
           [className]="'h-7 w-7 p-1 text-destructive hover:text-destructive'"
           variant="ghost"
@@ -41,7 +72,7 @@
             <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
           </svg>
         </app-button>
-      </div>
+        </div>
     </div>
 
     <!-- Moved time label outside the flex for better spacing -->

@@ -7,7 +7,12 @@
   <ng-container *ngTemplateOutlet="projectedContent"></ng-container>
 </a>
 } @else {
-<button type="button" [class]="classes()" [disabled]="disabled()">
+<button
+  type="button"
+  [class]="classes()"
+  [disabled]="disabled()"
+  [attr.aria-label]="ariaLabel()"
+>
   <ng-container *ngTemplateOutlet="projectedContent"></ng-container>
 </button>
 }

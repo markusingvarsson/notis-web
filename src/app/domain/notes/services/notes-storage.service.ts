@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID, inject } from '@angular/core';
-import { Note } from '..';
+import { Note, NoteCreated } from '..';
 
 @Injectable({
   providedIn: 'root',
@@ -54,72 +54,6 @@ export class NotesStorageService {
 
     request.onsuccess = () => {
       const notes = request.result;
-      if (notes.length === 0) {
-        // Initialize with sample data if empty
-        this.initializeSampleData();
-      } else {
-        this.notes.set(notes);
-      }
-    };
-  }
-
-  private initializeSampleData() {
-    const sampleNotes: Note[] = [
-      {
-        id: '1',
-        title: 'First Note',
-        type: 'text',
-        content: 'This is the content of the first note.',
-        updatedAt: new Date().toISOString(),
-      },
-      {
-        id: '2',
-        title: 'Second Note',
-        type: 'text',
-        content: 'This is the content of the second note.',
-        updatedAt: new Date().toISOString(),
-      },
-      {
-        id: '3',
-        title: 'Third Note',
-        type: 'text',
-        content: 'This is the content of the third note.',
-        updatedAt: new Date().toISOString(),
-      },
-      {
-        id: '4',
-        title: 'Fourth Note',
-        type: 'text',
-        content: 'This is the content of the fourth note.',
-        updatedAt: new Date().toISOString(),
-      },
-      {
-        id: '5',
-        title: 'Fifth Note',
-        type: 'text',
-        content: 'This is the content of the fifth note.',
-        updatedAt: new Date().toISOString(),
-      },
-    ];
-
-    this.saveNotes(sampleNotes);
-  }
-
-  private saveNotes(notes: Note[]) {
-    if (!this.db) return;
-
-    const transaction = this.db.transaction(this.storeName, 'readwrite');
-    const store = transaction.objectStore(this.storeName);
-
-    // Clear existing notes
-    store.clear();
-
-    // Add new notes
-    notes.forEach((note) => {
-      store.add(note);
-    });
-
-    transaction.oncomplete = () => {
       this.notes.set(notes);
     };
   }
@@ -190,36 +124,76 @@ export class NotesStorageService {
     });
   }
 
-  async createNote(
-    title: string,
-    content: string,
-    audioBlob?: Blob
-  ): Promise<void> {
+  private async getAudioDuration(audioBlob: Blob): Promise<number> {
+    return new Promise((resolve) => {
+      const audio = new Audio();
+      const objectUrl = URL.createObjectURL(audioBlob);
+      audio.src = objectUrl;
+
+      const cleanup = () => {
+        URL.revokeObjectURL(objectUrl);
+        audio.onloadedmetadata = null;
+        audio.onerror = null;
+        audio.ontimeupdate = null;
+      };
+
+      audio.onloadedmetadata = () => {
+        if (audio.duration === Infinity) {
+          // Force seek to end to trigger correct duration
+          audio.currentTime = 1e10;
+          audio.ontimeupdate = () => {
+            cleanup();
+            resolve(audio.duration);
+          };
+        } else {
+          cleanup();
+          resolve(audio.duration);
+        }
+      };
+
+      audio.onerror = () => {
+        cleanup();
+        resolve(0);
+      };
+
+      // Optional: safety timeout
+      setTimeout(() => {
+        cleanup();
+        resolve(0);
+      }, 5000);
+    });
+  }
+
+  async createNote(noteCreated: NoteCreated): Promise<void> {
     let note: Note;
-
-    if (audioBlob) {
+    if (noteCreated.type === 'audio' || noteCreated.type === 'textAndAudio') {
+      if (!noteCreated.audioBlob) {
+        throw new Error('Audio blob is required for audio notes');
+      }
       // Convert blob to URL
-      const audioUrl = URL.createObjectURL(audioBlob);
+      const audioUrl = URL.createObjectURL(noteCreated.audioBlob);
+      // Calculate duration
+      const duration = await this.getAudioDuration(noteCreated.audioBlob);
 
-      if (content) {
+      if (noteCreated.type === 'textAndAudio') {
         // Create a text and audio note
         note = {
           id: crypto.randomUUID(),
-          title,
+          title: noteCreated.title,
           type: 'textAndAudio',
-          content,
+          content: noteCreated.content,
           audioUrl,
-          duration: 0, // TODO: Calculate actual duration
+          duration,
           updatedAt: new Date().toISOString(),
         };
       } else {
         // Create an audio-only note
         note = {
           id: crypto.randomUUID(),
-          title,
+          title: noteCreated.title,
           type: 'audio',
           audioUrl,
-          duration: 0, // TODO: Calculate actual duration
+          duration,
           updatedAt: new Date().toISOString(),
         };
       }
@@ -227,13 +201,14 @@ export class NotesStorageService {
       // Create a text-only note
       note = {
         id: crypto.randomUUID(),
-        title,
+        title: noteCreated.title,
         type: 'text',
-        content,
+        content: noteCreated.content,
         updatedAt: new Date().toISOString(),
       };
     }
 
+    console.log('note', note);
     await this.addNote(note);
   }
 }
