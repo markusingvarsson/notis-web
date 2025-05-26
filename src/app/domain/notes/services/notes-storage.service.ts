@@ -53,7 +53,23 @@ export class NotesStorageService {
     const request = store.getAll();
 
     request.onsuccess = () => {
-      const notes = request.result;
+      const rawNotes = request.result;
+
+      const notes = rawNotes.map(
+        (
+          note: Omit<Note, 'audioBlob'> & { audioBlob?: Blob | ArrayBuffer }
+        ) => {
+          // Reconstruct audioBlob with MIME type if needed
+          if (
+            (note.type === 'audio' || note.type === 'textAndAudio') &&
+            note.audioBlob
+          ) {
+            note.audioBlob = new Blob([note.audioBlob], { type: 'audio/webm' });
+          }
+          return note as Note;
+        }
+      );
+
       this.notes.set(notes);
     };
   }
@@ -139,7 +155,6 @@ export class NotesStorageService {
 
       audio.onloadedmetadata = () => {
         if (audio.duration === Infinity) {
-          // Force seek to end to trigger correct duration
           audio.currentTime = 1e10;
           audio.ontimeupdate = () => {
             cleanup();
@@ -156,7 +171,6 @@ export class NotesStorageService {
         resolve(0);
       };
 
-      // Optional: safety timeout
       setTimeout(() => {
         cleanup();
         resolve(0);
@@ -166,39 +180,35 @@ export class NotesStorageService {
 
   async createNote(noteCreated: NoteCreated): Promise<void> {
     let note: Note;
+
     if (noteCreated.type === 'audio' || noteCreated.type === 'textAndAudio') {
       if (!noteCreated.audioBlob) {
         throw new Error('Audio blob is required for audio notes');
       }
-      // Convert blob to URL
-      const audioUrl = URL.createObjectURL(noteCreated.audioBlob);
-      // Calculate duration
+
       const duration = await this.getAudioDuration(noteCreated.audioBlob);
 
       if (noteCreated.type === 'textAndAudio') {
-        // Create a text and audio note
         note = {
           id: crypto.randomUUID(),
           title: noteCreated.title,
           type: 'textAndAudio',
           content: noteCreated.content,
-          audioUrl,
+          audioBlob: noteCreated.audioBlob,
           duration,
           updatedAt: new Date().toISOString(),
         };
       } else {
-        // Create an audio-only note
         note = {
           id: crypto.randomUUID(),
           title: noteCreated.title,
           type: 'audio',
-          audioUrl,
+          audioBlob: noteCreated.audioBlob,
           duration,
           updatedAt: new Date().toISOString(),
         };
       }
     } else {
-      // Create a text-only note
       note = {
         id: crypto.randomUUID(),
         title: noteCreated.title,
@@ -208,7 +218,6 @@ export class NotesStorageService {
       };
     }
 
-    console.log('note', note);
     await this.addNote(note);
   }
 }

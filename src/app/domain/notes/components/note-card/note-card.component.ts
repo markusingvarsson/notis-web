@@ -62,24 +62,35 @@ export class NoteCardComponent {
 
   togglePlay(e: Event) {
     e.stopPropagation();
+
     const note = this.note();
     if (!this.hasAudio()) return;
+
+    const audioNote = note as AudioNote | TextAndAudioNote;
 
     if (!this.isPlaying()) {
       // Start playing
       if (!this.audioElement) {
-        const audioNote = note as AudioNote | TextAndAudioNote;
-        this.audioElement = new Audio(audioNote.audioUrl);
+        const objectUrl = URL.createObjectURL(audioNote.audioBlob);
+        this.audioElement = new Audio(objectUrl);
+
         this.audioElement.onended = () => {
           this.isPlaying.set(false);
+          URL.revokeObjectURL(this.audioElement!.src);
           this.audioElement = null;
         };
       }
+
       this.audioElement.play();
       this.isPlaying.set(true);
     } else {
-      // Stop playing
-      this.audioElement?.pause();
+      // Pause or stop
+      if (this.audioElement) {
+        this.audioElement.pause();
+        URL.revokeObjectURL(this.audioElement.src);
+        this.audioElement = null;
+      }
+
       this.isPlaying.set(false);
     }
   }

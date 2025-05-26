@@ -14,14 +14,14 @@ export interface TextNote extends BaseNote {
 
 export interface AudioNote extends BaseNote {
   type: 'audio';
-  audioUrl: string;
+  audioBlob: Blob;
   duration: number;
 }
 
 export interface TextAndAudioNote extends BaseNote {
   type: 'textAndAudio';
   content: string;
-  audioUrl: string;
+  audioBlob: Blob;
   duration: number;
 }
 
