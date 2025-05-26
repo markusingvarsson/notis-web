@@ -78,9 +78,7 @@ export class CreateNoteComponent implements OnDestroy {
   readonly isRecording = signal(false);
   readonly audioBlob = signal<Blob | null>(null);
   readonly transcriptText = signal('');
-  readonly saveMode = signal<'audio' | 'text'>(
-    this.#isSpeechRecognitionSupported() ? 'text' : 'audio'
-  );
+  readonly saveMode = signal<'audio' | 'text'>('audio');
   readonly isPlaying = signal(false);
 
   /** Refs for recorder, audio & recognition */
