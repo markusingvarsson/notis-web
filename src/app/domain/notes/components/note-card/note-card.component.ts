@@ -6,7 +6,7 @@ import { ButtonComponent } from '../../../../components/ui/button/button.compone
 import { CardContentComponent } from '../../../../components/ui/card/components/card-content/card-content.component';
 import { CardHeaderComponent } from '../../../../components/ui/card/components/card-header/card-header.component';
 import { CardTitleComponent } from '../../../../components/ui/card/components/card-title/card-title.component';
-import { Note, AudioNote, TextAndAudioNote } from '../..';
+import { Note, AudioNote } from '../..';
 
 @Component({
   selector: 'app-note-card',
@@ -41,10 +41,6 @@ export class NoteCardComponent {
         return truncateContent(note.content, 150);
       case 'audio':
         return `Audio recording (${formatDuration(note.duration)})`;
-      case 'textAndAudio':
-        return `${truncateContent(note.content, 150)} + Audio (${formatDuration(
-          note.duration
-        )})`;
       default:
         return 'Unknown note type';
     }
@@ -52,7 +48,7 @@ export class NoteCardComponent {
 
   readonly hasAudio = computed(() => {
     const note = this.note();
-    return note.type === 'audio' || note.type === 'textAndAudio';
+    return note.type === 'audio';
   });
 
   onDelete(e: Event) {
@@ -66,7 +62,7 @@ export class NoteCardComponent {
     const note = this.note();
     if (!this.hasAudio()) return;
 
-    const audioNote = note as AudioNote | TextAndAudioNote;
+    const audioNote = note as AudioNote;
 
     if (!this.isPlaying()) {
       // Start playing

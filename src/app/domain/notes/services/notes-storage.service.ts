@@ -3,6 +3,15 @@ import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID, inject } from '@angular/core';
 import { Note, NoteCreated } from '..';
 
+// If there are no stored mime type, use the mime type of the blob.
+// If no mime type of the blob, use the audio/webm as it was the default for the first version of the app.
+const getDefaultMimeType = (blob: Blob | ArrayBuffer) => {
+  if (blob instanceof Blob) {
+    return blob.type;
+  }
+  return 'audio/webm';
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -57,14 +66,16 @@ export class NotesStorageService {
 
       const notes = rawNotes.map(
         (
-          note: Omit<Note, 'audioBlob'> & { audioBlob?: Blob | ArrayBuffer }
+          note: Omit<Note, 'audioBlob'> & {
+            audioBlob?: Blob | ArrayBuffer;
+            audioMimeType?: string;
+          }
         ) => {
           // Reconstruct audioBlob with MIME type if needed
-          if (
-            (note.type === 'audio' || note.type === 'textAndAudio') &&
-            note.audioBlob
-          ) {
-            note.audioBlob = new Blob([note.audioBlob], { type: 'audio/webm' });
+          if (note.type === 'audio' && note.audioBlob) {
+            const mimeType =
+              note.audioMimeType ?? getDefaultMimeType(note.audioBlob);
+            note.audioBlob = new Blob([note.audioBlob], { type: mimeType });
           }
           return note as Note;
         }
@@ -181,33 +192,22 @@ export class NotesStorageService {
   async createNote(noteCreated: NoteCreated): Promise<void> {
     let note: Note;
 
-    if (noteCreated.type === 'audio' || noteCreated.type === 'textAndAudio') {
+    if (noteCreated.type === 'audio') {
       if (!noteCreated.audioBlob) {
         throw new Error('Audio blob is required for audio notes');
       }
 
       const duration = await this.getAudioDuration(noteCreated.audioBlob);
 
-      if (noteCreated.type === 'textAndAudio') {
-        note = {
-          id: crypto.randomUUID(),
-          title: noteCreated.title,
-          type: 'textAndAudio',
-          content: noteCreated.content,
-          audioBlob: noteCreated.audioBlob,
-          duration,
-          updatedAt: new Date().toISOString(),
-        };
-      } else {
-        note = {
-          id: crypto.randomUUID(),
-          title: noteCreated.title,
-          type: 'audio',
-          audioBlob: noteCreated.audioBlob,
-          duration,
-          updatedAt: new Date().toISOString(),
-        };
-      }
+      note = {
+        id: crypto.randomUUID(),
+        title: noteCreated.title,
+        type: 'audio',
+        audioBlob: noteCreated.audioBlob,
+        audioMimeType: noteCreated.audioMimeType,
+        duration,
+        updatedAt: new Date().toISOString(),
+      };
     } else {
       note = {
         id: crypto.randomUUID(),

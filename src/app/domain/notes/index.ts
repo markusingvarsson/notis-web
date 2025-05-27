@@ -1,4 +1,4 @@
-export type NoteType = 'text' | 'audio' | 'textAndAudio';
+export type NoteType = 'text' | 'audio';
 
 export interface BaseNote {
   id: string;
@@ -15,17 +15,11 @@ export interface TextNote extends BaseNote {
 export interface AudioNote extends BaseNote {
   type: 'audio';
   audioBlob: Blob;
+  audioMimeType?: string;
   duration: number;
 }
 
-export interface TextAndAudioNote extends BaseNote {
-  type: 'textAndAudio';
-  content: string;
-  audioBlob: Blob;
-  duration: number;
-}
-
-export type Note = TextNote | AudioNote | TextAndAudioNote;
+export type Note = TextNote | AudioNote;
 
 export interface TextNoteCreated {
   type: 'text';
@@ -37,16 +31,7 @@ export interface AudioNoteCreated {
   type: 'audio';
   title: string;
   audioBlob: Blob;
+  audioMimeType: string;
 }
 
-export interface TextAndAudioNoteCreated {
-  type: 'textAndAudio';
-  title: string;
-  content: string;
-  audioBlob: Blob;
-}
-
-export type NoteCreated =
-  | TextNoteCreated
-  | AudioNoteCreated
-  | TextAndAudioNoteCreated;
+export type NoteCreated = TextNoteCreated | AudioNoteCreated;

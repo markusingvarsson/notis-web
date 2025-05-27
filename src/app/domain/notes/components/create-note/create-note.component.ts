@@ -13,6 +13,7 @@ import { isPlatformBrowser } from '@angular/common';
 //import { toast } from 'sonner';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { NoteCreated } from '../..';
+import { AUDIO_MIME_TYPE } from '../../services/mime-type';
 
 interface SpeechRecognitionEvent extends Event {
   results: SpeechRecognitionResultList;
@@ -60,6 +61,7 @@ declare global {
 export class CreateNoteComponent implements OnDestroy {
   #platformId = inject(PLATFORM_ID);
   #deviceService = inject(DeviceDetectorService);
+  #audioMimeType = inject(AUDIO_MIME_TYPE);
 
   readonly noteCreated = output<NoteCreated>();
 
@@ -100,13 +102,20 @@ export class CreateNoteComponent implements OnDestroy {
   async startRecording(): Promise<void> {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const recorder = new MediaRecorder(stream);
+      const options: MediaRecorderOptions = { mimeType: this.#audioMimeType };
+
+      const recorder = new MediaRecorder(stream, options);
       this.mediaRecorder = recorder;
 
       const chunks: BlobPart[] = [];
-      recorder.ondataavailable = (e: BlobEvent) => chunks.push(e.data);
+      recorder.ondataavailable = (e: BlobEvent) => {
+        if (e.data.size > 0) {
+          chunks.push(e.data);
+        }
+      };
+
       recorder.onstop = () => {
-        const blob = new Blob(chunks, { type: 'audio/webm' });
+        const blob = new Blob(chunks, { type: recorder.mimeType });
         this.audioBlob.set(blob);
         stream.getTracks().forEach((t) => t.stop());
       };
@@ -187,24 +196,12 @@ export class CreateNoteComponent implements OnDestroy {
           return;
         }
         const title = `Audio Note - ${new Date().toLocaleDateString()}`;
-        const content = this.transcriptText().trim();
-
-        if (content) {
-          // Create a text and audio note
-          this.noteCreated.emit({
-            type: 'textAndAudio',
-            title,
-            content,
-            audioBlob: blob,
-          });
-        } else {
-          // Create an audio-only note
-          this.noteCreated.emit({
-            type: 'audio',
-            title,
-            audioBlob: blob,
-          });
-        }
+        this.noteCreated.emit({
+          type: 'audio',
+          title,
+          audioBlob: blob,
+          audioMimeType: blob.type,
+        });
         console.info('Note saved!');
         break;
       }
