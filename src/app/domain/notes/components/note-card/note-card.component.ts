@@ -1,12 +1,21 @@
 // File: src/app/note-card/note-card.component.ts
-import { Component, input, computed, output, signal } from '@angular/core';
+import {
+  Component,
+  input,
+  computed,
+  output,
+  ElementRef,
+  viewChild,
+  OnDestroy,
+} from '@angular/core';
 import { formatDistanceToNow, isAfter, subDays } from 'date-fns';
 import { CardComponent } from '../../../../components/ui/card/card.component';
 import { ButtonComponent } from '../../../../components/ui/button/button.component';
 import { CardContentComponent } from '../../../../components/ui/card/components/card-content/card-content.component';
 import { CardHeaderComponent } from '../../../../components/ui/card/components/card-header/card-header.component';
 import { CardTitleComponent } from '../../../../components/ui/card/components/card-title/card-title.component';
-import { Note, AudioNote } from '../..';
+import { Note } from '../..';
+import { CardFooterComponent } from '../../../../components/ui/card/components/card-footer/card-footer.component';
 
 @Component({
   selector: 'app-note-card',
@@ -17,18 +26,19 @@ import { Note, AudioNote } from '../..';
     CardTitleComponent,
     CardContentComponent,
     ButtonComponent,
+    CardFooterComponent,
   ],
   templateUrl: './note-card.component.html',
   styleUrls: ['./note-card.component.scss'],
 })
-export class NoteCardComponent {
+export class NoteCardComponent implements OnDestroy {
   /** Inputs as signals */
   readonly note = input.required<Note>();
   readonly delete = output<Note>();
 
   /** Audio playback state */
-  readonly isPlaying = signal(false);
-  private audioElement: HTMLAudioElement | null = null;
+  readonly audioElementRef = viewChild<ElementRef<HTMLAudioElement>>('audio');
+  private audioUrl?: string;
 
   /** Computed values */
   readonly timeAgo = computed(() => {
@@ -49,6 +59,7 @@ export class NoteCardComponent {
       });
     }
   });
+
   readonly preview = computed(() => {
     const note = this.note();
     switch (note.type) {
@@ -66,43 +77,24 @@ export class NoteCardComponent {
     return note.type === 'audio';
   });
 
+  readonly audioSrc = computed(() => {
+    const note = this.note();
+    if (note.type !== 'audio') return '';
+
+    if (!this.audioUrl) {
+      this.audioUrl = URL.createObjectURL(note.audioBlob);
+    }
+    return this.audioUrl;
+  });
+
   onDelete(e: Event) {
     e.stopPropagation();
     this.delete.emit(this.note());
   }
 
-  togglePlay(e: Event) {
-    e.stopPropagation();
-
-    const note = this.note();
-    if (!this.hasAudio()) return;
-
-    const audioNote = note as AudioNote;
-
-    if (!this.isPlaying()) {
-      // Start playing
-      if (!this.audioElement) {
-        const objectUrl = URL.createObjectURL(audioNote.audioBlob);
-        this.audioElement = new Audio(objectUrl);
-
-        this.audioElement.onended = () => {
-          this.isPlaying.set(false);
-          URL.revokeObjectURL(this.audioElement!.src);
-          this.audioElement = null;
-        };
-      }
-
-      this.audioElement.play();
-      this.isPlaying.set(true);
-    } else {
-      // Pause or stop
-      if (this.audioElement) {
-        this.audioElement.pause();
-        URL.revokeObjectURL(this.audioElement.src);
-        this.audioElement = null;
-      }
-
-      this.isPlaying.set(false);
+  ngOnDestroy() {
+    if (this.audioUrl) {
+      URL.revokeObjectURL(this.audioUrl);
     }
   }
 }

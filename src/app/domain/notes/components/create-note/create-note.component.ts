@@ -8,6 +8,8 @@ import {
   PLATFORM_ID,
   output,
   inject,
+  viewChild,
+  ElementRef,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 //import { toast } from 'sonner';
@@ -81,22 +83,36 @@ export class CreateNoteComponent implements OnDestroy {
   readonly audioBlob = signal<Blob | null>(null);
   readonly transcriptText = signal('');
   readonly saveMode = signal<'audio' | 'text'>('audio');
-  readonly isPlaying = signal(false);
+  readonly audioElementRef =
+    viewChild<ElementRef<HTMLAudioElement>>('audioElement');
+  private audioUrl?: string;
 
   /** Refs for recorder, audio & recognition */
   private mediaRecorder: MediaRecorder | null = null;
   private recognition: WebkitSpeechRecognition | null = null;
-  private audioElement: HTMLAudioElement | null = null;
 
   /** Computed label below mic button */
   readonly recordLabel = computed(() =>
     this.isRecording() ? 'Recording...' : 'Click to start recording'
   );
 
+  /** Computed values */
+  readonly audioSrc = computed(() => {
+    const blob = this.audioBlob();
+    if (!blob) return '';
+
+    if (!this.audioUrl) {
+      this.audioUrl = URL.createObjectURL(blob);
+    }
+    return this.audioUrl;
+  });
+
   ngOnDestroy() {
     // stop any ongoing recognition/recording
     this.stopRecording();
-    this.audioElement?.pause();
+    if (this.audioUrl) {
+      URL.revokeObjectURL(this.audioUrl);
+    }
   }
 
   async startRecording(): Promise<void> {
@@ -168,25 +184,6 @@ export class CreateNoteComponent implements OnDestroy {
     }
   }
 
-  playAudio(): void {
-    const blob = this.audioBlob();
-    if (!blob) return;
-    if (!this.isPlaying()) {
-      const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      this.audioElement = audio;
-      audio.onended = () => {
-        this.isPlaying.set(false);
-        URL.revokeObjectURL(url);
-      };
-      audio.play();
-      this.isPlaying.set(true);
-    } else {
-      this.audioElement?.pause();
-      this.isPlaying.set(false);
-    }
-  }
-
   handleSave(): void {
     switch (this.saveMode()) {
       case 'audio': {
@@ -230,7 +227,6 @@ export class CreateNoteComponent implements OnDestroy {
   clearRecording(): void {
     this.audioBlob.set(null);
     this.transcriptText.set('');
-    this.isPlaying.set(false);
-    this.audioElement?.pause();
+    this.isRecording.set(false);
   }
 }
