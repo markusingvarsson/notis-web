@@ -80,7 +80,7 @@ export class NotesStorageService {
           return note as Note;
         }
       );
-
+      notes.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
       this.notes.set(notes);
     };
   }
@@ -99,7 +99,7 @@ export class NotesStorageService {
       const request = store.add(note);
 
       request.onsuccess = () => {
-        this.notes.update((notes) => [...notes, note]);
+        this.notes.update((notes) => [note, ...notes]);
         resolve();
       };
 

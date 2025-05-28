@@ -1,6 +1,6 @@
 // File: src/app/note-card/note-card.component.ts
 import { Component, input, computed, output, signal } from '@angular/core';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, isAfter, subDays } from 'date-fns';
 import { CardComponent } from '../../../../components/ui/card/card.component';
 import { ButtonComponent } from '../../../../components/ui/button/button.component';
 import { CardContentComponent } from '../../../../components/ui/card/components/card-content/card-content.component';
@@ -31,9 +31,24 @@ export class NoteCardComponent {
   private audioElement: HTMLAudioElement | null = null;
 
   /** Computed values */
-  readonly timeAgo = computed(() =>
-    formatDistanceToNow(new Date(this.note().updatedAt), { addSuffix: true })
-  );
+  readonly timeAgo = computed(() => {
+    const date = new Date(this.note().updatedAt);
+    const oneDayAgo = subDays(new Date(), 1);
+
+    if (isAfter(date, oneDayAgo)) {
+      // For notes less than 24 hours old, show relative time
+      return formatDistanceToNow(date, { addSuffix: true });
+    } else {
+      // For older notes, show localized date format
+      return date.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    }
+  });
   readonly preview = computed(() => {
     const note = this.note();
     switch (note.type) {
