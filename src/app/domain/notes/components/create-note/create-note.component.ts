@@ -1,5 +1,5 @@
 // File: src/app/quick-note-input/quick-note-input.component.ts
-import { CommonModule } from '@angular/common';
+
 import {
   Component,
   computed,
@@ -56,7 +56,7 @@ declare global {
 @Component({
   selector: 'app-create-note',
   standalone: true,
-  imports: [CommonModule],
+  imports: [],
   templateUrl: './create-note.component.html',
   styleUrls: ['./create-note.component.scss'],
 })
