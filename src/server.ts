@@ -30,9 +30,9 @@ const commonEngine = new CommonEngine();
 app.get(
   '**',
   express.static(browserDistFolder, {
-    maxAge: '1y',
-    index: 'index.html'
-  }),
+    maxAge: '1h',
+    index: 'index.html',
+  })
 );
 
 /**
