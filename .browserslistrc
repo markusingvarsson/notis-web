@@ -1,0 +1,9 @@
+# Browsers we support in all builds
+> 0.5%
+last 2 versions
+Firefox ESR
+not dead
+
+# Additional for iOS Safari (iPhone 11 / iOS 14+)
+iOS >= 14
+Safari >= 14
