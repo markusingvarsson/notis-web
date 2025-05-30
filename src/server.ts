@@ -27,11 +27,11 @@ const commonEngine = new CommonEngine();
 /**
  * Serve static files from /browser
  */
-app.get(
-  '**',
+app.use(
   express.static(browserDistFolder, {
-    maxAge: '1h',
-    index: 'index.html',
+    maxAge: '1y',
+    immutable: true,
+    index: false,
   })
 );
 
@@ -40,17 +40,25 @@ app.get(
  */
 app.get('**', (req, res, next) => {
   const { protocol, originalUrl, baseUrl, headers } = req;
+  const fullUrl = `${protocol}://${headers.host}${originalUrl}`;
 
   commonEngine
     .render({
       bootstrap,
       documentFilePath: indexHtml,
-      url: `${protocol}://${headers.host}${originalUrl}`,
+      url: fullUrl,
       publicPath: browserDistFolder,
       providers: [{ provide: APP_BASE_HREF, useValue: baseUrl }],
     })
-    .then((html) => res.send(html))
-    .catch((err) => next(err));
+    .then((html) => {
+      res.setHeader('Cache-Control', 'no-store');
+      res.send(html);
+    })
+    .catch((err) => {
+      console.error(`SSR rendering failed for URL: ${fullUrl}`);
+      console.error(`Error details:`, err); // Log the full error object/stack trace
+      next(err); // Pass the error to the next Express error handler
+    });
 });
 
 /**
