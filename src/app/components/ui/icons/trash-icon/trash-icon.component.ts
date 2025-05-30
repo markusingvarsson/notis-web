@@ -25,6 +25,6 @@ import { Component, input } from '@angular/core';
   `,
 })
 export class TrashIconComponent {
-  readonly size = input<number>(5);
+  readonly size = input<number>(20);
   readonly color = input<string>('currentColor');
 }
