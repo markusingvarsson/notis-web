@@ -6,8 +6,8 @@ import { Component, input } from '@angular/core';
   imports: [],
   template: `
     <svg
-      [style.width.px]="size() * 4"
-      [style.height.px]="size() * 4"
+      [style.width.px]="size()"
+      [style.height.px]="size()"
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
       viewBox="0 0 30.05 30.05"
@@ -34,6 +34,6 @@ import { Component, input } from '@angular/core';
   `,
 })
 export class StopIconComponent {
-  readonly size = input<number>(10);
+  readonly size = input<number>(40);
   readonly color = input<string>('#FFF');
 }

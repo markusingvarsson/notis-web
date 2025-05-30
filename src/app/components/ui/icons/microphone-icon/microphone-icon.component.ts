@@ -6,8 +6,8 @@ import { Component, input } from '@angular/core';
   imports: [],
   template: `
     <svg
-      [style.width.px]="size() * 4"
-      [style.height.px]="size() * 4"
+      [style.width.px]="size()"
+      [style.height.px]="size()"
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -31,6 +31,6 @@ import { Component, input } from '@angular/core';
   `,
 })
 export class MicrophoneIconComponent {
-  readonly size = input<number>(8);
+  readonly size = input<number>(32);
   readonly color = input<string>('#FFF');
 }

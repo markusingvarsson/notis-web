@@ -17,11 +17,11 @@ import { SpinnerIconComponent } from '../../../../components/ui/icons/spinner-ic
       "
     >
       @switch (state()) { @case (RECORDER_STATE.RECORDING) {
-      <app-stop-icon [size]="8" />
+      <app-stop-icon />
       } @case (RECORDER_STATE.STARTING) {
-      <app-spinner-icon [size]="8" />
+      <app-spinner-icon />
       } @case (RECORDER_STATE.IDLE) {
-      <app-microphone-icon [size]="8" />
+      <app-microphone-icon />
       } }
     </button>
   `,
