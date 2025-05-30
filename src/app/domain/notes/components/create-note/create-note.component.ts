@@ -101,9 +101,13 @@ export class CreateNoteComponent implements OnDestroy {
     const blob = this.audioBlob();
     if (!blob) return '';
 
-    if (!this.audioUrl) {
-      this.audioUrl = URL.createObjectURL(blob);
+    // Revoke the old URL if it exists
+    if (this.audioUrl) {
+      URL.revokeObjectURL(this.audioUrl);
     }
+
+    // Create a new URL for the current blob
+    this.audioUrl = URL.createObjectURL(blob);
     return this.audioUrl;
   });
 
