@@ -16,6 +16,7 @@ import { CardHeaderComponent } from '../../../../components/ui/card/components/c
 import { CardTitleComponent } from '../../../../components/ui/card/components/card-title/card-title.component';
 import { Note } from '../..';
 import { CardFooterComponent } from '../../../../components/ui/card/components/card-footer/card-footer.component';
+import { TrashIconComponent } from '../../../../components/ui/icons/trash-icon/trash-icon.component';
 
 @Component({
   selector: 'app-note-card',
@@ -27,6 +28,7 @@ import { CardFooterComponent } from '../../../../components/ui/card/components/c
     CardContentComponent,
     ButtonComponent,
     CardFooterComponent,
+    TrashIconComponent,
   ],
   templateUrl: './note-card.component.html',
   styleUrls: ['./note-card.component.scss'],
