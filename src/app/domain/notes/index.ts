@@ -35,3 +35,12 @@ export interface AudioNoteCreated {
 }
 
 export type NoteCreated = TextNoteCreated | AudioNoteCreated;
+
+export const RECORDER_STATE = {
+  IDLE: 'idle',
+  STARTING: 'starting',
+  RECORDING: 'recording',
+} as const;
+
+export type RecorderState =
+  (typeof RECORDER_STATE)[keyof typeof RECORDER_STATE];

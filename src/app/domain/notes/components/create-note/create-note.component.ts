@@ -14,8 +14,9 @@ import {
 import { isPlatformBrowser } from '@angular/common';
 //import { toast } from 'sonner';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { NoteCreated } from '../..';
+import { NoteCreated, RECORDER_STATE, RecorderState } from '../..';
 import { AUDIO_MIME_TYPE } from '../../services/mime-type';
+import { RecordButtonComponent } from '../record-button/record-button.component';
 
 interface SpeechRecognitionEvent extends Event {
   results: SpeechRecognitionResultList;
@@ -56,7 +57,7 @@ declare global {
 @Component({
   selector: 'app-create-note',
   standalone: true,
-  imports: [],
+  imports: [RecordButtonComponent],
   templateUrl: './create-note.component.html',
   styleUrls: ['./create-note.component.scss'],
 })
@@ -67,19 +68,16 @@ export class CreateNoteComponent implements OnDestroy {
 
   readonly noteCreated = output<NoteCreated>();
 
-  #isSpeechRecognitionSupported(): boolean {
-    return (
-      isPlatformBrowser(this.#platformId) && 'webkitSpeechRecognition' in window
-    );
-  }
+  readonly hasSpeechRecognition = computed(() => {
+    const isSpeechRecognitionSupported =
+      isPlatformBrowser(this.#platformId) &&
+      'webkitSpeechRecognition' in window;
 
-  readonly hasSpeechRecognition = computed(
-    () =>
-      this.#isSpeechRecognitionSupported() && this.#deviceService.isDesktop()
-  );
+    return isSpeechRecognitionSupported && this.#deviceService.isDesktop();
+  });
 
   /** UI state as signals */
-  readonly isRecording = signal(false);
+  readonly recordingState = signal<RecorderState>(RECORDER_STATE.IDLE);
   readonly audioBlob = signal<Blob | null>(null);
   readonly transcriptText = signal('');
   readonly saveMode = signal<'audio' | 'text'>('audio');
@@ -92,9 +90,16 @@ export class CreateNoteComponent implements OnDestroy {
   private recognition: WebkitSpeechRecognition | null = null;
 
   /** Computed label below mic button */
-  readonly recordLabel = computed(() =>
-    this.isRecording() ? 'Recording...' : 'Click to start recording'
-  );
+  readonly recordLabel = computed(() => {
+    switch (this.recordingState()) {
+      case RECORDER_STATE.STARTING:
+        return 'Starting...';
+      case RECORDER_STATE.RECORDING:
+        return 'Recording...';
+      default:
+        return 'Click to start recording';
+    }
+  });
 
   /** Computed values */
   readonly audioSrc = computed(() => {
@@ -134,10 +139,16 @@ export class CreateNoteComponent implements OnDestroy {
         }
       };
 
+      recorder.onstart = () => {
+        this.recordingState.set(RECORDER_STATE.RECORDING);
+        console.info('Recording started...');
+      };
+
       recorder.onstop = () => {
         const blob = new Blob(chunks, { type: recorder.mimeType });
         this.audioBlob.set(blob);
         stream.getTracks().forEach((t) => t.stop());
+        this.recordingState.set(RECORDER_STATE.IDLE);
       };
 
       // speech recognition if text mode
@@ -159,20 +170,20 @@ export class CreateNoteComponent implements OnDestroy {
         this.recognition.start();
       }
 
+      this.recordingState.set(RECORDER_STATE.STARTING);
       recorder.start();
-      this.isRecording.set(true);
-      //toast.info('Recording started...');
-      console.info('Recording started...');
+      //toast.info('Starting recording...');
+      console.info('Starting recording...');
     } catch {
+      this.recordingState.set(RECORDER_STATE.IDLE);
       //toast.error('Could not access microphone');
       console.error('Could not access microphone');
     }
   }
 
   stopRecording(): void {
-    if (this.mediaRecorder && this.isRecording()) {
+    if (this.mediaRecorder && this.recordingState() !== RECORDER_STATE.IDLE) {
       this.mediaRecorder.stop();
-      this.isRecording.set(false);
       if (this.recognition) {
         this.recognition.stop();
       }
@@ -180,11 +191,14 @@ export class CreateNoteComponent implements OnDestroy {
       console.info('Recording stopped');
     }
   }
+
   toggleRecording(): void {
-    if (this.isRecording()) {
+    if (this.recordingState() == RECORDER_STATE.IDLE) {
+      this.startRecording();
+    } else if (this.recordingState() == RECORDER_STATE.RECORDING) {
       this.stopRecording();
     } else {
-      this.startRecording();
+      console.log('Recording is already in progress');
     }
   }
 
@@ -226,11 +240,12 @@ export class CreateNoteComponent implements OnDestroy {
     // reset
     this.audioBlob.set(null);
     this.transcriptText.set('');
+    this.recordingState.set(RECORDER_STATE.IDLE);
   }
 
   clearRecording(): void {
     this.audioBlob.set(null);
     this.transcriptText.set('');
-    this.isRecording.set(false);
+    this.recordingState.set(RECORDER_STATE.IDLE);
   }
 }
