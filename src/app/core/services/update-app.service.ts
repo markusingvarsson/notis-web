@@ -62,64 +62,78 @@ export class UpdateAppService implements OnDestroy {
   }
 
   private handlePageShow = (event: PageTransitionEvent): void => {
-    if (event.persisted) {
-      console.log(
-        'Page restored from BF Cache. Checking for Service Worker updates (from service).'
-      );
-      this.checkForUpdatesBFCache();
+    if (isPlatformBrowser(this.platformId)) {
+      if (event.persisted) {
+        console.log(
+          'Page restored from BF Cache. Checking for Service Worker updates (from service).'
+        );
+        this.checkForUpdatesBFCache();
+      }
     }
   };
 
   private checkForUpdatesInitial(): void {
-    this.swUpdate
-      .checkForUpdate()
-      .then((updateFound) => {
-        if (updateFound) {
-          console.log(
-            'Service Worker: Initial check found an update (from service).'
+    if (
+      isPlatformBrowser(this.platformId) &&
+      this.swUpdate &&
+      this.swUpdate.isEnabled
+    ) {
+      this.swUpdate
+        .checkForUpdate()
+        .then((updateFound) => {
+          if (updateFound) {
+            console.log(
+              'Service Worker: Initial check found an update (from service).'
+            );
+          } else {
+            console.log(
+              'Service Worker: Initial check found no updates (from service).'
+            );
+          }
+        })
+        .catch((err) => {
+          console.error(
+            'Service Worker: Failed to initiate initial update check (from service):',
+            err
           );
-        } else {
-          console.log(
-            'Service Worker: Initial check found no updates (from service).'
-          );
-        }
-      })
-      .catch((err) => {
-        console.error(
-          'Service Worker: Failed to initiate initial update check (from service):',
-          err
-        );
-      });
+        });
+    }
   }
 
   private checkForUpdatesBFCache(): void {
-    this.swUpdate
-      .checkForUpdate()
-      .then((updateFound) => {
-        if (updateFound) {
-          console.log(
-            'Service Worker: BF Cache check found an update (from service).'
-          );
-          if (!this.newVersionAvailable) {
-            this.newVersionAvailable = true;
-            this.promptUserForUpdate();
-          } else {
-            if (!this.showUpdatePrompt()) {
+    if (
+      isPlatformBrowser(this.platformId) &&
+      this.swUpdate &&
+      this.swUpdate.isEnabled
+    ) {
+      this.swUpdate
+        .checkForUpdate()
+        .then((updateFound) => {
+          if (updateFound) {
+            console.log(
+              'Service Worker: BF Cache check found an update (from service).'
+            );
+            if (!this.newVersionAvailable) {
+              this.newVersionAvailable = true;
               this.promptUserForUpdate();
+            } else {
+              if (!this.showUpdatePrompt()) {
+                this.promptUserForUpdate();
+              }
             }
+          } else {
+            console.log(
+              'Service Worker: BF Cache check found no new updates (from service).'
+            );
           }
-        } else {
-          console.log(
-            'Service Worker: BF Cache check found no new updates (from service).'
+        })
+        .catch((err) => {
+          console.error(
+            'Service Worker: Failed to check for updates after BF Cache restoration (from service):',
+            err
           );
-        }
-      })
-      .catch((err) => {
-        console.error(
-          'Service Worker: Failed to check for updates after BF Cache restoration (from service):',
-          err
-        );
-      });
+        });
+    }
   }
 
   private promptUserForUpdate(): void {
@@ -138,25 +152,26 @@ export class UpdateAppService implements OnDestroy {
   }
 
   private activateNewVersion(): void {
-    this.swUpdate
-      .activateUpdate()
-      .then(() => {
-        console.log(
-          'New Service Worker activated. Reloading page (from service)...'
-        );
-        if (isPlatformBrowser(this.platformId)) {
-          document.location.reload();
-        }
-      })
-      .catch((err) => {
-        console.error(
-          'Failed to activate new Service Worker (from service):',
-          err
-        );
-        // Attempt to reload even if activation fails, as the new version might be pending.
-        if (isPlatformBrowser(this.platformId)) {
-          document.location.reload();
-        }
-      });
+    if (isPlatformBrowser(this.platformId) && this.swUpdate) {
+      this.swUpdate
+        .activateUpdate()
+        .then(() => {
+          console.log(
+            'New Service Worker activated. Reloading page (from service)...'
+          );
+          if (isPlatformBrowser(this.platformId)) {
+            document.location.reload();
+          }
+        })
+        .catch((err) => {
+          console.error(
+            'Failed to activate new Service Worker (from service):',
+            err
+          );
+          if (isPlatformBrowser(this.platformId)) {
+            document.location.reload();
+          }
+        });
+    }
   }
 }
