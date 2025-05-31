@@ -9,7 +9,8 @@
     "test": "ng test",
     "serve:ssr:notis-web": "node dist/notis-web/server/server.mjs",
     "prepare": "husky",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "ngsw": "ng build && npx http-server -p 8080 -c-1 dist/notis-web/browser"
   },
   "private": true,
   "dependencies": {
