@@ -1,0 +1,40 @@
+@if (updateService.showUpdatePrompt()) {
+<div
+  role="alert"
+  aria-live="assertive"
+  aria-atomic="true"
+  class="fixed top-0 left-0 right-0 z-50 bg-[var(--tw-primary)] text-[var(--tw-bg-light)] p-4 shadow-lg flex items-center justify-between transition-transform duration-300 ease-out transform translate-y-0"
+>
+  <p class="text-sm md:text-base">
+    A new version of the application is available.
+  </p>
+  <div class="flex items-center gap-2 md:gap-4">
+    <button
+      (click)="updateService.handleUpdate()"
+      class="px-3 py-1.5 md:px-4 md:py-2 bg-[var(--tw-bg-light)] text-[var(--tw-primary)] rounded-md hover:bg-[var(--tw-bg)] focus:outline-none focus:ring-2 focus:ring-[var(--tw-bg-light)] focus:ring-opacity-50 text-xs md:text-sm font-medium transition-colors"
+    >
+      Update Now
+    </button>
+    <button
+      (click)="updateService.dismissUpdate()"
+      aria-label="Dismiss update notification"
+      class="p-1.5 md:p-2 rounded-md hover:bg-[var(--tw-primary-dark)] focus:outline-none focus:ring-2 focus:ring-[var(--tw-bg-light)] focus:ring-opacity-50 transition-colors"
+    >
+      <svg
+        class="w-4 h-4 md:w-5 md:h-5"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M6 18L18 6M6 6l12 12"
+        ></path>
+      </svg>
+    </button>
+  </div>
+</div>
+}
