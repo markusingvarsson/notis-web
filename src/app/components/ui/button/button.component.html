@@ -3,7 +3,12 @@
 </ng-template>
 
 @if (link()) {
-<a [routerLink]="link()" [class]="classes()" [attr.aria-disabled]="disabled()">
+<a
+  [routerLink]="link()"
+  [queryParams]="queryParams()"
+  [class]="classes()"
+  [attr.aria-disabled]="disabled()"
+>
   <ng-container *ngTemplateOutlet="projectedContent"></ng-container>
 </a>
 } @else {

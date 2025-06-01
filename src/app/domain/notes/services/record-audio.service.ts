@@ -17,9 +17,7 @@ import {
 import { AUDIO_MIME_TYPE } from './mime-type'; // Adjust path as needed
 import { ToasterService } from '../../../components/ui/toaster/toaster.service';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable()
 export class RecordAudioService implements OnDestroy {
   #platformId = inject(PLATFORM_ID);
   #audioMimeType = inject(AUDIO_MIME_TYPE);

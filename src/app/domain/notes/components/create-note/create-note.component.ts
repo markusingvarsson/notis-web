@@ -9,13 +9,15 @@ import {
   inject,
   viewChild,
   ElementRef,
+  effect,
+  input,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-//import { toast } from 'sonner';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { NoteCreated, NoteType, RECORDER_STATE } from '../..';
 import { RecordButtonComponent } from '../record-button/record-button.component';
 import { RecordAudioService } from '../../services/record-audio.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-create-note',
@@ -23,11 +25,14 @@ import { RecordAudioService } from '../../services/record-audio.service';
   imports: [RecordButtonComponent],
   templateUrl: './create-note.component.html',
   styleUrls: ['./create-note.component.scss'],
+  providers: [RecordAudioService],
 })
 export class CreateNoteComponent {
   #platformId = inject(PLATFORM_ID);
   #deviceService = inject(DeviceDetectorService);
   #recordAudioService = inject(RecordAudioService);
+  #router = inject(Router);
+  readonly CTA = input<boolean>(false);
 
   readonly noteCreated = output<NoteCreated>();
 
@@ -57,16 +62,27 @@ export class CreateNoteComponent {
       case RECORDER_STATE.BLOCKED:
         return 'Please enable microphone access';
       default:
+        if (this.audioBlob()) return 'Recording complete. Save or clear.';
         return 'Click to start recording';
     }
   });
 
+  constructor() {
+    effect(() => {
+      if (isPlatformBrowser(this.#platformId) && this.CTA()) {
+        this.toggleRecording();
+        // remove query param
+        this.#router.navigate([], {
+          queryParams: { CTA: undefined },
+          queryParamsHandling: 'merge',
+          replaceUrl: true,
+        });
+      }
+    });
+  }
+
   toggleRecording(): void {
     if (this.recordingState() === RECORDER_STATE.BLOCKED) {
-      console.warn(
-        'Microphone access is blocked. Please enable it in your browser settings.'
-      );
-      // toast.warning('Microphone access is blocked. Please enable it in browser settings.');
       return;
     }
 

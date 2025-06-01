@@ -1,8 +1,15 @@
 <app-pagelayout
   [pageTitle]="'My Notes - Notis.nu'"
-  [pageDescription]="'A minimalist voice-first note-taking experience designed for clarity and focus.'"
-  [pageKeywords]="'notes, voice notes, my notes, note management, notis, local storage, privacy'"
+  [pageDescription]="
+    'A minimalist voice-first note-taking experience designed for clarity and focus.'
+  "
+  [pageKeywords]="
+    'notes, voice notes, my notes, note management, notis, local storage, privacy'
+  "
 >
-  <app-create-note (noteCreated)="onCreateNote($event)"></app-create-note>
+  <app-create-note
+    [CTA]="CTA()"
+    (noteCreated)="onCreateNote($event)"
+  ></app-create-note>
   <app-note-list></app-note-list>
 </app-pagelayout>

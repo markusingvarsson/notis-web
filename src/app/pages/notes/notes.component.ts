@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { PagelayoutComponent } from '../../components/layout/pagelayout/pagelayout.component';
 import { NoteListComponent } from '../../domain/notes/components/note-list/note-list.component';
 import { CreateNoteComponent } from '../../domain/notes/components/create-note/create-note.component';
@@ -14,6 +14,8 @@ import { NoteCreated } from '../../domain/notes';
 })
 export class NotesComponent {
   private notesStorageService = inject(NotesStorageService);
+
+  readonly CTA = input<boolean>(false);
 
   onCreateNote(event: NoteCreated) {
     console.log('Creating note:', event);
