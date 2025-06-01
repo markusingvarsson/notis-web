@@ -98,7 +98,7 @@ export class CreateNoteComponent implements OnInit, OnDestroy {
       case RECORDER_STATE.RECORDING:
         return 'Recording...';
       case RECORDER_STATE.BLOCKED:
-        return 'Microphone access blocked';
+        return 'Please enable microphone access';
       default:
         return 'Click to start recording';
     }
@@ -126,42 +126,123 @@ export class CreateNoteComponent implements OnInit, OnDestroy {
   }
 
   private async checkInitialMicrophonePermission(): Promise<void> {
-    if (!isPlatformBrowser(this.#platformId) || !navigator.permissions) {
+    if (!isPlatformBrowser(this.#platformId)) {
       return;
     }
 
-    try {
-      const permissionStatus = await navigator.permissions.query({
-        name: 'microphone' as PermissionName,
-      });
-      this.permissionStatusSubscription = permissionStatus;
+    // Check for Permissions API support
+    const hasPermissionsApiSupport =
+      navigator.permissions &&
+      typeof navigator.permissions.query === 'function';
 
-      if (permissionStatus.state === 'denied') {
-        this.recordingState.set(RECORDER_STATE.BLOCKED);
-        console.info('Microphone permission initially denied.');
-      } else if (permissionStatus.state === 'granted') {
-        console.info('Microphone permission initially granted.');
-      } else {
-        console.info('Microphone permission initially in prompt state.');
-      }
+    if (hasPermissionsApiSupport) {
+      try {
+        // Attempt to query microphone permission
+        const permissionStatus = await navigator.permissions.query({
+          name: 'microphone' as PermissionName,
+        });
+        this.permissionStatusSubscription = permissionStatus; // Store for ngOnDestroy cleanup
 
-      permissionStatus.onchange = () => {
+        // Set initial recording state based on permission
         if (permissionStatus.state === 'denied') {
-          if (this.recordingState() === RECORDER_STATE.RECORDING) {
-            this.stopRecording();
-            //this.clearRecording();
-            //console.log('audioBlob', this.audioBlob());
-            //console.log('transcriptText', this.transcriptText());
-          }
           this.recordingState.set(RECORDER_STATE.BLOCKED);
         } else if (permissionStatus.state === 'granted') {
           if (this.recordingState() === RECORDER_STATE.BLOCKED) {
             this.recordingState.set(RECORDER_STATE.IDLE);
           }
         }
-      };
-    } catch (err) {
-      console.error('Error querying microphone permission:', err);
+
+        // Handle subsequent permission changes
+        permissionStatus.onchange = () => {
+          this.permissionStatusChangeHandler(permissionStatus.state);
+        };
+      } catch {
+        const fallbackStatus = await this.tryMicAccessFallback();
+        this.handleMicStatus(fallbackStatus);
+      }
+    } else {
+      // Permissions API not available, or does not support 'microphone' query name
+      const fallbackStatus = await this.tryMicAccessFallback();
+      this.handleMicStatus(fallbackStatus);
+    }
+  }
+
+  private permissionStatusChangeHandler(
+    permissionStatusState: PermissionState
+  ) {
+    switch (permissionStatusState) {
+      case 'granted':
+        if (this.recordingState() === RECORDER_STATE.BLOCKED) {
+          this.recordingState.set(RECORDER_STATE.IDLE);
+        }
+        break;
+      case 'denied':
+        if (this.recordingState() === RECORDER_STATE.RECORDING) {
+          this.stopRecording(); // Ensure recording stops if permission revoked
+        }
+        this.recordingState.set(RECORDER_STATE.BLOCKED);
+        break;
+      case 'prompt':
+        if (this.recordingState() === RECORDER_STATE.BLOCKED) {
+          this.recordingState.set(RECORDER_STATE.IDLE);
+        } else if (this.recordingState() === RECORDER_STATE.RECORDING) {
+          // If permission changes to 'prompt' during recording, stop and reset.
+          this.stopRecording();
+          this.recordingState.set(RECORDER_STATE.IDLE);
+        }
+        break;
+    }
+  }
+
+  private async tryMicAccessFallback(): Promise<PermissionState> {
+    const hasMediaDevicesApiSupport =
+      navigator.mediaDevices &&
+      typeof navigator.mediaDevices.getUserMedia === 'function';
+
+    if (!hasMediaDevicesApiSupport) {
+      return 'denied';
+    }
+
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      stream.getTracks().forEach((track) => track.stop());
+      return 'granted';
+    } catch (err: unknown) {
+      if (err instanceof DOMException) {
+        switch (err.name) {
+          case 'NotAllowedError': // User denied permission at prompt.
+          case 'PermissionDeniedError': // Legacy name for NotAllowedError (some older browsers).
+            // console.warn('Microphone access explicitly denied by the user.'); // Optional: for more detailed internal logging
+            return 'denied';
+          case 'NotFoundError': // No microphone device found.
+            // toast.error('No microphone found on this device.'); // User feedback was here
+            return 'denied'; // Treat as denied for recording capability.
+          case 'NotReadableError': // Hardware error, OS, or browser preventing access at a low level.
+            return 'denied'; // Or a specific error state if the app can handle it differently
+          case 'AbortError': // Operation aborted by something other than user denial (e.g. navigation).
+          case 'SecurityError': // Document not allowed to use feature (e.g. iframe policy, or insecure context).
+          case 'TypeError': // audio: true is invalid (highly unlikely for this simple constraint).
+          case 'OverconstrainedError': // No device meets specified constraints (unlikely for simple audio).
+            return 'prompt'; // These errors might be transient or indicate issues needing user attention.
+          default:
+            // Handles other DOMExceptions not explicitly listed.
+            return 'prompt';
+        }
+      } else {
+        return 'prompt';
+      }
+    }
+  }
+
+  private handleMicStatus(status: PermissionState) {
+    if (status === 'denied') {
+      this.recordingState.set(RECORDER_STATE.BLOCKED);
+      // toast.error('Microphone access has been denied.'); // User feedback was here
+      return;
+    }
+
+    if (this.recordingState() === RECORDER_STATE.BLOCKED) {
+      this.recordingState.set(RECORDER_STATE.IDLE);
     }
   }
 
@@ -212,7 +293,6 @@ export class CreateNoteComponent implements OnInit, OnDestroy {
 
       recorder.onstart = () => {
         this.recordingState.set(RECORDER_STATE.RECORDING);
-        console.info('Recording started...');
       };
 
       recorder.onstop = () => {
@@ -233,7 +313,6 @@ export class CreateNoteComponent implements OnInit, OnDestroy {
             .map((r) => r[0].transcript)
             .join('');
           this.transcriptText.set(txt);
-          console.log(txt);
         };
         this.recognition.onerror = () =>
           //toast.error('Speech recognition error');

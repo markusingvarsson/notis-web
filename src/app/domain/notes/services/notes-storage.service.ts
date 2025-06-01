@@ -185,7 +185,7 @@ export class NotesStorageService {
       setTimeout(() => {
         cleanup();
         resolve(0);
-      }, 5000);
+      }, 500);
     });
   }
 

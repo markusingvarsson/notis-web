@@ -23,7 +23,7 @@ import { MicrophoneSlashIconComponent } from '../../../../components/ui/icons/mi
       "
       [disabled]="state() === RECORDER_STATE.BLOCKED"
       [attr.aria-disabled]="state() === RECORDER_STATE.BLOCKED ? 'true' : null"
-      [attr.aria-label]="ariaLabel()"
+      [attr.aria-label]="ariaLabelInput()"
     >
       @switch (state()) { @case (RECORDER_STATE.RECORDING) {
       <app-stop-icon />
@@ -48,6 +48,7 @@ export class RecordButtonComponent {
   readonly state = input.required<RecorderState>();
   readonly buttonClick = output<void>();
   readonly RECORDER_STATE = RECORDER_STATE;
+  readonly ariaLabelInput = input<string>('Record audio'); // Default value
 
   readonly buttonClass = computed(() => {
     const s = this.state();
@@ -64,22 +65,5 @@ export class RecordButtonComponent {
     }
     // This part should not be reached if all union members are covered
     return ''; // Fallback, should ideally be unreachable if switch is exhaustive
-  });
-
-  readonly ariaLabel = computed(() => {
-    switch (this.state()) {
-      case RECORDER_STATE.RECORDING:
-        return 'Stop recording';
-      case RECORDER_STATE.STARTING:
-        return 'Starting recording';
-      case RECORDER_STATE.IDLE:
-        return 'Start recording';
-      case RECORDER_STATE.BLOCKED:
-        return 'Microphone access blocked';
-      default:
-        // This default case handles any state not explicitly listed,
-        // which is good for robustness if RecorderState type changes.
-        return 'Record audio';
-    }
   });
 }
