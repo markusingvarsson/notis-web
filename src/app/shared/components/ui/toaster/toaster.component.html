@@ -1,5 +1,5 @@
 <div
-  class="fixed top-4 right-4 z-[100] space-y-2 overflow-x-hidden"
+  class="fixed top-20 right-2 z-[100] space-y-2 overflow-x-hidden"
   aria-live="polite"
   aria-atomic="true"
 >
@@ -14,10 +14,6 @@
     ]"
     role="alert"
   >
-    <!-- Optional Icon -->
-    @if (toast.icon || true) {
-    <span class="text-xl">{{ getToastIcon(toast) }}</span>
-    }
     <span>{{ toast.message }}</span>
     <button
       (click)="removeToast(toast.id)"

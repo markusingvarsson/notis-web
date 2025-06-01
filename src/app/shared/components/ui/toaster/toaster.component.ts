@@ -17,30 +17,14 @@ export class ToasterComponent {
   getToastClass(toast: Toast): string {
     switch (toast.type) {
       case 'success':
-        return 'bg-green-500';
+        return 'toast-success';
       case 'error':
-        return 'bg-red-500';
+        return 'toast-error';
       case 'warning':
-        return 'bg-yellow-500';
+        return 'toast-warning';
       case 'info':
       default:
-        return 'bg-blue-500';
-    }
-  }
-
-  // Optional: Add icons based on type
-  getToastIcon(toast: Toast): string {
-    // This is a placeholder. You can use SVG paths or CSS classes for icons.
-    switch (toast.type) {
-      case 'success':
-        return '✓'; // Checkmark
-      case 'error':
-        return '✗'; // Cross
-      case 'warning':
-        return '!'; // Exclamation
-      case 'info':
-      default:
-        return 'i'; // Info
+        return 'toast-info';
     }
   }
 

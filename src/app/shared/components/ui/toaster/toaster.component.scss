@@ -6,6 +6,7 @@
   transform: translateX(100%);
   opacity: 0;
   will-change: transform, opacity; /* Hint for browsers to optimize */
+  /* Common text styling if not handled by specific types, though specific types will override color */
 }
 
 .toast-item.toast-visible {
@@ -17,6 +18,27 @@
   transform: translateX(100%);
   opacity: 0;
   transition-timing-function: ease-in; /* Change timing for exit */
+}
+
+/* Type-specific styles using CSS variables from styles.scss */
+.toast-success {
+  background-color: var(--toast-success-bg);
+  color: var(--toast-success-fg);
+}
+
+.toast-error {
+  background-color: var(--toast-error-bg);
+  color: var(--toast-error-fg);
+}
+
+.toast-warning {
+  background-color: var(--toast-warning-bg);
+  color: var(--toast-warning-fg);
+}
+
+.toast-info {
+  background-color: var(--toast-info-bg);
+  color: var(--toast-info-fg);
 }
 
 /* 

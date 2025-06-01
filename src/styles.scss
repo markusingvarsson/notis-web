@@ -35,6 +35,22 @@ html, body {
     --tw-success-light:  #66A884;
     --tw-success:        #3E8C5D;
     --tw-success-dark:   #255A3C;
+
+   /* Success: muted forest green */
+    --toast-success-bg:   #3E8C5D;
+    --toast-success-fg:   #FFFFFF;
+
+    /* Error: deep red but not neon */
+    --toast-error-bg:     #8C2E2E;
+    --toast-error-fg:     #FFFFFF;
+
+    /* Warning: warm amber, not too bright */
+    --toast-warning-bg:   #C18401;
+    --toast-warning-fg:   #FFFFFF;
+
+    /* Info: slate-blue, still calm */
+    --toast-info-bg:      #2E4A6E;
+    --toast-info-fg:      #FFFFFF;
   }
 }
 
