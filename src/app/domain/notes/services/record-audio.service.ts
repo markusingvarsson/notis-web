@@ -15,7 +15,7 @@ import {
   WebkitSpeechRecognition,
 } from '../'; // Adjust path as needed
 import { AUDIO_MIME_TYPE } from './mime-type'; // Adjust path as needed
-import { ToasterService } from '../../../shared/components/ui/toaster/toaster.service';
+import { ToasterService } from '../../../components/ui/toaster/toaster.service';
 
 @Injectable({
   providedIn: 'root',

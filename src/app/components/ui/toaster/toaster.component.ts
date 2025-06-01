@@ -1,12 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { ToasterService } from './toaster.service';
 import { Toast } from './toast.types';
-import { NgFor, NgClass, NgIf } from '@angular/common';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-toaster',
   standalone: true,
-  imports: [NgFor, NgClass, NgIf],
+  imports: [NgClass],
   templateUrl: './toaster.component.html',
   styleUrls: ['./toaster.component.scss'],
 })

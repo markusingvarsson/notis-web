@@ -1,0 +1,37 @@
+.toast-item {
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  transform: translateX(100%);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.toast-item.toast-visible {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.toast-item.toast-leaving {
+  transform: translateX(100%);
+  opacity: 0;
+  transition-timing-function: ease-in;
+}
+
+.toast-success {
+  background-color: var(--toast-success-bg);
+  color: var(--toast-success-fg);
+}
+
+.toast-error {
+  background-color: var(--toast-error-bg);
+  color: var(--toast-error-fg);
+}
+
+.toast-warning {
+  background-color: var(--toast-warning-bg);
+  color: var(--toast-warning-fg);
+}
+
+.toast-info {
+  background-color: var(--toast-info-bg);
+  color: var(--toast-info-fg);
+}

@@ -5,7 +5,6 @@ export interface Toast {
   id: string;
   message: string;
   type: ToastType;
-  duration?: number; // in milliseconds
-  icon?: string; // Optional: SVG path or class for an icon
+  duration?: number;
   state?: ToastState;
 }
