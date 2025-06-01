@@ -1,0 +1,28 @@
+/* You can add component-specific styles here if needed. 
+   Tailwind CSS will handle most of the styling via the template. */ 
+
+.toast-item {
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+  transform: translateX(100%);
+  opacity: 0;
+  will-change: transform, opacity; /* Hint for browsers to optimize */
+}
+
+.toast-item.toast-visible {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.toast-item.toast-leaving {
+  transform: translateX(100%);
+  opacity: 0;
+  transition-timing-function: ease-in; /* Change timing for exit */
+}
+
+/* 
+  Note for Safari 14/iOS 14 compatibility:
+  - Standard CSS transitions for transform and opacity are well-supported.
+  - Using `translateX(100%)` for off-screen and `translateX(0)` for on-screen is robust.
+  - `will-change` is a suggestion and might not be strictly necessary but can help performance.
+  - Avoid complex animations or properties that might have spotty support in older versions.
+*/ 
