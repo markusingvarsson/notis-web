@@ -38,7 +38,9 @@ export class RecordAudioService implements OnDestroy {
   private currentSaveMode: NoteType = 'audio';
 
   constructor() {
-    this.checkInitialMicrophonePermission();
+    if (isPlatformBrowser(this.#platformId)) {
+      this.checkInitialMicrophonePermission();
+    }
   }
 
   ngOnDestroy() {
