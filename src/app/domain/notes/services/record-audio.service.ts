@@ -15,6 +15,7 @@ import {
   WebkitSpeechRecognition,
 } from '../'; // Adjust path as needed
 import { AUDIO_MIME_TYPE } from './mime-type'; // Adjust path as needed
+import { ToasterService } from '../../../shared/components/ui/toaster/toaster.service';
 
 @Injectable({
   providedIn: 'root',
@@ -22,6 +23,7 @@ import { AUDIO_MIME_TYPE } from './mime-type'; // Adjust path as needed
 export class RecordAudioService implements OnDestroy {
   #platformId = inject(PLATFORM_ID);
   #audioMimeType = inject(AUDIO_MIME_TYPE);
+  #toaster = inject(ToasterService);
 
   // Public signals for component consumption
   readonly recordingState = signal<RecorderState>(RECORDER_STATE.IDLE);
@@ -114,6 +116,7 @@ export class RecordAudioService implements OnDestroy {
           this.stopRecordingInternal();
         }
         this.recordingState.set(RECORDER_STATE.BLOCKED);
+        this.#toaster.error('Microphone access denied');
         break;
       case 'prompt':
         if (this.recordingState() === RECORDER_STATE.RECORDING) {
@@ -131,6 +134,7 @@ export class RecordAudioService implements OnDestroy {
       typeof navigator.mediaDevices?.getUserMedia !== 'function';
 
     if (isNotBrowser || hasNoMediaDevices || hasNoGetUserMedia) {
+      this.#toaster.error('Microphone access denied');
       return 'denied';
     }
 
@@ -144,10 +148,13 @@ export class RecordAudioService implements OnDestroy {
         switch (err.name) {
           case 'NotAllowedError': // User denied permission
           case 'PermissionDeniedError': // Legacy name for NotAllowedError
+            this.#toaster.error('Microphone access denied');
             return 'denied';
           case 'NotFoundError': // No microphone device found
+            this.#toaster.error('Microphone not found');
             return 'denied'; // Treat as denied for recording capability
           case 'NotReadableError': // Hardware error, OS, or browser preventing access
+            this.#toaster.error('Microphone not readable');
             return 'denied';
           // AbortError, SecurityError, TypeError, OverconstrainedError might be transient or indicate config issues
           default:
