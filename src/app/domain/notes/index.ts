@@ -40,6 +40,7 @@ export const RECORDER_STATE = {
   IDLE: 'idle',
   STARTING: 'starting',
   RECORDING: 'recording',
+  BLOCKED: 'blocked',
 } as const;
 
 export type RecorderState =

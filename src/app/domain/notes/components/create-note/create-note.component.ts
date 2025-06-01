@@ -5,6 +5,7 @@ import {
   computed,
   signal,
   OnDestroy,
+  OnInit,
   PLATFORM_ID,
   output,
   inject,
@@ -61,7 +62,7 @@ declare global {
   templateUrl: './create-note.component.html',
   styleUrls: ['./create-note.component.scss'],
 })
-export class CreateNoteComponent implements OnDestroy {
+export class CreateNoteComponent implements OnInit, OnDestroy {
   #platformId = inject(PLATFORM_ID);
   #deviceService = inject(DeviceDetectorService);
   #audioMimeType = inject(AUDIO_MIME_TYPE);
@@ -96,6 +97,8 @@ export class CreateNoteComponent implements OnDestroy {
         return 'Starting...';
       case RECORDER_STATE.RECORDING:
         return 'Recording...';
+      case RECORDER_STATE.BLOCKED:
+        return 'Microphone access blocked';
       default:
         return 'Click to start recording';
     }
@@ -116,15 +119,83 @@ export class CreateNoteComponent implements OnDestroy {
     return this.audioUrl;
   });
 
+  private permissionStatusSubscription: PermissionStatus | null = null;
+
+  async ngOnInit(): Promise<void> {
+    await this.checkInitialMicrophonePermission();
+  }
+
+  private async checkInitialMicrophonePermission(): Promise<void> {
+    if (!isPlatformBrowser(this.#platformId) || !navigator.permissions) {
+      return;
+    }
+
+    try {
+      const permissionStatus = await navigator.permissions.query({
+        name: 'microphone' as PermissionName,
+      });
+      this.permissionStatusSubscription = permissionStatus;
+
+      if (permissionStatus.state === 'denied') {
+        this.recordingState.set(RECORDER_STATE.BLOCKED);
+        console.info('Microphone permission initially denied.');
+      } else if (permissionStatus.state === 'granted') {
+        console.info('Microphone permission initially granted.');
+      } else {
+        console.info('Microphone permission initially in prompt state.');
+      }
+
+      permissionStatus.onchange = () => {
+        if (permissionStatus.state === 'denied') {
+          if (this.recordingState() === RECORDER_STATE.RECORDING) {
+            this.stopRecording();
+            //this.clearRecording();
+            //console.log('audioBlob', this.audioBlob());
+            //console.log('transcriptText', this.transcriptText());
+          }
+          this.recordingState.set(RECORDER_STATE.BLOCKED);
+        } else if (permissionStatus.state === 'granted') {
+          if (this.recordingState() === RECORDER_STATE.BLOCKED) {
+            this.recordingState.set(RECORDER_STATE.IDLE);
+          }
+        }
+      };
+    } catch (err) {
+      console.error('Error querying microphone permission:', err);
+    }
+  }
+
   ngOnDestroy() {
-    // stop any ongoing recognition/recording
-    this.stopRecording();
+    if (this.recordingState() === RECORDER_STATE.RECORDING) {
+      this.stopRecording();
+    }
     if (this.audioUrl) {
       URL.revokeObjectURL(this.audioUrl);
+    }
+    if (this.permissionStatusSubscription) {
+      this.permissionStatusSubscription.onchange = null;
+      this.permissionStatusSubscription = null;
     }
   }
 
   async startRecording(): Promise<void> {
+    // The initial check in ngOnInit might have already set it to BLOCKED.
+    // However, keeping this check is good for robustness, e.g., if permissions change after init.
+    if (!isPlatformBrowser(this.#platformId)) {
+      console.warn('Media devices API is not available in this environment.');
+      this.recordingState.set(RECORDER_STATE.BLOCKED);
+      return;
+    }
+
+    // If already known to be blocked from init check or a previous attempt, don't try again.
+    if (this.recordingState() === RECORDER_STATE.BLOCKED) {
+      console.warn(
+        'Microphone access is blocked. Please enable it in your browser settings.'
+      );
+      // toast.error('Microphone access is blocked. Please check permissions.');
+      return;
+    }
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const options: MediaRecorderOptions = { mimeType: this.#audioMimeType };
@@ -174,15 +245,14 @@ export class CreateNoteComponent implements OnDestroy {
       recorder.start();
       //toast.info('Starting recording...');
       console.info('Starting recording...');
-    } catch {
-      this.recordingState.set(RECORDER_STATE.IDLE);
-      //toast.error('Could not access microphone');
-      console.error('Could not access microphone');
+    } catch (err) {
+      this.recordingState.set(RECORDER_STATE.BLOCKED);
+      console.error('Could not access microphone or recording failed:', err);
     }
   }
 
   stopRecording(): void {
-    if (this.mediaRecorder && this.recordingState() !== RECORDER_STATE.IDLE) {
+    if (this.mediaRecorder) {
       this.mediaRecorder.stop();
       if (this.recognition) {
         this.recognition.stop();
@@ -193,6 +263,14 @@ export class CreateNoteComponent implements OnDestroy {
   }
 
   toggleRecording(): void {
+    if (this.recordingState() === RECORDER_STATE.BLOCKED) {
+      console.warn(
+        'Microphone access is blocked. Please enable it in your browser settings.'
+      );
+      // toast.warning('Microphone access is blocked. Please enable it in browser settings.');
+      return;
+    }
+
     if (this.recordingState() == RECORDER_STATE.IDLE) {
       this.startRecording();
     } else if (this.recordingState() == RECORDER_STATE.RECORDING) {
