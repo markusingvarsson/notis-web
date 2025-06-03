@@ -5,12 +5,17 @@ html, body {
   padding: 0;
   height: 100%;                   /* allow full-height layouts */
   font-family: 'Inter', sans-serif;
-  background: var(--bg-color);
+  background: var(--bg-color-light); /* Changed to light background for default */
   color: var(--fg-color);
 }
 /* Define your secure-notes palette */
 @layer base {
   :root {
+    /* Default bg/fg for body */
+     --bg-color-light: var(--tw-bg-light); /* Renamed for clarity, using white as default page bg */
+     --bg-color: var(--tw-bg);             /* Retaining this for components that need gray bg */
+     --fg-color: var(--tw-primary-dark); /* Default foreground text */
+
     /* Primary (teal-blue) */
     --tw-primary-light:  #5EA8B5;
     --tw-primary:        #367D8C; /* your main accent */
@@ -51,6 +56,11 @@ html, body {
     /* Info: slate-blue, still calm */
     --toast-info-bg:      #2E4A6E;
     --toast-info-fg:      #FFFFFF;
+
+    /* Extended semantic variables for trust & security theme */
+    --tw-text-default: var(--fg-color); /* Main text color */
+    --tw-text-muted: var(--tw-border-dark); /* Muted text for less emphasis */
+    --tw-primary-accent-bg: rgba(54, 125, 140, 0.1); /* --tw-primary (#367D8C) with 10% alpha */
   }
 }
 
