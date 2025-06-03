@@ -1,0 +1,10 @@
+/* Styles for the navbar component */
+
+.nav-link-active {
+  @apply font-semibold text-[var(--tw-primary)];
+  text-decoration-line: underline;
+  text-decoration-style: solid;
+  text-decoration-color: var(--tw-primary);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px; /* Adjust for desired space below text */
+}

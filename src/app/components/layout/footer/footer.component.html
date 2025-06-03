@@ -1,5 +1,5 @@
 <!-- src/app/footer/footer.component.html -->
-<footer class="bg-[var(--tw-bg)] py-12">
+<footer class="bg-[var(--bg-color)] py-12">
   <div class="container mx-auto px-4">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       <!-- Brand + Description -->
@@ -11,7 +11,7 @@
             Notis.nu
           </span>
         </a>
-        <p class="mt-4 text-sm text-[var(--tw-border)]">
+        <p class="mt-4 text-sm text-[var(--tw-text-muted)]">
           A minimalist voice-first note-taking experience designed for clarity
           and focus.
         </p>
@@ -21,14 +21,14 @@
       <div class="grid grid-cols-2 gap-8 md:contents">
         <!-- Pages/Navigation -->
         <div>
-          <h3 class="text-sm font-semibold mb-4 text-[var(--tw-primary-dark)]">
+          <h3 class="text-sm font-semibold mb-4 text-[var(--tw-text-default)]">
             Pages
           </h3>
           <ul class="space-y-2">
             <li>
               <a
                 routerLink="/"
-                class="text-sm text-[var(--tw-border)] hover:text-[var(--tw-primary)] transition-colors duration-200"
+                class="text-sm text-[var(--tw-text-muted)] hover:text-[var(--tw-primary)] transition-colors duration-200"
               >
                 Home
               </a>
@@ -36,7 +36,7 @@
             <li>
               <a
                 routerLink="/notes"
-                class="text-sm text-[var(--tw-border)] hover:text-[var(--tw-primary)] transition-colors duration-200"
+                class="text-sm text-[var(--tw-text-muted)] hover:text-[var(--tw-primary)] transition-colors duration-200"
               >
                 Notes
               </a>
@@ -46,14 +46,14 @@
 
         <!-- Connect -->
         <div>
-          <h3 class="text-sm font-semibold mb-4 text-[var(--tw-primary-dark)]">
+          <h3 class="text-sm font-semibold mb-4 text-[var(--tw-text-default)]">
             Connect
           </h3>
           <ul class="space-y-2">
             <li>
               <a
                 href="mailto:info@markusingvarsson.com"
-                class="text-sm text-[var(--tw-border)] hover:text-[var(--tw-primary)] transition-colors duration-200"
+                class="text-sm text-[var(--tw-text-muted)] hover:text-[var(--tw-primary)] transition-colors duration-200"
               >
                 Feedback
               </a>
@@ -63,7 +63,7 @@
                 href="https://github.com/markusingvarsson/notis-web"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="text-sm text-[var(--tw-border)] hover:text-[var(--tw-primary)] transition-colors duration-200"
+                class="text-sm text-[var(--tw-text-muted)] hover:text-[var(--tw-primary)] transition-colors duration-200"
               >
                 GitHub
               </a>
