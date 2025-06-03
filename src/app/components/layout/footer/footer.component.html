@@ -1,7 +1,7 @@
 <!-- src/app/footer/footer.component.html -->
 <footer class="bg-[var(--tw-bg)] py-12">
   <div class="container mx-auto px-4">
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
       <!-- Brand + Description -->
       <div>
         <a routerLink="/" class="flex items-center gap-2">
@@ -17,113 +17,60 @@
         </p>
       </div>
 
-      <!-- Pages -->
-      <div>
-        <h3 class="text-sm font-semibold mb-4 text-primary-dark">Pages</h3>
-        <ul class="space-y-2">
-          <li>
-            <a
-              routerLink="/"
-              class="text-sm text-[var(--tw-border)] hover:text-primary transition-colors duration-200"
-            >
-              Home
-            </a>
-          </li>
-          <li>
-            <a
-              routerLink="/notes"
-              class="text-sm text-[var(--tw-border)] hover:text-primary transition-colors duration-200"
-            >
-              Notes
-            </a>
-          </li>
-          <li>
-            <a
-              routerLink="/about"
-              class="text-sm text-[var(--tw-border)] hover:text-primary transition-colors duration-200"
-            >
-              About
-            </a>
-          </li>
-          <li>
-            <a
-              routerLink="/faq"
-              class="text-sm text-[var(--tw-border)] hover:text-primary transition-colors duration-200"
-            >
-              FAQ
-            </a>
-          </li>
-        </ul>
-      </div>
+      <!-- Wrapper for Pages & Connect on small screens, contents pass through on md -->
+      <div class="grid grid-cols-2 gap-8 md:contents">
+        <!-- Pages/Navigation -->
+        <div>
+          <h3 class="text-sm font-semibold mb-4 text-[var(--tw-primary-dark)]">
+            Pages
+          </h3>
+          <ul class="space-y-2">
+            <li>
+              <a
+                routerLink="/"
+                class="text-sm text-[var(--tw-border)] hover:text-[var(--tw-primary)] transition-colors duration-200"
+              >
+                Home
+              </a>
+            </li>
+            <li>
+              <a
+                routerLink="/notes"
+                class="text-sm text-[var(--tw-border)] hover:text-[var(--tw-primary)] transition-colors duration-200"
+              >
+                Notes
+              </a>
+            </li>
+          </ul>
+        </div>
 
-      <!-- Resources -->
-      <div>
-        <h3 class="text-sm font-semibold mb-4 text-primary-dark">Resources</h3>
-        <ul class="space-y-2">
-          <li>
-            <a
-              href="#"
-              class="text-sm text-[var(--tw-border)] hover:text-primary transition-colors duration-200"
-            >
-              Privacy Policy
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="text-sm text-[var(--tw-border)] hover:text-primary transition-colors duration-200"
-            >
-              Terms of Service
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="text-sm text-[var(--tw-border)] hover:text-primary transition-colors duration-200"
-            >
-              Support
-            </a>
-          </li>
-        </ul>
+        <!-- Connect -->
+        <div>
+          <h3 class="text-sm font-semibold mb-4 text-[var(--tw-primary-dark)]">
+            Connect
+          </h3>
+          <ul class="space-y-2">
+            <li>
+              <a
+                href="mailto:info@markusingvarsson.com"
+                class="text-sm text-[var(--tw-border)] hover:text-[var(--tw-primary)] transition-colors duration-200"
+              >
+                Feedback
+              </a>
+            </li>
+            <li>
+              <a
+                href="https://github.com/markusingvarsson/notis-web"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-sm text-[var(--tw-border)] hover:text-[var(--tw-primary)] transition-colors duration-200"
+              >
+                GitHub
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
-
-      <!-- Connect -->
-      <div>
-        <h3 class="text-sm font-semibold mb-4 text-primary-dark">Connect</h3>
-        <ul class="space-y-2">
-          <li>
-            <a
-              href="#"
-              class="text-sm text-[var(--tw-border)] hover:text-primary transition-colors duration-200"
-            >
-              Twitter
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="text-sm text-[var(--tw-border)] hover:text-primary transition-colors duration-200"
-            >
-              Instagram
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              class="text-sm text-[var(--tw-border)] hover:text-primary transition-colors duration-200"
-            >
-              GitHub
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-
-    <!-- Bottom Bar -->
-    <div class="mt-12 pt-6 border-t border-default">
-      <p class="text-sm text-[var(--tw-border)] text-center">
-        &copy; {{ currentYear() }} Notely. All rights reserved.
-      </p>
     </div>
   </div>
 </footer>
