@@ -1,0 +1,37 @@
+<!-- contact.component.html -->
+<section class="my-12 bg-[var(--tw-bg-light)] px-6 py-12 md:px-10 md:py-20">
+  <div class="container mx-auto px-4">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2
+        class="text-3xl sm:text-4xl font-bold text-[var(--tw-text-default)] mb-8"
+      >
+        Hey, Got Feedback?
+      </h2>
+      <div class="p-8">
+        <p class="text-lg text-[var(--tw-text-default)] mb-4">
+          This application is built with a strong focus on privacy: all your
+          data is stored 100% locally on your device, and no tracking or
+          analytics are performed.
+        </p>
+        <p class="text-lg text-[var(--tw-text-muted)] mb-4">
+          Because of this commitment to your privacy, direct user feedback is
+          the only way for improvements and new features to be considered. If
+          there is something you would like to see fixed or added, please don't
+          hesitate to share what's on your mind.
+        </p>
+        <p class="text-sm text-[var(--tw-text-muted)] mt-4">- Markus</p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center my-8">
+          <app-button>
+            <a
+              href="mailto:info@markusingvarsson.com"
+              class="inline-flex items-center gap-2"
+            >
+              <app-mail-icon [size]="20" />
+              <span class="font-bold text-white">Send Feedback</span>
+            </a>
+          </app-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
