@@ -1,100 +1,115 @@
-<!-- File: src/app/quick-note-input/quick-note-input.component.html -->
-<div
-  class="bg-[var(--tw-bg-light)] rounded-lg shadow-sm p-6 mb-8 border border-[var(--tw-border-light)]"
->
-  <div class="text-center mb-6">
-    <h2 class="text-xl font-semibold mb-2 text-[var(--tw-primary-dark)]">
-      Create a new note
-    </h2>
-    <p class="text-sm text-[var(--tw-border-dark)]">
-      Record your thoughts with voice
-    </p>
-  </div>
-
-  <!-- Save Mode -->
-  <div class="mb-6">
-    @if (hasSpeechRecognition()) {
-    <span class="text-sm font-medium mb-3 block text-[var(--tw-primary-dark)]"
-      >Save as:</span
+<!-- File: src/app/domain/notes/components/create-note/create-note.component.html -->
+<div class="max-w-2xl mx-auto">
+  <div
+    class="bg-gradient-to-br from-[var(--tw-bg-light)] to-[var(--tw-bg)] rounded-2xl shadow-lg border border-[var(--tw-border-light)] overflow-hidden"
+  >
+    <!-- Header -->
+    <div
+      class="bg-gradient-to-r from-[var(--tw-primary-light)] to-[var(--tw-primary)] p-6 text-center border-b border-[var(--tw-border-light)]"
     >
-    <div class="flex gap-6">
-      <label class="flex items-center space-x-2" for="save-text">
-        <input
-          id="save-text"
-          type="radio"
-          [checked]="saveMode() === 'text'"
-          (change)="saveMode.set('text')"
-          class="cursor-pointer"
-        />
-        <span class="text-sm text-[var(--tw-primary-dark)]"
-          >Transcribed Text</span
+      <h2 class="text-2xl font-bold text-white mb-2">Create a new note</h2>
+      <p class="text-sm text-white">Record your thoughts with voice</p>
+    </div>
+
+    <!-- Content -->
+    <div class="p-6 space-y-6">
+      <!-- Save Mode Selection -->
+      <div>
+        @if (hasSpeechRecognition()) {
+        <span
+          class="text-sm font-semibold text-[var(--tw-primary-dark)] mb-3 block"
         >
-      </label>
+          Save as:
+        </span>
+        <div class="flex gap-6 justify-center">
+          <label class="flex items-center space-x-3" for="save-text">
+            <input
+              id="save-text"
+              type="radio"
+              [checked]="saveMode() === 'text'"
+              (change)="saveMode.set('text')"
+              class="cursor-pointer"
+            />
+            <span class="text-sm text-[var(--tw-primary-dark)]">
+              Transcribed Text
+            </span>
+          </label>
+          <label class="flex items-center space-x-3" for="save-audio">
+            <input
+              id="save-audio"
+              type="radio"
+              [checked]="saveMode() === 'audio'"
+              (change)="saveMode.set('audio')"
+              class="cursor-pointer"
+            />
+            <span class="text-sm text-[var(--tw-primary-dark)]">
+              Audio Recording
+            </span>
+          </label>
+        </div>
+        }
+      </div>
 
-      <label class="flex items-center space-x-2" for="save-audio">
-        <input
-          id="save-audio"
-          type="radio"
-          [checked]="saveMode() === 'audio'"
-          (change)="saveMode.set('audio')"
-          class="cursor-pointer"
-        />
-        <span class="text-sm text-[var(--tw-primary-dark)]"
-          >Audio Recording</span
+      <!-- Record Button -->
+      <div class="flex flex-col items-center space-y-6">
+        <app-record-button
+          [state]="recordingState()"
+          [ariaLabelInput]="recordLabel()"
+          (buttonClick)="toggleRecording()"
+        ></app-record-button>
+        <p class="text-center text-sm text-[var(--tw-border-dark)]">
+          {{ recordLabel() }}
+        </p>
+      </div>
+
+      <!-- Preview Area -->
+      @if (audioBlob() || transcriptText()) {
+      <div
+        class="bg-[var(--tw-bg)] rounded-xl p-4 border border-[var(--tw-border-light)]"
+      >
+        @if (saveMode() === 'audio' && audioBlob()) {
+        <div class="flex items-center gap-3">
+          <audio
+            #audioElement
+            [src]="audioSrc()"
+            controls
+            preload="auto"
+          ></audio>
+        </div>
+        } @if (saveMode() === 'text' && transcriptText()) {
+        <div>
+          <span class="text-xs text-[var(--tw-border-dark)] mb-2 block">
+            Transcription:
+          </span>
+          <p
+            class="text-sm bg-[var(--tw-bg-light)] p-3 rounded-lg border border-[var(--tw-border-light)] min-h-[60px] text-[var(--tw-primary-dark)]"
+          >
+            {{ transcriptText() || "Transcribing..." }}
+          </p>
+        </div>
+        }
+      </div>
+      }
+
+      <!-- Action Buttons -->
+      @if (audioBlob() || transcriptText()) {
+      <div
+        class="flex gap-3 justify-end pt-4 border-t border-[var(--tw-border-light)]"
+      >
+        <button
+          (click)="clearRecording()"
+          class="inline-flex items-center gap-2 px-3 py-1 rounded border border-[var(--tw-border)] text-sm text-[var(--tw-primary-dark)] hover:bg-[var(--tw-bg-light)]"
         >
-      </label>
+          Clear
+        </button>
+        <button
+          (click)="handleSave()"
+          class="inline-flex items-center gap-2 px-3 py-1 bg-[var(--tw-primary)] hover:bg-[var(--tw-primary-light)] text-white rounded text-sm"
+        >
+          💾 Save Note
+        </button>
+      </div>
+      }
     </div>
-    }
   </div>
-
-  <!-- Record Button -->
-  <div class="flex flex-col items-center gap-4 mb-6">
-    <app-record-button
-      [state]="recordingState()"
-      [ariaLabelInput]="recordLabel()"
-      (buttonClick)="toggleRecording()"
-    ></app-record-button>
-    <p class="text-center text-sm text-gray-500 mt-2">{{ recordLabel() }}</p>
-  </div>
-
-  <!-- Preview -->
-  @if (audioBlob() || transcriptText()) {
-  <div class="bg-[var(--tw-bg)] rounded-lg p-4 mb-4">
-    @if (saveMode() === 'audio' && audioBlob()) {
-    <div class="flex items-center gap-3">
-      <audio #audioElement [src]="audioSrc()" controls preload="auto"></audio>
-      <!-- <span class="text-sm text-[var(--tw-border-dark)]">Audio recorded</span> -->
-    </div>
-    } @if (saveMode() === 'text' && transcriptText()) {
-    <div>
-      <span class="text-xs text-[var(--tw-border-dark)] mb-2 block"
-        >Transcription:</span
-      >
-      <p
-        class="text-sm bg-[var(--tw-bg-light)] p-3 rounded border border-[var(--tw-border-light)] min-h-[60px] text-[var(--tw-primary-dark)]"
-      >
-        {{ transcriptText() || "Transcribing..." }}
-      </p>
-    </div>
-    }
-  </div>
-  }
-
-  <!-- Actions -->
-  @if (audioBlob() || transcriptText()) {
-  <div class="flex gap-2 justify-end">
-    <button
-      (click)="clearRecording()"
-      class="px-3 py-1 rounded border border-[var(--tw-border)] text-sm text-[var(--tw-primary-dark)] hover:bg-[var(--tw-bg)]"
-    >
-      Clear
-    </button>
-    <button
-      (click)="handleSave()"
-      class="inline-flex items-center gap-1 px-3 py-1 bg-[var(--tw-primary)] hover:bg-[var(--tw-primary-light)] text-white rounded text-sm"
-    >
-      💾 Save Note
-    </button>
-  </div>
-  }
 </div>
