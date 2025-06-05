@@ -1,5 +1,3 @@
-// File: src/app/quick-note-input/quick-note-input.component.ts
-
 import {
   Component,
   computed,
@@ -20,11 +18,19 @@ import { RecordButtonComponent } from './components/record-button/record-button.
 import { RecordAudioService } from '../../services/record-audio.service';
 import { Router } from '@angular/router';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
+import { SaveModePickerComponent } from './components/save-mode-picker/save-mode-picker.component';
+import { NoteNameInputComponent } from './components/note-name-input/note-name-input.component';
 
 @Component({
   selector: 'app-create-note',
   standalone: true,
-  imports: [RecordButtonComponent, FormsModule, PageHeaderComponent],
+  imports: [
+    RecordButtonComponent,
+    FormsModule,
+    PageHeaderComponent,
+    SaveModePickerComponent,
+    NoteNameInputComponent,
+  ],
   templateUrl: './create-note.component.html',
   styleUrls: ['./create-note.component.scss'],
   providers: [RecordAudioService],

@@ -12,39 +12,10 @@
     <div class="p-6 space-y-6">
       <!-- Save Mode Selection  -->
       @if (hasSpeechRecognition()) {
-      <div>
-        <span
-          class="text-sm font-semibold text-[var(--tw-primary-dark)] mb-3 block"
-        >
-          Save as:
-        </span>
-        <div class="flex gap-6 justify-center">
-          <label class="flex items-center space-x-3" for="save-text">
-            <input
-              id="save-text"
-              type="radio"
-              [checked]="saveMode() === 'text'"
-              (change)="saveMode.set('text')"
-              class="cursor-pointer"
-            />
-            <span class="text-sm text-[var(--tw-primary-dark)]">
-              Transcribed Text
-            </span>
-          </label>
-          <label class="flex items-center space-x-3" for="save-audio">
-            <input
-              id="save-audio"
-              type="radio"
-              [checked]="saveMode() === 'audio'"
-              (change)="saveMode.set('audio')"
-              class="cursor-pointer"
-            />
-            <span class="text-sm text-[var(--tw-primary-dark)]">
-              Audio Recording
-            </span>
-          </label>
-        </div>
-      </div>
+      <app-save-mode-picker
+        [currentSaveMode]="saveMode()"
+        (saveModeChange)="saveMode.set($event)"
+      ></app-save-mode-picker>
       } @if (currentView() === 'recording') {
       <!-- Record Button -->
       <div class="flex flex-col items-center space-y-6">
@@ -59,22 +30,7 @@
       </div>
       } @if (currentView() === 'preview') {
       <!-- Note Name Input -->
-      <div class="space-y-2">
-        <label
-          for="note-name"
-          class="text-sm font-semibold text-[var(--tw-primary-dark)] block"
-        >
-          Note Name:
-        </label>
-        <input
-          id="note-name"
-          type="text"
-          name="noteName"
-          [(ngModel)]="noteName"
-          class="w-full p-3 border border-[var(--tw-border-light)] rounded-lg bg-[var(--tw-bg-light)] text-[var(--tw-primary-dark)] focus:ring-2 focus:ring-[var(--tw-primary)] focus:border-transparent transition-shadow duration-150 ease-in-out"
-          placeholder="Enter a name for your note (e.g., Meeting Summary)"
-        />
-      </div>
+      <app-note-name-input [(noteName)]="noteName"></app-note-name-input>
       }
       <!-- Preview Area -->
       @if (audioBlob() || transcriptText()) {

@@ -13,6 +13,13 @@ import { Component, input } from '@angular/core';
       }
     </div>
   `,
+  styles: [
+    `
+      :host {
+        display: block;
+      }
+    `,
+  ],
 })
 export class PageHeaderComponent {
   title = input.required<string>();
