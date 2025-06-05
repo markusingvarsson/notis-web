@@ -12,17 +12,19 @@ import {
   effect,
   input,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { isPlatformBrowser } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { NoteCreated, NoteType, RECORDER_STATE } from '../..';
-import { RecordButtonComponent } from '../record-button/record-button.component';
+import { RecordButtonComponent } from './components/record-button/record-button.component';
 import { RecordAudioService } from '../../services/record-audio.service';
 import { Router } from '@angular/router';
+import { PageHeaderComponent } from './components/page-header/page-header.component';
 
 @Component({
   selector: 'app-create-note',
   standalone: true,
-  imports: [RecordButtonComponent],
+  imports: [RecordButtonComponent, FormsModule, PageHeaderComponent],
   templateUrl: './create-note.component.html',
   styleUrls: ['./create-note.component.scss'],
   providers: [RecordAudioService],
@@ -44,6 +46,9 @@ export class CreateNoteComponent {
   readonly saveMode = signal<NoteType>('audio');
   readonly audioElementRef =
     viewChild<ElementRef<HTMLAudioElement>>('audioElement');
+
+  readonly noteName = signal('');
+  readonly currentView = signal<'recording' | 'preview'>('recording');
 
   readonly hasSpeechRecognition = computed(() => {
     const isSpeechRecognitionSupported =
@@ -92,6 +97,7 @@ export class CreateNoteComponent {
       this.#recordAudioService.startRecording(this.saveMode());
     } else if (this.recordingState() === RECORDER_STATE.RECORDING) {
       this.#recordAudioService.stopRecording();
+      this.currentView.set('preview');
     } else {
       // Potentially STARTING, or a new state from service like COMPLETED_READY_TO_SAVE
       console.log('Recording state:', this.recordingState());
@@ -100,14 +106,16 @@ export class CreateNoteComponent {
 
   handleSave(): void {
     const currentSaveMode = this.saveMode();
+    const customNoteName = this.noteName()?.trim();
+
     if (currentSaveMode === 'audio') {
       const blob = this.audioBlob();
       if (!blob) {
         console.error('Please record audio first');
-        // Potentially trigger a toast or UI warning
         return;
       }
-      const title = `Audio Note - ${new Date().toLocaleDateString()}`;
+      const title =
+        customNoteName || `Audio Note - ${new Date().toLocaleDateString()}`;
       this.noteCreated.emit({
         type: 'audio',
         title,
@@ -119,11 +127,12 @@ export class CreateNoteComponent {
       const txt = this.transcriptText()?.trim();
       if (!txt) {
         console.error('Please record for transcription or type text');
-        // Potentially trigger a toast or UI warning
         return;
       }
-      let title = txt.split('\n')[0].slice(0, 50);
-      if (txt.length > 50) title = title.slice(0, 47) + '...';
+      let title = customNoteName || txt.split('\n')[0].slice(0, 50);
+      if (!customNoteName && txt.length > 50 && title.length === 50)
+        title = title.slice(0, 47) + '...';
+
       this.noteCreated.emit({
         type: 'text',
         title,
@@ -132,11 +141,14 @@ export class CreateNoteComponent {
       console.info('Text note saved event emitted!');
     }
     // Reset UI and service state after saving
-    this.#recordAudioService.clearRecording();
+    this.clearRecording();
   }
 
   clearRecording(): void {
     this.#recordAudioService.clearRecording();
+    // Reset component-specific state
+    this.noteName.set('');
+    this.currentView.set('recording');
     // UI might need to react to this, e.g., clear display of audio player or text.
     // This is handled by the service signals resetting.
     // console.log('Recording cleared via service.');

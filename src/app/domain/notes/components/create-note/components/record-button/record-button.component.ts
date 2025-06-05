@@ -1,9 +1,9 @@
 import { Component, computed, input, output } from '@angular/core';
-import { RECORDER_STATE, RecorderState } from '../../index';
-import { MicrophoneIconComponent } from '../../../../components/ui/icons/microphone-icon/microphone-icon.component';
-import { StopIconComponent } from '../../../../components/ui/icons/stop-icon/stop-icon.component';
-import { SpinnerIconComponent } from '../../../../components/ui/icons/spinner-icon/spinner-icon.component';
-import { MicrophoneSlashIconComponent } from '../../../../components/ui/icons/microphone-slash-icon/microphone-slash-icon.component';
+import { RECORDER_STATE, RecorderState } from '../../../../index';
+import { MicrophoneIconComponent } from '../../../../../../components/ui/icons/microphone-icon/microphone-icon.component';
+import { StopIconComponent } from '../../../../../../components/ui/icons/stop-icon/stop-icon.component';
+import { SpinnerIconComponent } from '../../../../../../components/ui/icons/spinner-icon/spinner-icon.component';
+import { MicrophoneSlashIconComponent } from '../../../../../../components/ui/icons/microphone-slash-icon/microphone-slash-icon.component';
 
 @Component({
   selector: 'app-record-button',
