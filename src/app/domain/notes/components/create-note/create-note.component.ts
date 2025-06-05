@@ -14,22 +14,22 @@ import { FormsModule } from '@angular/forms';
 import { isPlatformBrowser } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { NoteCreated, NoteType, RECORDER_STATE } from '../..';
-import { RecordButtonComponent } from './components/record-button/record-button.component';
 import { RecordAudioService } from '../../services/record-audio.service';
 import { Router } from '@angular/router';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
+import { CreateAudioNoteComponent } from './create-audio-note/create-audio-note.component';
+import { CreateTextNoteComponent } from './create-text-note/create-text-note.component';
 import { SaveModePickerComponent } from './components/save-mode-picker/save-mode-picker.component';
-import { NoteNameInputComponent } from './components/note-name-input/note-name-input.component';
 
 @Component({
   selector: 'app-create-note',
   standalone: true,
   imports: [
-    RecordButtonComponent,
     FormsModule,
     PageHeaderComponent,
+    CreateAudioNoteComponent,
+    CreateTextNoteComponent,
     SaveModePickerComponent,
-    NoteNameInputComponent,
   ],
   templateUrl: './create-note.component.html',
   styleUrls: ['./create-note.component.scss'],
