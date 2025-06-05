@@ -18,7 +18,6 @@ export class NotesComponent {
   readonly CTA = input<boolean>(false);
 
   onCreateNote(event: NoteCreated) {
-    console.log('Creating note:', event);
     this.notesStorageService.createNote(event);
   }
 }

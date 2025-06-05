@@ -16,9 +16,13 @@
     </div>
 
     @switch (saveMode()) { @case ('audio') {
-    <app-create-audio-note></app-create-audio-note>
+    <app-create-audio-note
+      (noteCreated)="noteCreated.emit($event)"
+    ></app-create-audio-note>
     } @case ('text') {
-    <app-create-text-note></app-create-text-note>
+    <app-create-text-note
+      (noteCreated)="noteCreated.emit($event)"
+    ></app-create-text-note>
     } }
   </div>
 </div>
