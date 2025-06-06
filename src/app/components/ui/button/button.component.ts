@@ -1,5 +1,5 @@
 // File: src/app/button/button.component.ts
-import { Component, signal, computed, input } from '@angular/core';
+import { Component, signal, computed, input, output } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -18,6 +18,9 @@ type Size = 'default' | 'sm' | 'lg' | 'icon';
   imports: [NgTemplateOutlet, RouterLink],
   templateUrl: './button.component.html',
   styleUrls: ['./button.component.scss'],
+  host: {
+    '[style.cursor]': 'disabled() ? "not-allowed" : "pointer"',
+  },
 })
 export class ButtonComponent {
   readonly link = input<string | undefined>(undefined);
@@ -30,8 +33,10 @@ export class ButtonComponent {
     Record<string, string | number | boolean> | undefined
   >(undefined);
 
+  readonly buttonClick = output<MouseEvent>();
+
   private base = signal(
-    'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'
+    'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:cursor-pointer'
   );
   private variants: Record<Variant, string> = {
     default:

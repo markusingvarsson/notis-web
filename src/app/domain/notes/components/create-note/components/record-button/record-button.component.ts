@@ -54,11 +54,11 @@ export class RecordButtonComponent {
     const s = this.state();
     switch (s) {
       case RECORDER_STATE.RECORDING:
-        return 'bg-red-500 hover:bg-red-600 animate-pulse';
+        return 'bg-red-500 hover:bg-red-600 animate-pulse hover:cursor-pointer';
       case RECORDER_STATE.STARTING:
-        return 'bg-[var(--tw-primary)] hover:bg-[var(--tw-primary)] cursor-wait';
+        return 'bg-[var(--tw-primary)] hover:bg-[var(--tw-primary)] hover:cursor-wait';
       case RECORDER_STATE.IDLE:
-        return 'bg-[var(--tw-primary)] hover:bg-[var(--tw-primary-light)]';
+        return 'bg-[var(--tw-primary)] hover:bg-[var(--tw-primary-light)] hover:cursor-pointer';
       case RECORDER_STATE.BLOCKED:
         return 'bg-gray-400 text-gray-700 cursor-not-allowed';
       // No default case needed if all union members are covered

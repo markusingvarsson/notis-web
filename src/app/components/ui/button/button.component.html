@@ -16,7 +16,9 @@
   type="button"
   [class]="classes()"
   [disabled]="disabled()"
+  [attr.aria-disabled]="disabled()"
   [attr.aria-label]="ariaLabel()"
+  (click)="buttonClick.emit($event)"
 >
   <ng-container *ngTemplateOutlet="projectedContent"></ng-container>
 </button>
