@@ -30,6 +30,7 @@ export class CreateNoteComponent {
 
   readonly noteCreated = output<NoteCreated>();
   readonly recordingState = this.#recordAudioService.recordingState;
+  readonly isRecordingDone = this.#recordAudioService.isRecordingDone;
 
   constructor() {
     effect(() => {

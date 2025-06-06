@@ -5,11 +5,19 @@ import { Component, input } from '@angular/core';
   imports: [],
   template: `
     <div
-      class="bg-gradient-to-r from-[var(--tw-primary-light)] to-[var(--tw-primary)] p-6 text-center border-b border-[var(--tw-border-light)]"
+      class="bg-gradient-to-r from-[var(--tw-primary-light)] to-[var(--tw-primary)] text-center border-b border-[var(--tw-border-light)]"
+      [class.p-6]="subtitle()"
+      [class.p-3]="!subtitle()"
     >
-      <h2 class="text-2xl font-bold text-white mb-2">{{ title() }}</h2>
+      <h2
+        class="font-bold text-white"
+        [class.text-2xl]="subtitle()"
+        [class.text-xl]="!subtitle()"
+      >
+        {{ title() }}
+      </h2>
       @if (subtitle()) {
-      <p class="text-sm text-white">{{ subtitle() }}</p>
+      <p class="text-sm text-white mt-2">{{ subtitle() }}</p>
       }
     </div>
   `,

@@ -26,6 +26,9 @@ export class RecordAudioService implements OnDestroy {
   readonly recordingState = signal<RecorderState>(RECORDER_STATE.IDLE);
   readonly audioBlob = signal<Blob | null>(null);
   readonly transcriptText = signal('');
+  readonly isRecordingDone = computed(() => {
+    return this.recordingState() === RECORDER_STATE.IDLE && this.audioBlob();
+  });
   readonly recordLabel = computed(() => {
     switch (this.recordingState()) {
       case RECORDER_STATE.STARTING:
