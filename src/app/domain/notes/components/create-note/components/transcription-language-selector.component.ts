@@ -14,7 +14,7 @@ export class TranscriptionLanguageSelectorComponent {
 
   readonly languages = [
     { name: 'No transcription', value: null },
-    { name: 'English (US)', value: 'en-US' },
-    { name: 'Swedish (Sweden)', value: 'sv-SE' },
+    { name: 'English', value: 'en-US' },
+    { name: 'Swedish', value: 'sv-SE' },
   ];
 }
