@@ -14,9 +14,11 @@ export class AddTagsInputComponent {
   tagInput = model<string>('');
   tagsAsArray = computed(() => Object.values(this.tags()));
 
+  disabled = computed(() => {
+    return !this.tagInput() || Boolean(this.tags()[this.tagInput()]);
+  });
+
   addTag() {
-    console.log(this.tagInput());
-    if (!this.tagInput()) return;
     this.tags.set({
       ...this.tags(),
       [this.tagInput()]: { name: this.tagInput(), id: this.tagInput() },

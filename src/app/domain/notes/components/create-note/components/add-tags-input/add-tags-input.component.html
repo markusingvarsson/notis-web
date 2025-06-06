@@ -11,7 +11,7 @@
         placeholder="e.g.,  meeting, important, todo, personal"
         [(ngModel)]="tagInput"
       />
-      <app-button (click)="addTag()" [disabled]="!tagInput()"
+      <app-button (buttonClick)="addTag()" [disabled]="disabled()"
         >Add Tag</app-button
       >
     </div>
