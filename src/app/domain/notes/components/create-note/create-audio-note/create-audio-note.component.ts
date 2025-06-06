@@ -14,10 +14,16 @@ import { NoteNameInputComponent } from '../components/note-name-input/note-name-
 import { ToasterService } from '../../../../../components/ui/toaster/toaster.service';
 import { isPlatformBrowser } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { TranscriptionLanguageSelectorComponent } from '../components/transcription-language-selector.component';
 
 @Component({
   selector: 'app-create-audio-note',
-  imports: [RecordButtonComponent, FormsModule, NoteNameInputComponent],
+  imports: [
+    RecordButtonComponent,
+    FormsModule,
+    NoteNameInputComponent,
+    TranscriptionLanguageSelectorComponent,
+  ],
   templateUrl: './create-audio-note.component.html',
   styleUrl: './create-audio-note.component.scss',
 })
@@ -37,11 +43,6 @@ export class CreateAudioNoteComponent {
   readonly noteName = signal('');
   readonly currentView = signal<'recording' | 'preview'>('recording');
   readonly selectedLanguage = signal<string | null>(null);
-  readonly languages = [
-    { name: 'No transcription', value: null },
-    { name: 'English (US)', value: 'en-US' },
-    { name: 'Swedish (Sweden)', value: 'sv-SE' },
-  ];
 
   readonly hasSpeechRecognition = computed(() => {
     const isSpeechRecognitionSupported =
