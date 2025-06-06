@@ -206,6 +206,7 @@ export class NotesStorageService {
         audioBlob: noteCreated.audioBlob,
         audioMimeType: noteCreated.audioMimeType,
         duration,
+        transcript: noteCreated.transcript,
         updatedAt: new Date().toISOString(),
       };
     } else {

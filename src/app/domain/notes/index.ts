@@ -17,6 +17,7 @@ export interface AudioNote extends BaseNote {
   audioBlob: Blob;
   audioMimeType?: string;
   duration: number;
+  transcript?: string;
 }
 
 export type Note = TextNote | AudioNote;
@@ -32,6 +33,7 @@ export interface AudioNoteCreated {
   title: string;
   audioBlob: Blob;
   audioMimeType: string;
+  transcript?: string;
 }
 
 export type NoteCreated = TextNoteCreated | AudioNoteCreated;

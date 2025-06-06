@@ -1,16 +1,19 @@
 import {
   Component,
-  ElementRef,
+  computed,
   inject,
   output,
+  PLATFORM_ID,
   signal,
-  viewChild,
 } from '@angular/core';
 import { NoteCreated, RECORDER_STATE } from '../../..';
 import { RecordAudioService } from '../../../services/record-audio.service';
 import { FormsModule } from '@angular/forms';
 import { RecordButtonComponent } from '../components/record-button/record-button.component';
 import { NoteNameInputComponent } from '../components/note-name-input/note-name-input.component';
+import { ToasterService } from '../../../../../components/ui/toaster/toaster.service';
+import { isPlatformBrowser } from '@angular/common';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-create-audio-note',
@@ -19,20 +22,34 @@ import { NoteNameInputComponent } from '../components/note-name-input/note-name-
   styleUrl: './create-audio-note.component.scss',
 })
 export class CreateAudioNoteComponent {
+  #platformId = inject(PLATFORM_ID);
   #recordAudioService = inject(RecordAudioService);
-
-  readonly noteCreated = output<NoteCreated>();
+  #toaster = inject(ToasterService);
+  #deviceService = inject(DeviceDetectorService);
 
   readonly recordingState = this.#recordAudioService.recordingState;
   readonly audioBlob = this.#recordAudioService.audioBlob;
   readonly audioSrc = this.#recordAudioService.audioSrc;
   readonly recordLabel = this.#recordAudioService.recordLabel;
+  readonly transcriptText = this.#recordAudioService.transcriptText;
 
-  readonly audioElementRef =
-    viewChild<ElementRef<HTMLAudioElement>>('audioElement');
-
+  readonly noteCreated = output<NoteCreated>();
   readonly noteName = signal('');
   readonly currentView = signal<'recording' | 'preview'>('recording');
+  readonly selectedLanguage = signal<string | null>(null);
+  readonly languages = [
+    { name: 'No transcription', value: null },
+    { name: 'English (US)', value: 'en-US' },
+    { name: 'Swedish (Sweden)', value: 'sv-SE' },
+  ];
+
+  readonly hasSpeechRecognition = computed(() => {
+    const isSpeechRecognitionSupported =
+      isPlatformBrowser(this.#platformId) &&
+      'webkitSpeechRecognition' in window;
+
+    return isSpeechRecognitionSupported && this.#deviceService.isDesktop();
+  });
 
   toggleRecording(): void {
     if (this.recordingState() === RECORDER_STATE.BLOCKED) {
@@ -42,7 +59,7 @@ export class CreateAudioNoteComponent {
     if (this.recordingState() === RECORDER_STATE.IDLE) {
       // Before starting, ensure any previous audio/text is handled or explicitly cleared by user if necessary
       // For now, service's startRecording clears previous artifacts.
-      this.#recordAudioService.startRecording('audio');
+      this.#recordAudioService.startRecording(this.selectedLanguage());
     } else if (this.recordingState() === RECORDER_STATE.RECORDING) {
       this.#recordAudioService.stopRecording();
       this.currentView.set('preview');
@@ -56,7 +73,7 @@ export class CreateAudioNoteComponent {
     const customNoteName = this.noteName()?.trim();
     const blob = this.audioBlob();
     if (!blob) {
-      console.error('Please record audio first');
+      this.#toaster.error('Please record audio first');
       return;
     }
     const title =
@@ -66,10 +83,9 @@ export class CreateAudioNoteComponent {
       title,
       audioBlob: blob,
       audioMimeType: blob.type,
+      transcript: this.transcriptText(),
     });
-    console.info('Audio note saved event emitted!');
 
-    // Reset UI and service state after saving
     this.clearRecording();
   }
 

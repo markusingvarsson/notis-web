@@ -68,7 +68,11 @@ export class NoteCardComponent implements OnDestroy {
       case 'text':
         return truncateContent(note.content, 150);
       case 'audio':
-        return `Audio recording (${formatDuration(note.duration)})`;
+        if (note.transcript) {
+          return note.transcript;
+        } else {
+          return `Audio recording (${formatDuration(note.duration)})`;
+        }
       default:
         return 'Unknown note type';
     }

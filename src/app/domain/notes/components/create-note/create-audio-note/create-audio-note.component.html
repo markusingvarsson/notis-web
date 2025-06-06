@@ -1,5 +1,25 @@
 <div class="p-6 space-y-6">
   @if (currentView() === 'recording') {
+  <!-- Language Selector -->
+  @if (hasSpeechRecognition()) {
+  <div class="space-y-2">
+    <label
+      for="language-select"
+      class="text-sm font-semibold text-[var(--tw-primary-dark)] block"
+    >
+      Transcription Language:
+    </label>
+    <select
+      id="language-select"
+      [(ngModel)]="selectedLanguage"
+      class="w-full p-3 border border-[var(--tw-border-light)] rounded-lg bg-[var(--tw-bg-light)] text-[var(--tw-primary-dark)] focus:ring-2 focus:ring-[var(--tw-primary)] focus:border-transparent transition-shadow duration-150 ease-in-out"
+    >
+      @for (lang of languages; track lang.value) {
+      <option [ngValue]="lang.value">{{ lang.name }}</option>
+      }
+    </select>
+  </div>
+  }
   <!-- Record Button -->
   <div class="flex flex-col items-center space-y-6">
     <app-record-button
@@ -29,6 +49,17 @@
         class="w-full"
       ></audio>
     </div>
+  </div>
+  } @if (transcriptText()) {
+  <div class="space-y-2">
+    <h3 class="text-sm font-semibold text-[var(--tw-primary-dark)]">
+      Transcript:
+    </h3>
+    <p
+      class="text-sm text-[var(--tw-primary-dark)] bg-[var(--tw-bg-light)] border border-[var(--tw-border-light)] rounded-lg p-3"
+    >
+      {{ transcriptText() }}
+    </p>
   </div>
   }
 

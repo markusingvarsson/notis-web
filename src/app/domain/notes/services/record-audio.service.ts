@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import {
-  NoteType,
   RECORDER_STATE,
   RecorderState,
   SpeechRecognitionEvent,
@@ -46,7 +45,6 @@ export class RecordAudioService implements OnDestroy {
   private mediaRecorder: MediaRecorder | null = null;
   private recognition: WebkitSpeechRecognition | null = null;
   private permissionStatusSubscription: PermissionStatus | null = null;
-  private currentSaveMode: NoteType = 'audio';
 
   constructor() {
     if (isPlatformBrowser(this.#platformId)) {
@@ -189,8 +187,9 @@ export class RecordAudioService implements OnDestroy {
     }
   }
 
-  async startRecording(saveMode: NoteType): Promise<void> {
-    this.currentSaveMode = saveMode;
+  async startRecording(
+    transcriptionLanguage: string | null = null
+  ): Promise<void> {
     if (!isPlatformBrowser(this.#platformId)) {
       this.recordingState.set(RECORDER_STATE.BLOCKED);
       return;
@@ -227,11 +226,11 @@ export class RecordAudioService implements OnDestroy {
         this.cleanupSpeechRecognition(); // Clean up speech recognition resources
       };
 
-      if (this.currentSaveMode === 'text' && window.webkitSpeechRecognition) {
+      if (transcriptionLanguage && window.webkitSpeechRecognition) {
         this.recognition = new window.webkitSpeechRecognition();
         this.recognition.continuous = true;
         this.recognition.interimResults = true;
-        this.recognition.lang = 'en-US'; // Or make configurable
+        this.recognition.lang = transcriptionLanguage;
         this.recognition.onresult = (e: SpeechRecognitionEvent) => {
           const transcript = Array.from(e.results) // Use Array.from for SpeechRecognitionResultList
             .map((result) => result[0]) // Get the first alternative
@@ -248,11 +247,6 @@ export class RecordAudioService implements OnDestroy {
           // Optionally handle natural end of speech if not continuous, or if stop() was called.
         };
         this.recognition.start();
-      } else if (this.currentSaveMode === 'text') {
-        console.warn(
-          'WebkitSpeechRecognition not supported in this browser for text mode.'
-        );
-        // Optionally set a state or signal to inform the UI
       }
 
       this.recordingState.set(RECORDER_STATE.STARTING);
@@ -272,19 +266,11 @@ export class RecordAudioService implements OnDestroy {
   }
 
   private stopRecordingInternal(): void {
-    if (this.mediaRecorder?.state !== 'inactive') {
-      this.mediaRecorder?.stop(); // This will trigger onstop for MediaRecorder
+    if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
+      this.mediaRecorder.stop();
     }
-    // Speech recognition is stopped separately because its lifecycle is not tied to mediaRecorder.stop() directly
     if (this.recognition) {
-      try {
-        this.recognition.stop(); // This will trigger an 'end' event for speech recognition
-      } catch (e) {
-        console.warn(
-          'Error stopping speech recognition (may have already stopped or not started):',
-          e
-        );
-      }
+      this.recognition.stop();
     }
   }
 
@@ -312,15 +298,8 @@ export class RecordAudioService implements OnDestroy {
   }
 
   clearRecording(): void {
-    // Stop any active recording or starting process
-    if (
-      this.recordingState() === RECORDER_STATE.RECORDING ||
-      this.recordingState() === RECORDER_STATE.STARTING
-    ) {
-      this.stopRecordingInternal();
-    }
-    // Clear all data and reset state
-    this.clearPreviousRecordingArtifacts(); // This already calls cleanupSpeechRecognition
+    this.clearPreviousRecordingArtifacts();
     this.recordingState.set(RECORDER_STATE.IDLE);
+    // No need to reset noteName here as it's a concern of the component
   }
 }

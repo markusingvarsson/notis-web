@@ -8,21 +8,8 @@
       [subtitle]="'Record your thoughts with voice'"
     ></app-page-header>
 
-    <div class="p-6 space-y-6">
-      <app-save-mode-picker
-        [currentSaveMode]="saveMode()"
-        (saveModeChange)="saveMode.set($event)"
-      ></app-save-mode-picker>
-    </div>
-
-    @switch (saveMode()) { @case ('audio') {
     <app-create-audio-note
       (noteCreated)="noteCreated.emit($event)"
     ></app-create-audio-note>
-    } @case ('text') {
-    <app-create-text-note
-      (noteCreated)="noteCreated.emit($event)"
-    ></app-create-text-note>
-    } }
   </div>
 </div>
