@@ -1,4 +1,4 @@
-import { Component, model } from '@angular/core';
+import { Component, computed, model } from '@angular/core';
 import { Tag } from '.';
 import { ButtonComponent } from '../../../../../../components/ui/button/button.component';
 import { FormsModule } from '@angular/forms';
@@ -10,14 +10,23 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './add-tags-input.component.scss',
 })
 export class AddTagsInputComponent {
-  tags = model<Tag[]>([]);
+  tags = model<Record<string, Tag>>({});
   tagInput = model<string>('');
+  tagsAsArray = computed(() => Object.values(this.tags()));
 
   addTag() {
-    this.tags.set([
+    console.log(this.tagInput());
+    if (!this.tagInput()) return;
+    this.tags.set({
       ...this.tags(),
-      { name: this.tagInput(), value: this.tagInput() },
-    ]);
+      [this.tagInput()]: { name: this.tagInput(), id: this.tagInput() },
+    });
     this.tagInput.set('');
+  }
+
+  removeTag(tagToRemove: Tag) {
+    const newTags = { ...this.tags() };
+    delete newTags[tagToRemove.id];
+    this.tags.set(newTags);
   }
 }

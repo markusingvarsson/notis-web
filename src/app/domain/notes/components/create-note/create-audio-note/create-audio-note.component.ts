@@ -52,7 +52,7 @@ export class CreateAudioNoteComponent {
 
   readonly noteCreated = output<NoteCreated>();
   readonly noteName = signal('');
-  readonly tags = signal<Tag[]>([]);
+  readonly tags = signal<Record<string, Tag>>({});
   readonly currentView = signal<'recording' | 'preview'>('recording');
   readonly selectedLanguage = signal<string | null>(
     this.#transcriptionLanguageSelectorService.getSelectedLanguage()
