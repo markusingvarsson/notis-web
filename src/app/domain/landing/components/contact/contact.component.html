@@ -18,15 +18,15 @@
         </p>
         <p class="text-sm text-[var(--tw-text-muted)] mt-4">– Markus</p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center my-8">
-          <app-button>
-            <a
-              href="mailto:info@markusingvarsson.com"
-              class="inline-flex items-center gap-2"
-            >
+          <a
+            href="mailto:info@markusingvarsson.com"
+            class="inline-flex items-center gap-2 cursor-pointer"
+          >
+            <app-button className="cursor-pointer">
               <app-mail-icon [size]="20" />
               <span class="font-bold text-white">Send Feedback</span>
-            </a>
-          </app-button>
+            </app-button>
+          </a>
         </div>
       </div>
     </div>
