@@ -8,7 +8,8 @@
   <select
     [disabled]="disabled()"
     id="language-select"
-    [(ngModel)]="selectedLanguage"
+    [ngModel]="selectedLanguage()"
+    (ngModelChange)="onLanguageChange($event)"
     class="w-full p-3 border border-[var(--tw-border-light)] rounded-lg bg-[var(--tw-bg-light)] text-[var(--tw-primary-dark)] focus:ring-2 focus:ring-[var(--tw-primary)] focus:border-transparent transition-shadow duration-150 ease-in-out appearance-none bg-[url('data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2212%22%20height%3D%2212%22%20viewBox%3D%220%200%2012%2012%22%3E%3Cpath%20fill%3D%22%23333%22%20d%3D%22M6%208L1%203h10z%22%2F%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[center_right_1rem] disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-100"
   >
     @for (lang of languages; track lang.value) {
