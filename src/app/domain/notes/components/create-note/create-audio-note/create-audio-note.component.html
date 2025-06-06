@@ -4,6 +4,7 @@
   @if (hasSpeechRecognition()) {
   <app-transcription-language-selector
     [(selectedLanguage)]="selectedLanguage"
+    [disabled]="isRecording()"
   ></app-transcription-language-selector>
   }
   <!-- Record Button -->

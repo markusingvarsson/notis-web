@@ -1,4 +1,4 @@
-import { Component, model } from '@angular/core';
+import { Component, input, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -10,6 +10,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './transcription-language-selector.component.scss',
 })
 export class TranscriptionLanguageSelectorComponent {
+  readonly disabled = input.required<boolean>();
   selectedLanguage = model<string | null>();
 
   readonly languages = [

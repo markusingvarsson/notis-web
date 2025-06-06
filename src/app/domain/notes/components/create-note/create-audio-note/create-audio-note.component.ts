@@ -28,6 +28,10 @@ import { TranscriptionLanguageSelectorComponent } from '../components/transcript
   styleUrl: './create-audio-note.component.scss',
 })
 export class CreateAudioNoteComponent {
+  readonly isRecording = computed(() => {
+    return this.recordingState() === RECORDER_STATE.RECORDING;
+  });
+
   #platformId = inject(PLATFORM_ID);
   #recordAudioService = inject(RecordAudioService);
   #toaster = inject(ToasterService);
