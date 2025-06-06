@@ -22,6 +22,7 @@ export class TranscriptionLanguageSelectorComponent {
     { name: 'No transcription', value: null },
     { name: 'English', value: 'en-US' },
     { name: 'Swedish', value: 'sv-SE' },
+    { name: 'Spanish', value: 'es-ES' },
   ];
 
   onLanguageChange($event: string | null) {

@@ -3,7 +3,7 @@ export interface Language {
   value: SupportedLanguageCode | null;
 }
 
-export const supportedLanguageCodes = ['en-US', 'sv-SE'] as const;
+export const supportedLanguageCodes = ['en-US', 'sv-SE', 'es-ES'] as const;
 export type SupportedLanguageCode = (typeof supportedLanguageCodes)[number];
 
 export function getSupportedLanguageCode(

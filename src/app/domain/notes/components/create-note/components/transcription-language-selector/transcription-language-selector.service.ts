@@ -9,7 +9,9 @@ export class TranscriptionLanguageSelectorService {
   #platformId = inject(PLATFORM_ID);
   storeSelectedLanguage(selectedLanguageStr: string | null) {
     const selectedLanguage = getSupportedLanguageCode(selectedLanguageStr);
-    localStorage.setItem('selectedLanguage', selectedLanguage || '');
+    if (selectedLanguage) {
+      localStorage.setItem('selectedLanguage', selectedLanguage);
+    }
   }
 
   getSelectedLanguage(): string | null {
