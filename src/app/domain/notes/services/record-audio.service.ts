@@ -27,6 +27,19 @@ export class RecordAudioService implements OnDestroy {
   readonly recordingState = signal<RecorderState>(RECORDER_STATE.IDLE);
   readonly audioBlob = signal<Blob | null>(null);
   readonly transcriptText = signal('');
+  readonly recordLabel = computed(() => {
+    switch (this.recordingState()) {
+      case RECORDER_STATE.STARTING:
+        return 'Starting...';
+      case RECORDER_STATE.RECORDING:
+        return 'Recording...';
+      case RECORDER_STATE.BLOCKED:
+        return 'Please enable microphone access';
+      default:
+        if (this.audioBlob()) return 'Recording complete. Save or clear.';
+        return 'Click to start recording';
+    }
+  });
 
   // Private state
   private audioUrl?: string;

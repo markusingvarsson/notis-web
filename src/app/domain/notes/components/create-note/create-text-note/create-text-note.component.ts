@@ -1,4 +1,4 @@
-import { Component, computed, inject, output, signal } from '@angular/core';
+import { Component, inject, output, signal } from '@angular/core';
 import { NoteCreated, RECORDER_STATE } from '../../..';
 import { RecordAudioService } from '../../../services/record-audio.service';
 import { RecordButtonComponent } from '../components/record-button/record-button.component';
@@ -18,23 +18,11 @@ export class CreateTextNoteComponent {
 
   readonly recordingState = this.#recordAudioService.recordingState;
   readonly transcriptText = this.#recordAudioService.transcriptText;
+  readonly recordLabel = this.#recordAudioService.recordLabel;
 
   readonly noteName = signal('');
   readonly currentView = signal<'recording' | 'preview'>('recording');
 
-  readonly recordLabel = computed(() => {
-    switch (this.recordingState()) {
-      case RECORDER_STATE.STARTING:
-        return 'Starting...';
-      case RECORDER_STATE.RECORDING:
-        return 'Recording...';
-      case RECORDER_STATE.BLOCKED:
-        return 'Please enable microphone access';
-      default:
-        if (this.transcriptText()) return 'Recording complete. Save or clear.';
-        return 'Click to start recording';
-    }
-  });
   toggleRecording(): void {
     if (this.recordingState() === RECORDER_STATE.BLOCKED) {
       return;

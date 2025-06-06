@@ -1,6 +1,5 @@
 import {
   Component,
-  computed,
   ElementRef,
   inject,
   output,
@@ -27,26 +26,13 @@ export class CreateAudioNoteComponent {
   readonly recordingState = this.#recordAudioService.recordingState;
   readonly audioBlob = this.#recordAudioService.audioBlob;
   readonly audioSrc = this.#recordAudioService.audioSrc;
+  readonly recordLabel = this.#recordAudioService.recordLabel;
 
   readonly audioElementRef =
     viewChild<ElementRef<HTMLAudioElement>>('audioElement');
 
   readonly noteName = signal('');
   readonly currentView = signal<'recording' | 'preview'>('recording');
-
-  readonly recordLabel = computed(() => {
-    switch (this.recordingState()) {
-      case RECORDER_STATE.STARTING:
-        return 'Starting...';
-      case RECORDER_STATE.RECORDING:
-        return 'Recording...';
-      case RECORDER_STATE.BLOCKED:
-        return 'Please enable microphone access';
-      default:
-        if (this.audioBlob()) return 'Recording complete. Save or clear.';
-        return 'Click to start recording';
-    }
-  });
 
   toggleRecording(): void {
     if (this.recordingState() === RECORDER_STATE.BLOCKED) {
