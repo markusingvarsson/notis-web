@@ -77,8 +77,7 @@ export class CreateAudioNoteComponent {
       this.#toaster.error('Please record audio first');
       return;
     }
-    const title =
-      customNoteName || `Audio Note - ${new Date().toLocaleDateString()}`;
+    const title = customNoteName || `Note - ${new Date().toLocaleDateString()}`;
     this.noteCreated.emit({
       type: 'audio',
       title,
