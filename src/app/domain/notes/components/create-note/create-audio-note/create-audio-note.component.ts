@@ -2,6 +2,7 @@ import {
   Component,
   computed,
   inject,
+  input,
   output,
   PLATFORM_ID,
   signal,
@@ -17,7 +18,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import { TranscriptionLanguageSelectorComponent } from '../components/transcription-language-selector/transcription-language-selector.component';
 import { TranscriptionLanguageSelectorService } from '../components/transcription-language-selector/transcription-language-selector.service';
 import { AddTagsInputComponent } from '../components/add-tags-input/add-tags-input.component';
-import { Tag } from '../components/add-tags-input';
+import { CreateTag, Tag } from '../components/add-tags-input';
 
 @Component({
   selector: 'app-create-audio-note',
@@ -51,8 +52,10 @@ export class CreateAudioNoteComponent {
   readonly transcriptText = this.#recordAudioService.transcriptText;
 
   readonly noteCreated = output<NoteCreated>();
+  readonly tagAdded = output<CreateTag>();
   readonly noteName = signal('');
   readonly tags = signal<Record<string, Tag>>({});
+  readonly availableTags = input<Record<string, Tag>>({});
   readonly currentView = signal<'recording' | 'preview'>('recording');
   readonly selectedLanguage = signal<string | null>(
     this.#transcriptionLanguageSelectorService.getSelectedLanguage()

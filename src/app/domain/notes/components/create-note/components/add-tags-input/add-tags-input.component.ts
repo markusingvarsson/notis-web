@@ -1,5 +1,12 @@
-import { Component, computed, model } from '@angular/core';
-import { Tag } from '.';
+import {
+  Component,
+  computed,
+  effect,
+  input,
+  model,
+  output,
+} from '@angular/core';
+import { CreateTag, Tag } from '.';
 import { ButtonComponent } from '../../../../../../components/ui/button/button.component';
 import { FormsModule } from '@angular/forms';
 
@@ -13,15 +20,29 @@ export class AddTagsInputComponent {
   tags = model<Record<string, Tag>>({});
   tagInput = model<string>('');
   tagsAsArray = computed(() => Object.values(this.tags()));
-
   disabled = computed(() => {
     return !this.tagInput() || Boolean(this.tags()[this.tagInput()]);
   });
+  tagAdded = output<CreateTag>();
+  availableTags = input<Record<string, Tag>>({});
 
+  constructor() {
+    effect(() => {
+      console.log(this.availableTags());
+    });
+  }
   addTag() {
+    this.tagAdded.emit({
+      name: this.tagInput(),
+      updatedAt: new Date().toISOString(),
+    });
     this.tags.set({
       ...this.tags(),
-      [this.tagInput()]: { name: this.tagInput(), id: this.tagInput() },
+      [this.tagInput()]: {
+        name: this.tagInput(),
+        id: this.tagInput(),
+        updatedAt: new Date().toISOString(),
+      },
     });
     this.tagInput.set('');
   }

@@ -21,7 +21,11 @@
   } @if (currentView() === 'preview') {
   <!-- Note Name Input -->
   <app-note-name-input [(noteName)]="noteName"></app-note-name-input>
-  <app-add-tags-input [(tags)]="tags"></app-add-tags-input>
+  <app-add-tags-input
+    [(tags)]="tags"
+    (tagAdded)="tagAdded.emit($event)"
+    [availableTags]="availableTags()"
+  ></app-add-tags-input>
   }
   <!-- Preview Area -->
   @if (audioBlob()) {

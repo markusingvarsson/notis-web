@@ -2,6 +2,10 @@ import { Injectable, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID, inject } from '@angular/core';
 import { Note, NoteCreated } from '..';
+import {
+  CreateTag,
+  Tag,
+} from '../components/create-note/components/add-tags-input';
 
 // If there are no stored mime type, use the mime type of the blob.
 // If no mime type of the blob, use the audio/webm as it was the default for the first version of the app.
@@ -18,9 +22,11 @@ const getDefaultMimeType = (blob: Blob | ArrayBuffer) => {
 export class NotesStorageService {
   private dbName = 'notisDB';
   private storeName = 'notes';
+  private tagsStoreName = 'tags';
   private db: IDBDatabase | null = null;
   private notes = signal<Note[]>([]);
-  private version = 1;
+  private tags = signal<Record<string, Tag>>({});
+  private version = 2;
   private platformId = inject(PLATFORM_ID);
 
   constructor() {
@@ -44,12 +50,16 @@ export class NotesStorageService {
     request.onsuccess = (event) => {
       this.db = (event.target as IDBOpenDBRequest).result;
       this.loadNotes();
+      this.loadTags();
     };
 
     request.onupgradeneeded = (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
       if (!db.objectStoreNames.contains(this.storeName)) {
         db.createObjectStore(this.storeName, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(this.tagsStoreName)) {
+        db.createObjectStore(this.tagsStoreName, { keyPath: 'id' });
       }
     };
   }
@@ -60,6 +70,10 @@ export class NotesStorageService {
     const transaction = this.db.transaction(this.storeName, 'readonly');
     const store = transaction.objectStore(this.storeName);
     const request = store.getAll();
+
+    request.onerror = (event) => {
+      console.error('Error loading notes:', event);
+    };
 
     request.onsuccess = () => {
       const rawNotes = request.result;
@@ -85,8 +99,33 @@ export class NotesStorageService {
     };
   }
 
+  private loadTags() {
+    if (!this.db) return;
+
+    const transaction = this.db.transaction(this.tagsStoreName, 'readonly');
+    const store = transaction.objectStore(this.tagsStoreName);
+    const request = store.getAll();
+
+    request.onerror = (event) => {
+      console.error('Error loading tags:', event);
+    };
+
+    request.onsuccess = () => {
+      const tagsResult: Tag[] = request.result;
+      const tagsRecord = tagsResult.reduce((acc, tag) => {
+        acc[tag.id] = tag;
+        return acc;
+      }, {} as Record<string, Tag>);
+      this.tags.set(tagsRecord);
+    };
+  }
+
   getNotes() {
     return this.notes;
+  }
+
+  getTags() {
+    return this.tags;
   }
 
   async addNote(note: Note) {
@@ -142,6 +181,46 @@ export class NotesStorageService {
 
       request.onsuccess = () => {
         this.notes.update((notes) => notes.filter((n) => n.id !== noteId));
+        resolve();
+      };
+
+      request.onerror = () => {
+        reject(request.error);
+      };
+    });
+  }
+
+  async addTagNote(tag: Tag) {
+    if (!this.db) return;
+
+    const transaction = this.db.transaction(this.tagsStoreName, 'readwrite');
+    const store = transaction.objectStore(this.tagsStoreName);
+
+    return new Promise<void>((resolve, reject) => {
+      const request = store.add(tag);
+
+      request.onsuccess = () => {
+        this.tags.update((tags) => ({ ...tags, [tag.id]: tag }));
+        resolve();
+      };
+
+      request.onerror = () => {
+        reject(request.error);
+      };
+    });
+  }
+
+  async updateTagNote(tag: Tag) {
+    if (!this.db) return;
+
+    const transaction = this.db.transaction(this.tagsStoreName, 'readwrite');
+    const store = transaction.objectStore(this.tagsStoreName);
+
+    return new Promise<void>((resolve, reject) => {
+      const request = store.put(tag);
+
+      request.onsuccess = () => {
+        this.tags.update((tags) => ({ ...tags, [tag.id]: tag }));
         resolve();
       };
 
@@ -220,5 +299,19 @@ export class NotesStorageService {
     }
 
     await this.addNote(note);
+  }
+
+  async createTag(tag: CreateTag): Promise<void> {
+    const newTag: Tag = {
+      id: tag.name,
+      name: tag.name,
+      updatedAt: tag.updatedAt,
+    };
+
+    if (this.tags()[tag.name]) {
+      await this.updateTagNote(newTag);
+    } else {
+      await this.addTagNote(newTag);
+    }
   }
 }
