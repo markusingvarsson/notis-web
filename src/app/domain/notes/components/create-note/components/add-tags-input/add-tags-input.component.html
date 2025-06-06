@@ -1,0 +1,22 @@
+<div class="flex flex-col gap-2">
+  <div class="flex flex-col gap-2">
+    <label for="tag-input" class="text-sm text-[var(--tw-border-dark)]">
+      Add tags
+    </label>
+    <input
+      id="tag-input"
+      type="text"
+      class="w-full p-3 border border-[var(--tw-border-light)] rounded-lg bg-[var(--tw-bg-light)] text-[var(--tw-primary-dark)] focus:ring-2 focus:ring-[var(--tw-primary)] focus:border-transparent transition-shadow duration-150 ease-in-out placeholder:text-slate-400"
+      placeholder="e.g.,  meeting, important, todo, personal"
+      [(ngModel)]="tagInput"
+    />
+  </div>
+  <app-button (click)="addTag()">Add Tag</app-button>
+  <div class="flex flex-col gap-2">
+    @for (tag of tags(); track tag.value) {
+    <div class="flex items-center gap-2">
+      <span>{{ tag.name }}</span>
+    </div>
+    }
+  </div>
+</div>

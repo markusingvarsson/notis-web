@@ -16,6 +16,8 @@ import { isPlatformBrowser } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { TranscriptionLanguageSelectorComponent } from '../components/transcription-language-selector/transcription-language-selector.component';
 import { TranscriptionLanguageSelectorService } from '../components/transcription-language-selector/transcription-language-selector.service';
+import { AddTagsInputComponent } from '../components/add-tags-input/add-tags-input.component';
+import { Tag } from '../components/add-tags-input';
 
 @Component({
   selector: 'app-create-audio-note',
@@ -24,6 +26,7 @@ import { TranscriptionLanguageSelectorService } from '../components/transcriptio
     FormsModule,
     NoteNameInputComponent,
     TranscriptionLanguageSelectorComponent,
+    AddTagsInputComponent,
   ],
   templateUrl: './create-audio-note.component.html',
   styleUrl: './create-audio-note.component.scss',
@@ -49,6 +52,7 @@ export class CreateAudioNoteComponent {
 
   readonly noteCreated = output<NoteCreated>();
   readonly noteName = signal('');
+  readonly tags = signal<Tag[]>([]);
   readonly currentView = signal<'recording' | 'preview'>('recording');
   readonly selectedLanguage = signal<string | null>(
     this.#transcriptionLanguageSelectorService.getSelectedLanguage()
