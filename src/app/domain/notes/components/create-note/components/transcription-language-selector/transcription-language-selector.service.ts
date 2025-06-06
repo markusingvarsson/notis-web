@@ -7,17 +7,18 @@ import { getSupportedLanguageCode } from '.';
 })
 export class TranscriptionLanguageSelectorService {
   #platformId = inject(PLATFORM_ID);
-  storeSelectedLanguage(selectedLanguage: 'en-US' | 'sv-SE' | null) {
+  storeSelectedLanguage(selectedLanguageStr: string | null) {
+    const selectedLanguage = getSupportedLanguageCode(selectedLanguageStr);
     localStorage.setItem('selectedLanguage', selectedLanguage || '');
   }
 
-  getSelectedLanguage(): 'en-US' | 'sv-SE' | null {
+  getSelectedLanguage(): string | null {
     if (!isPlatformBrowser(this.#platformId)) {
       return null;
     }
 
-    const unknownSelectedLanguage = localStorage.getItem('selectedLanguage');
-    const selectedLanguage = getSupportedLanguageCode(unknownSelectedLanguage);
+    const selectedLanguageStr = localStorage.getItem('selectedLanguage');
+    const selectedLanguage = getSupportedLanguageCode(selectedLanguageStr);
     return selectedLanguage;
   }
 }

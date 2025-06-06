@@ -24,7 +24,7 @@ export class TranscriptionLanguageSelectorComponent {
     { name: 'Swedish', value: 'sv-SE' },
   ];
 
-  onLanguageChange($event: 'en-US' | 'sv-SE' | null) {
+  onLanguageChange($event: string | null) {
     this.selectedLanguage.set($event);
     this.#transcriptionLanguageSelectorService.storeSelectedLanguage($event);
   }
