@@ -1,7 +1,6 @@
 import {
   AfterViewInit,
   Component,
-  computed,
   ElementRef,
   input,
   output,
@@ -27,7 +26,6 @@ export class NotesFilterComponent implements AfterViewInit {
   readonly clearFilters = output<void>();
 
   /** Helpers */
-  readonly hasTags = computed(() => this.availableTags().length > 0);
   getButtonVariant(tag: string | null) {
     return this.selectedTag() === tag ? 'default' : 'outline';
   }

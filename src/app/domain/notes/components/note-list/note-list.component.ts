@@ -15,7 +15,6 @@ export class NoteListComponent {
   private notesStorage = inject(NotesStorageService);
   private notes = this.notesStorage.getNotes();
   private allTags = this.notesStorage.getTags();
-
   readonly selectedTag = signal<string | null>(null);
 
   readonly availableTags = computed(() => {
@@ -26,6 +25,7 @@ export class NoteListComponent {
       )
       .map((tag) => tag.name);
   });
+  readonly hasTags = computed(() => this.availableTags().length > 0);
 
   readonly filteredNotes = computed(() => {
     const selected = this.selectedTag();
