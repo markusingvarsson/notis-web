@@ -14,14 +14,17 @@ import { NotesFilterComponent } from '../notes-filter/notes-filter.component';
 export class NoteListComponent {
   private notesStorage = inject(NotesStorageService);
   private notes = this.notesStorage.getNotes();
+  private allTags = this.notesStorage.getTags();
 
   readonly selectedTag = signal<string | null>(null);
 
   readonly availableTags = computed(() => {
-    const allTags = this.notes()
-      .flatMap((note) => (note.tags ? Object.values(note.tags) : []))
+    return Object.values(this.allTags())
+      .sort(
+        (a, b) =>
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      )
       .map((tag) => tag.name);
-    return [...new Set(allTags)];
   });
 
   readonly filteredNotes = computed(() => {
