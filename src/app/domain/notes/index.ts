@@ -10,6 +10,7 @@ export interface BaseNote {
   title: string;
   type: NoteType;
   updatedAt: string;
+  tags?: Record<string, NoteTag>;
 }
 
 export interface TextNote extends BaseNote {
@@ -23,7 +24,6 @@ export interface AudioNote extends BaseNote {
   audioMimeType?: string;
   duration: number;
   transcript?: string;
-  tags: Record<string, NoteTag>;
 }
 
 export type Note = TextNote | AudioNote;
@@ -32,6 +32,7 @@ export interface TextNoteCreated {
   type: 'text';
   title: string;
   content: string;
+  tags?: Record<string, Tag>;
 }
 
 export interface AudioNoteCreated {
@@ -40,7 +41,7 @@ export interface AudioNoteCreated {
   audioBlob: Blob;
   audioMimeType: string;
   transcript?: string;
-  tags: Record<string, Tag>;
+  tags?: Record<string, Tag>;
 }
 
 export type NoteCreated = TextNoteCreated | AudioNoteCreated;

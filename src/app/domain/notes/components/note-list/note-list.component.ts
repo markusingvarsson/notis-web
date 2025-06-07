@@ -1,20 +1,56 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { NoteCardComponent } from '../note-card/note-card.component';
 import { NotesStorageService } from '../../services/notes-storage.service';
 import { Note } from '../..';
+import { NotesFilterComponent } from '../notes-filter/notes-filter.component';
 
 @Component({
   selector: 'app-note-list',
   standalone: true,
-  imports: [NoteCardComponent],
+  imports: [NoteCardComponent, NotesFilterComponent],
   templateUrl: './note-list.component.html',
   styleUrl: './note-list.component.scss',
 })
 export class NoteListComponent {
   private notesStorage = inject(NotesStorageService);
-  notes = this.notesStorage.getNotes();
+  private notes = this.notesStorage.getNotes();
+
+  readonly selectedTags = signal<string[]>([]);
+
+  readonly availableTags = computed(() => {
+    const allTags = this.notes()
+      .flatMap((note) => (note.tags ? Object.values(note.tags) : []))
+      .map((tag) => tag.name);
+    return [...new Set(allTags)];
+  });
+
+  readonly filteredNotes = computed(() => {
+    const selected = this.selectedTags();
+    if (selected.length === 0) {
+      return this.notes();
+    }
+    return this.notes().filter((note) => {
+      if (!note.tags) return false;
+      const noteTags = Object.values(note.tags).map((tag) => tag.name);
+      return selected.every((selectedTag) => noteTags.includes(selectedTag));
+    });
+  });
 
   async onDelete(note: Note) {
     await this.notesStorage.deleteNote(note.id);
+  }
+
+  onTagToggle(tag: string) {
+    this.selectedTags.update((tags) => {
+      if (tags.includes(tag)) {
+        return tags.filter((t) => t !== tag);
+      } else {
+        return [...tags, tag];
+      }
+    });
+  }
+
+  onClearFilters() {
+    this.selectedTags.set([]);
   }
 }

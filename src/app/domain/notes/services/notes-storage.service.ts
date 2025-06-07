@@ -311,15 +311,18 @@ export class NotesStorageService {
         duration,
         transcript: noteCreated.transcript,
         updatedAt: new Date().toISOString(),
-        tags: Object.entries(noteCreated.tags).reduce((acc, [tagId, tag]) => {
-          acc[tagId] = {
-            tagId,
-            name: tag.name,
-          };
-          return acc;
-        }, {} as Record<string, NoteTag>),
+        tags: Object.entries(noteCreated.tags ?? {}).reduce(
+          (acc, [tagId, tag]) => {
+            acc[tagId] = {
+              tagId,
+              name: tag.name,
+            };
+            return acc;
+          },
+          {} as Record<string, NoteTag>
+        ),
       };
-      Object.values(noteCreated.tags).forEach((tag) => {
+      Object.values(noteCreated.tags ?? {}).forEach((tag) => {
         this.createTag(tag);
       });
     } else {
