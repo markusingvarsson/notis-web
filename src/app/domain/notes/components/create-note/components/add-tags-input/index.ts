@@ -4,7 +4,7 @@ export interface Tag {
   updatedAt: string;
 }
 
-export interface CreateTag {
+export interface NoteTag {
+  tagId: string;
   name: string;
-  updatedAt: string;
 }

@@ -1,3 +1,8 @@
+import {
+  NoteTag,
+  Tag,
+} from './components/create-note/components/add-tags-input';
+
 export type NoteType = 'text' | 'audio';
 
 export interface BaseNote {
@@ -18,6 +23,7 @@ export interface AudioNote extends BaseNote {
   audioMimeType?: string;
   duration: number;
   transcript?: string;
+  tags: Record<string, NoteTag>;
 }
 
 export type Note = TextNote | AudioNote;
@@ -34,6 +40,7 @@ export interface AudioNoteCreated {
   audioBlob: Blob;
   audioMimeType: string;
   transcript?: string;
+  tags: Record<string, Tag>;
 }
 
 export type NoteCreated = TextNoteCreated | AudioNoteCreated;

@@ -17,7 +17,7 @@
         <option [value]="tag.name"></option>
         }
       </datalist>
-      <app-button (buttonClick)="addTag()" [disabled]="disabled()"
+      <app-button (buttonClick)="addTag(tagInput())" [disabled]="disabled()"
         >Add Tag</app-button
       >
     </div>
@@ -46,10 +46,10 @@
       >
         <span>{{ tag.name }}</span>
         <button
-          (click)="deleteTag(tag)"
+          (click)="addTag(tag.name)"
           class="flex h-4 w-4 items-center justify-center rounded-full bg-gray-500 text-white transition-colors hover:bg-gray-600"
         >
-          &#x1F5D1;
+          +
         </button>
       </div>
       }

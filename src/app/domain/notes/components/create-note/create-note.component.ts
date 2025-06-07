@@ -13,7 +13,7 @@ import { RecordAudioService } from '../../services/record-audio.service';
 import { Router } from '@angular/router';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
 import { CreateAudioNoteComponent } from './create-audio-note/create-audio-note.component';
-import { CreateTag, Tag } from './components/add-tags-input';
+import { Tag } from './components/add-tags-input';
 
 @Component({
   selector: 'app-create-note',
@@ -32,8 +32,6 @@ export class CreateNoteComponent {
   readonly availableTags = input<Record<string, Tag>>({});
 
   readonly noteCreated = output<NoteCreated>();
-  readonly tagAdded = output<CreateTag>();
-  readonly tagDeleted = output<string>();
   readonly recordingState = this.#recordAudioService.recordingState;
   readonly isRecordingDone = this.#recordAudioService.isRecordingDone;
 
@@ -51,13 +49,5 @@ export class CreateNoteComponent {
         });
       }
     });
-  }
-
-  onTagAdded(event: CreateTag) {
-    this.tagAdded.emit(event);
-  }
-
-  onTagDeleted(tagId: string) {
-    this.tagDeleted.emit(tagId);
   }
 }

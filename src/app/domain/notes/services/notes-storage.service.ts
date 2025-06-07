@@ -3,7 +3,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID, inject } from '@angular/core';
 import { Note, NoteCreated } from '..';
 import {
-  CreateTag,
+  NoteTag,
   Tag,
 } from '../components/create-note/components/add-tags-input';
 
@@ -311,7 +311,17 @@ export class NotesStorageService {
         duration,
         transcript: noteCreated.transcript,
         updatedAt: new Date().toISOString(),
+        tags: Object.entries(noteCreated.tags).reduce((acc, [tagId, tag]) => {
+          acc[tagId] = {
+            tagId,
+            name: tag.name,
+          };
+          return acc;
+        }, {} as Record<string, NoteTag>),
       };
+      Object.values(noteCreated.tags).forEach((tag) => {
+        this.createTag(tag);
+      });
     } else {
       note = {
         id: crypto.randomUUID(),
@@ -329,17 +339,12 @@ export class NotesStorageService {
     await this.deleteTagNote(tagId);
   }
 
-  async createTag(tag: CreateTag): Promise<void> {
-    const newTag: Tag = {
-      id: tag.name,
-      name: tag.name,
-      updatedAt: tag.updatedAt,
-    };
-
-    if (this.tags()[tag.name]) {
-      await this.updateTagNote(newTag);
+  async createTag(tag: Tag): Promise<void> {
+    const doesTagExist = Boolean(this.tags()[tag.id]);
+    if (doesTagExist) {
+      await this.updateTagNote(tag);
     } else {
-      await this.addTagNote(newTag);
+      await this.addTagNote(tag);
     }
   }
 }

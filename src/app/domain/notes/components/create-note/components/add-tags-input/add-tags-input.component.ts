@@ -1,14 +1,7 @@
-import {
-  Component,
-  computed,
-  effect,
-  input,
-  model,
-  output,
-} from '@angular/core';
-import { CreateTag, Tag } from '.';
+import { Component, computed, effect, input, model } from '@angular/core';
 import { ButtonComponent } from '../../../../../../components/ui/button/button.component';
 import { FormsModule } from '@angular/forms';
+import { Tag } from '.';
 
 @Component({
   selector: 'app-add-tags-input',
@@ -23,8 +16,6 @@ export class AddTagsInputComponent {
   disabled = computed(() => {
     return !this.tagInput() || Boolean(this.tags()[this.tagInput()]);
   });
-  tagAdded = output<CreateTag>();
-  tagDeleted = output<string>();
   availableTags = input<Record<string, Tag>>({});
   availableTagsAsArray = computed(() => Object.values(this.availableTags()));
 
@@ -33,16 +24,12 @@ export class AddTagsInputComponent {
       console.log(this.availableTags());
     });
   }
-  addTag() {
-    this.tagAdded.emit({
-      name: this.tagInput(),
-      updatedAt: new Date().toISOString(),
-    });
+  addTag(tagStr: string) {
     this.tags.set({
       ...this.tags(),
-      [this.tagInput()]: {
-        name: this.tagInput(),
-        id: this.tagInput(),
+      [tagStr]: {
+        name: tagStr,
+        id: tagStr,
         updatedAt: new Date().toISOString(),
       },
     });
@@ -53,9 +40,5 @@ export class AddTagsInputComponent {
     const newTags = { ...this.tags() };
     delete newTags[tagToRemove.id];
     this.tags.set(newTags);
-  }
-
-  deleteTag(tag: Tag) {
-    this.tagDeleted.emit(tag.id);
   }
 }

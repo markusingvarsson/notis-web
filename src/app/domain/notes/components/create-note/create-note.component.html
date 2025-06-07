@@ -8,8 +8,6 @@
 
     <app-create-audio-note
       (noteCreated)="noteCreated.emit($event)"
-      (tagAdded)="tagAdded.emit($event)"
-      (tagDeleted)="onTagDeleted($event)"
       [availableTags]="availableTags()"
     ></app-create-audio-note>
   </div>
