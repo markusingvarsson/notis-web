@@ -15,7 +15,7 @@ export class NoteListComponent {
   private notesStorage = inject(NotesStorageService);
   private notes = this.notesStorage.getNotes();
 
-  readonly selectedTags = signal<string[]>([]);
+  readonly selectedTag = signal<string | null>(null);
 
   readonly availableTags = computed(() => {
     const allTags = this.notes()
@@ -25,14 +25,14 @@ export class NoteListComponent {
   });
 
   readonly filteredNotes = computed(() => {
-    const selected = this.selectedTags();
-    if (selected.length === 0) {
+    const selected = this.selectedTag();
+    if (selected === null) {
       return this.notes();
     }
     return this.notes().filter((note) => {
       if (!note.tags) return false;
       const noteTags = Object.values(note.tags).map((tag) => tag.name);
-      return selected.every((selectedTag) => noteTags.includes(selectedTag));
+      return noteTags.includes(selected);
     });
   });
 
@@ -41,16 +41,10 @@ export class NoteListComponent {
   }
 
   onTagToggle(tag: string) {
-    this.selectedTags.update((tags) => {
-      if (tags.includes(tag)) {
-        return tags.filter((t) => t !== tag);
-      } else {
-        return [...tags, tag];
-      }
-    });
+    this.selectedTag.update((current) => (current === tag ? null : tag));
   }
 
   onClearFilters() {
-    this.selectedTags.set([]);
+    this.selectedTag.set(null);
   }
 }

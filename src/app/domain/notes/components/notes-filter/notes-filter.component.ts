@@ -9,20 +9,18 @@ import {
   viewChild,
 } from '@angular/core';
 import { ButtonComponent } from '../../../../components/ui/button/button.component';
-import { IconFilterComponent } from '../../../../components/ui/icons/icon-filter/icon-filter.component';
-import { IconXComponent } from '../../../../components/ui/icons/icon-x/icon-x.component';
 
 @Component({
   selector: 'app-notes-filter',
   standalone: true,
-  imports: [ButtonComponent, IconFilterComponent, IconXComponent],
+  imports: [ButtonComponent],
   templateUrl: './notes-filter.component.html',
   styleUrls: ['./notes-filter.component.scss'],
 })
 export class NotesFilterComponent implements AfterViewInit {
   /** Inputs as signals */
   readonly availableTags = input.required<string[]>();
-  readonly selectedTags = input.required<string[]>();
+  readonly selectedTag = input.required<string | null>();
 
   /** Outputs */
   readonly tagToggle = output<string>();
@@ -31,10 +29,7 @@ export class NotesFilterComponent implements AfterViewInit {
   /** Helpers */
   readonly hasTags = computed(() => this.availableTags().length > 0);
   getButtonVariant(tag: string | null) {
-    if (tag === null) {
-      return this.selectedTags().length === 0 ? 'default' : 'outline';
-    }
-    return this.selectedTags().includes(tag) ? 'default' : 'outline';
+    return this.selectedTag() === tag ? 'default' : 'outline';
   }
 
   /** Scroll state */
