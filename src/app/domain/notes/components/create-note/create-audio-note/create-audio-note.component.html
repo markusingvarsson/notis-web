@@ -22,9 +22,10 @@
   <!-- Note Name Input -->
   <app-note-name-input [(noteName)]="noteName"></app-note-name-input>
   <app-add-tags-input
-    [(tags)]="tags"
-    (tagAdded)="tagAdded.emit($event)"
+    (tagAdded)="onTagAdded($event)"
+    (tagDeleted)="onTagDeleted($event)"
     [availableTags]="availableTags()"
+    [(tags)]="tags"
   ></app-add-tags-input>
   }
   <!-- Preview Area -->

@@ -24,7 +24,9 @@ export class AddTagsInputComponent {
     return !this.tagInput() || Boolean(this.tags()[this.tagInput()]);
   });
   tagAdded = output<CreateTag>();
+  tagDeleted = output<string>();
   availableTags = input<Record<string, Tag>>({});
+  availableTagsAsArray = computed(() => Object.values(this.availableTags()));
 
   constructor() {
     effect(() => {
@@ -51,5 +53,9 @@ export class AddTagsInputComponent {
     const newTags = { ...this.tags() };
     delete newTags[tagToRemove.id];
     this.tags.set(newTags);
+  }
+
+  deleteTag(tag: Tag) {
+    this.tagDeleted.emit(tag.id);
   }
 }

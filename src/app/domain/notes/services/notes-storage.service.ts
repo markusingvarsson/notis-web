@@ -230,6 +230,30 @@ export class NotesStorageService {
     });
   }
 
+  async deleteTagNote(tagId: string) {
+    if (!this.db) return;
+
+    const transaction = this.db.transaction(this.tagsStoreName, 'readwrite');
+    const store = transaction.objectStore(this.tagsStoreName);
+
+    return new Promise<void>((resolve, reject) => {
+      const request = store.delete(tagId);
+
+      request.onsuccess = () => {
+        this.tags.update((tags) => {
+          const newTags = { ...tags };
+          delete newTags[tagId];
+          return newTags;
+        });
+        resolve();
+      };
+
+      request.onerror = () => {
+        reject(request.error);
+      };
+    });
+  }
+
   private async getAudioDuration(audioBlob: Blob): Promise<number> {
     return new Promise((resolve) => {
       const audio = new Audio();
@@ -299,6 +323,10 @@ export class NotesStorageService {
     }
 
     await this.addNote(note);
+  }
+
+  async deleteTag(tagId: string): Promise<void> {
+    await this.deleteTagNote(tagId);
   }
 
   async createTag(tag: CreateTag): Promise<void> {

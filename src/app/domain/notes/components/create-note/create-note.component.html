@@ -1,16 +1,15 @@
 <!-- File: src/app/domain/notes/components/create-note/create-note.component.html -->
-<div class="max-w-2xl mx-auto">
-  <div
-    class="bg-gradient-to-br from-[var(--tw-bg-light)] to-[var(--tw-bg)] rounded-2xl shadow-lg border border-[var(--tw-border-light)] overflow-hidden"
-  >
+<div class="p-4 md:p-6">
+  <div class="mx-auto max-w-2xl">
     <app-page-header
-      [title]="!isRecordingDone() ? 'Create a new note' : 'Save your note'"
-      [subtitle]="!isRecordingDone() ? 'Record your thoughts with voice' : ''"
+      title="Create a new note"
+      description="Choose the type of note you want to create and fill in the details."
     ></app-page-header>
 
     <app-create-audio-note
       (noteCreated)="noteCreated.emit($event)"
       (tagAdded)="tagAdded.emit($event)"
+      (tagDeleted)="onTagDeleted($event)"
       [availableTags]="availableTags()"
     ></app-create-audio-note>
   </div>

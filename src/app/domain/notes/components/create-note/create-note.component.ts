@@ -33,6 +33,7 @@ export class CreateNoteComponent {
 
   readonly noteCreated = output<NoteCreated>();
   readonly tagAdded = output<CreateTag>();
+  readonly tagDeleted = output<string>();
   readonly recordingState = this.#recordAudioService.recordingState;
   readonly isRecordingDone = this.#recordAudioService.isRecordingDone;
 
@@ -50,5 +51,13 @@ export class CreateNoteComponent {
         });
       }
     });
+  }
+
+  onTagAdded(event: CreateTag) {
+    this.tagAdded.emit(event);
+  }
+
+  onTagDeleted(tagId: string) {
+    this.tagDeleted.emit(tagId);
   }
 }

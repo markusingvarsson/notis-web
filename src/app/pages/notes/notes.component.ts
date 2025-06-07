@@ -26,4 +26,8 @@ export class NotesComponent {
   onCreateTag(event: CreateTag) {
     this.notesStorageService.createTag(event);
   }
+
+  onDeleteTag(tagId: string) {
+    this.notesStorageService.deleteTag(tagId);
+  }
 }
