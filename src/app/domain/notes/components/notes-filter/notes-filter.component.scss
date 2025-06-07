@@ -3,11 +3,24 @@
 }
 
 .tag-container {
-  /* Hide scrollbar for a cleaner look */
+  /* Hide scrollbar by default */
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
   &::-webkit-scrollbar {
     display: none; /* Chrome, Safari, and Opera */
+  }
+
+  /* Show scrollbar on desktop */
+  @media (hover: hover) and (pointer: fine) {
+    scrollbar-width: auto; /* Firefox */
+    &::-webkit-scrollbar {
+      display: block; /* Chrome, Safari, and Opera */
+      height: 8px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 4px;
+    }
   }
 }
 
