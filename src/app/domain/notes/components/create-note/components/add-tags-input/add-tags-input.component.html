@@ -11,6 +11,9 @@
         class="w-full p-3 border border-[var(--tw-border-light)] rounded-lg bg-[var(--tw-bg-light)] text-[var(--tw-primary-dark)] focus:ring-2 focus:ring-[var(--tw-primary)] focus:border-transparent transition-shadow duration-150 ease-in-out placeholder:text-slate-400"
         placeholder="e.g.,  meeting, important, todo, personal"
         [(ngModel)]="currentTag"
+        maxlength="25"
+        (keydown.enter)="addTag(currentTag()); $event.preventDefault()"
+        (keydown.escape)="currentTag.set('')"
       />
       <datalist id="tags">
         @for (tag of availableTagsAsArray(); track tag.id) {
@@ -32,7 +35,7 @@
         (click)="removeTag(tag)"
         class="flex h-4 w-4 items-center justify-center rounded-full bg-white text-black bg-opacity-20 transition-colors hover:bg-opacity-30"
       >
-        x
+        -
       </button>
     </div>
     }
@@ -40,7 +43,7 @@
   <div class="mt-4">
     <h3 class="text-sm text-[var(--tw-border-dark)]">Available tags</h3>
     <div class="mt-2 flex flex-wrap gap-2">
-      @for (tag of availableTagsAsArray(); track tag.id) {
+      @for (tag of topThreeMostRecentlyUsedTags(); track tag.id) {
       <div
         class="flex items-center gap-2 rounded-full bg-gray-200 px-3 py-1 text-sm text-gray-800"
       >

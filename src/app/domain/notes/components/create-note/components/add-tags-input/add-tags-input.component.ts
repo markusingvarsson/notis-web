@@ -22,6 +22,14 @@ export class AddTagsInputComponent {
       (tag) => !this.noteTags()[tag.id]
     );
   });
+  topThreeMostRecentlyUsedTags = computed(() => {
+    return this.availableTagsAsArray()
+      .sort(
+        (a, b) =>
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      )
+      .slice(0, 3);
+  });
 
   constructor() {
     effect(() => {
@@ -29,6 +37,8 @@ export class AddTagsInputComponent {
     });
   }
   addTag(tagStr: string) {
+    if (!tagStr) return;
+
     this.noteTags.set({
       ...this.noteTags(),
       [tagStr]: {
