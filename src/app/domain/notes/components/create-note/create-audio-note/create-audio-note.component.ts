@@ -53,7 +53,7 @@ export class CreateAudioNoteComponent {
 
   readonly noteCreated = output<NoteCreated>();
   readonly noteName = signal('');
-  readonly tags = signal<Record<string, Tag>>({});
+  readonly noteTags = signal<Record<string, Tag>>({});
   readonly availableTags = input<Record<string, Tag>>({});
   readonly currentView = signal<'recording' | 'preview'>('recording');
   readonly selectedLanguage = signal<string | null>(
@@ -100,7 +100,7 @@ export class CreateAudioNoteComponent {
       audioBlob: blob,
       audioMimeType: blob.type,
       transcript: this.transcriptText(),
-      tags: this.tags(),
+      tags: this.noteTags(),
     });
 
     this.clearRecording();
@@ -109,7 +109,7 @@ export class CreateAudioNoteComponent {
   clearRecording(): void {
     this.#recordAudioService.clearRecording();
     this.noteName.set('');
-    this.tags.set({});
+    this.noteTags.set({});
     this.currentView.set('recording');
   }
 }

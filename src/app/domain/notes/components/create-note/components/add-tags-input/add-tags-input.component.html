@@ -10,20 +10,20 @@
         list="tags"
         class="w-full p-3 border border-[var(--tw-border-light)] rounded-lg bg-[var(--tw-bg-light)] text-[var(--tw-primary-dark)] focus:ring-2 focus:ring-[var(--tw-primary)] focus:border-transparent transition-shadow duration-150 ease-in-out placeholder:text-slate-400"
         placeholder="e.g.,  meeting, important, todo, personal"
-        [(ngModel)]="tagInput"
+        [(ngModel)]="currentTag"
       />
       <datalist id="tags">
         @for (tag of availableTagsAsArray(); track tag.id) {
         <option [value]="tag.name"></option>
         }
       </datalist>
-      <app-button (buttonClick)="addTag(tagInput())" [disabled]="disabled()"
+      <app-button (buttonClick)="addTag(currentTag())" [disabled]="disabled()"
         >Add Tag</app-button
       >
     </div>
   </div>
   <div class="mt-2 flex flex-wrap gap-2">
-    @for (tag of tagsAsArray(); track tag.id) {
+    @for (tag of noteTagsAsArray(); track tag.id) {
     <div
       class="flex items-center gap-2 rounded-full bg-[var(--tw-primary)] px-3 py-1 text-sm text-white"
     >

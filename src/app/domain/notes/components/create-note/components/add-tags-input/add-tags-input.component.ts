@@ -10,14 +10,18 @@ import { Tag } from '.';
   styleUrl: './add-tags-input.component.scss',
 })
 export class AddTagsInputComponent {
-  tags = model<Record<string, Tag>>({});
-  tagInput = model<string>('');
-  tagsAsArray = computed(() => Object.values(this.tags()));
+  noteTags = model<Record<string, Tag>>({});
+  noteTagsAsArray = computed(() => Object.values(this.noteTags()));
+  currentTag = model<string>('');
   disabled = computed(() => {
-    return !this.tagInput() || Boolean(this.tags()[this.tagInput()]);
+    return !this.currentTag() || Boolean(this.noteTags()[this.currentTag()]);
   });
   availableTags = input<Record<string, Tag>>({});
-  availableTagsAsArray = computed(() => Object.values(this.availableTags()));
+  availableTagsAsArray = computed(() => {
+    return Object.values(this.availableTags()).filter(
+      (tag) => !this.noteTags()[tag.id]
+    );
+  });
 
   constructor() {
     effect(() => {
@@ -25,20 +29,20 @@ export class AddTagsInputComponent {
     });
   }
   addTag(tagStr: string) {
-    this.tags.set({
-      ...this.tags(),
+    this.noteTags.set({
+      ...this.noteTags(),
       [tagStr]: {
         name: tagStr,
         id: tagStr,
         updatedAt: new Date().toISOString(),
       },
     });
-    this.tagInput.set('');
+    this.currentTag.set('');
   }
 
   removeTag(tagToRemove: Tag) {
-    const newTags = { ...this.tags() };
+    const newTags = { ...this.noteTags() };
     delete newTags[tagToRemove.id];
-    this.tags.set(newTags);
+    this.noteTags.set(newTags);
   }
 }
