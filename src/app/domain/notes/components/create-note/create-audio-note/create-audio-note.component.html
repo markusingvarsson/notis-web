@@ -1,68 +1,73 @@
-<div class="p-6 space-y-6">
-  @if (currentView() === 'recording') {
-  <!-- Language Selector -->
-  @if (hasSpeechRecognition()) {
-  <app-transcription-language-selector
-    [(selectedLanguage)]="selectedLanguage"
-    [disabled]="isRecording()"
-  ></app-transcription-language-selector>
-  }
-  <!-- Record Button -->
-  <div class="flex flex-col items-center space-y-6">
-    <app-record-button
-      [state]="recordingState()"
-      [ariaLabelInput]="recordLabel()"
-      (buttonClick)="toggleRecording()"
-    ></app-record-button>
-    <p class="text-center text-sm text-[var(--tw-border-dark)]">
-      {{ recordLabel() }}
-    </p>
-  </div>
-  } @if (currentView() === 'preview') {
-  <!-- Note Name Input -->
-  <app-note-name-input [(noteName)]="noteName"></app-note-name-input>
-  <app-add-tags-input
-    [availableTags]="availableTags()"
-    [(noteTags)]="noteTags"
-  ></app-add-tags-input>
-  }
-  <!-- Preview Area -->
-  @if (audioBlob()) {
-  <div class="space-y-2">
-    <h3 class="text-sm font-semibold text-[var(--tw-primary-dark)]">
-      Audio Preview
-    </h3>
-    <div
-      class="bg-[var(--tw-bg-light)] rounded-lg p-4 border border-[var(--tw-border-light)]"
-    >
-      <audio
-        #audioElement
-        [src]="audioSrc()"
-        controls
-        preload="auto"
-        class="w-full"
-      ></audio>
-    </div>
-  </div>
-  } @if (transcriptText()) {
-  <div class="space-y-2">
-    <h3 class="text-sm font-semibold text-[var(--tw-primary-dark)]">
-      Transcript
-    </h3>
-    <div
-      class="bg-[var(--tw-bg-light)] rounded-lg p-4 border border-[var(--tw-border-light)]"
-    >
-      <p class="text-sm text-[var(--tw-primary-dark)]">
-        {{ transcriptText() }}
+<div
+  class="max-h-[80vh] flex flex-col bg-[var(--tw-bg)] rounded-xl overflow-hidden"
+>
+  <div class="p-6 space-y-6 overflow-y-auto flex-1">
+    @if (currentView() === 'recording') {
+    <!-- Language Selector -->
+    @if (hasSpeechRecognition()) {
+    <app-transcription-language-selector
+      [(selectedLanguage)]="selectedLanguage"
+      [disabled]="isRecording()"
+    ></app-transcription-language-selector>
+    }
+    <!-- Record Button -->
+    <div class="flex flex-col items-center space-y-6">
+      <app-record-button
+        [state]="recordingState()"
+        [ariaLabelInput]="recordLabel()"
+        (buttonClick)="toggleRecording()"
+      ></app-record-button>
+      <p class="text-center text-sm text-[var(--tw-border-dark)]">
+        {{ recordLabel() }}
       </p>
     </div>
+    } @if (currentView() === 'preview') {
+    <!-- Note Name Input -->
+    <app-note-name-input [(noteName)]="noteName"></app-note-name-input>
+    <app-add-tags-input
+      [availableTags]="availableTags()"
+      [(noteTags)]="noteTags"
+    ></app-add-tags-input>
+    }
+    <!-- Preview Area -->
+    @if (audioBlob()) {
+    <div class="space-y-2">
+      <h3 class="text-sm font-semibold text-[var(--tw-primary-dark)]">
+        Audio Preview
+      </h3>
+      <div
+        class="bg-[var(--tw-bg-light)] rounded-lg p-4 border border-[var(--tw-border-light)]"
+      >
+        <div class="flex items-center gap-3">
+          <audio
+            #audioElement
+            [src]="audioSrc()"
+            controls
+            preload="auto"
+            class="w-full"
+          ></audio>
+        </div>
+      </div>
+    </div>
+    } @if (transcriptText()) {
+    <div class="space-y-2">
+      <h3 class="text-sm font-semibold text-[var(--tw-primary-dark)]">
+        Transcript:
+      </h3>
+      <div
+        class="bg-[var(--tw-bg-light)] rounded-lg p-4 border border-[var(--tw-border-light)]"
+      >
+        <p class="text-sm text-[var(--tw-primary-dark)]">
+          {{ transcriptText() }}
+        </p>
+      </div>
+    </div>
+    }
   </div>
-  }
 
-  <!-- Action Buttons -->
   @if (audioBlob()) {
   <div
-    class="flex gap-3 justify-end pt-4 border-t border-[var(--tw-border-light)]"
+    class="flex-shrink-0 bg-[var(--tw-bg)] px-6 py-4 border-t border-[var(--tw-border-light)] flex gap-3 justify-end z-10"
   >
     <button
       (click)="clearRecording()"
@@ -70,6 +75,7 @@
     >
       Clear
     </button>
+
     <button
       (click)="handleSave()"
       class="inline-flex items-center gap-2 px-4 py-2 bg-[var(--tw-primary)] hover:bg-[var(--tw-primary-light)] text-white rounded-lg text-sm font-medium transition-colors duration-150 ease-in-out disabled:opacity-50 disabled:cursor-not-allowed"
