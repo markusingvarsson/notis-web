@@ -1,61 +1,81 @@
-<div class="flex flex-col gap-2">
-  <div class="flex flex-col gap-2 w-full">
-    <label for="tag-input" class="text-sm text-[var(--tw-border-dark)]">
-      Add tags
-    </label>
-    <div class="flex items-center gap-2">
-      <input
-        id="tag-input"
-        type="text"
-        list="tags"
-        class="w-full p-3 border border-[var(--tw-border-light)] rounded-lg bg-[var(--tw-bg-light)] text-[var(--tw-primary-dark)] focus:ring-2 focus:ring-[var(--tw-primary)] focus:border-transparent transition-shadow duration-150 ease-in-out placeholder:text-slate-400"
-        placeholder="e.g.,  meeting, important, todo, personal"
-        [(ngModel)]="currentTag"
-        maxlength="25"
-        (keydown.enter)="addTag(currentTag()); $event.preventDefault()"
-        (keydown.escape)="currentTag.set('')"
-      />
-      <datalist id="tags">
-        @for (tag of availableTagsAsArray(); track tag.id) {
-        <option [value]="tag.name"></option>
-        }
-      </datalist>
-      <app-button (buttonClick)="addTag(currentTag())" [disabled]="disabled()"
-        >Add Tag</app-button
-      >
-    </div>
-  </div>
-  <div class="mt-2 flex flex-wrap gap-2">
-    @for (tag of noteTagsAsArray(); track tag.id) {
-    <div
-      class="flex items-center gap-2 rounded-full bg-[var(--tw-primary)] px-3 py-1 text-sm text-white"
+<div
+  class="flex flex-col p-3 rounded-lg bg-[var(--tw-bg-light)] border border-[var(--tw-border-light)]"
+>
+  <div
+    (click)="toggleExpanded()"
+    (keydown.enter)="toggleExpanded()"
+    tabindex="0"
+    role="button"
+    class="flex items-center justify-between cursor-pointer"
+  >
+    <span class="text-sm font-medium text-[var(--tw-primary-dark)]"
+      >Add Tags</span
     >
-      <span>{{ tag.name }}</span>
-      <button
-        (click)="removeTag(tag)"
-        class="flex h-4 w-4 items-center justify-center rounded-full bg-white text-black bg-opacity-20 transition-colors hover:bg-opacity-30"
-      >
-        -
-      </button>
-    </div>
-    }
+    <span class="text-lg text-[var(--tw-primary-dark)]">{{
+      isExpanded() ? "-" : "+"
+    }}</span>
   </div>
-  <div class="mt-4">
-    <h3 class="text-sm text-[var(--tw-border-dark)]">Available tags</h3>
+
+  @if (isExpanded()) {
+  <div
+    class="flex flex-col gap-2 mt-4 border-t border-[var(--tw-border-light)] pt-4"
+  >
+    <div class="flex flex-col gap-2 w-full">
+      <div class="flex items-center gap-2">
+        <input
+          id="tag-input"
+          type="text"
+          list="tags"
+          class="w-full p-3 border border-[var(--tw-border-light)] rounded-lg bg-[var(--tw-bg-light)] text-[var(--tw-primary-dark)] focus:ring-2 focus:ring-[var(--tw-primary)] focus:border-transparent transition-shadow duration-150 ease-in-out placeholder:text-slate-400"
+          placeholder="e.g.,  meeting, important, todo, personal"
+          [(ngModel)]="currentTag"
+          maxlength="25"
+          (keydown.enter)="addTag(currentTag()); $event.preventDefault()"
+          (keydown.escape)="currentTag.set('')"
+        />
+        <datalist id="tags">
+          @for (tag of availableTagsAsArray(); track tag.id) {
+          <option [value]="tag.name"></option>
+          }
+        </datalist>
+        <app-button (buttonClick)="addTag(currentTag())" [disabled]="disabled()"
+          >Add Tag</app-button
+        >
+      </div>
+    </div>
     <div class="mt-2 flex flex-wrap gap-2">
-      @for (tag of topThreeMostRecentlyUsedTags(); track tag.id) {
+      @for (tag of noteTagsAsArray(); track tag.id) {
       <div
-        class="flex items-center gap-2 rounded-full bg-gray-200 px-3 py-1 text-sm text-gray-800"
+        class="flex items-center gap-2 rounded-full bg-[var(--tw-primary)] px-3 py-1 text-sm text-white"
       >
         <span>{{ tag.name }}</span>
         <button
-          (click)="addTag(tag.name)"
-          class="flex h-4 w-4 items-center justify-center rounded-full bg-gray-500 text-white transition-colors hover:bg-gray-600"
+          (click)="removeTag(tag)"
+          class="flex h-4 w-4 items-center justify-center rounded-full bg-white text-black bg-opacity-20 transition-colors hover:bg-opacity-30"
         >
-          +
+          -
         </button>
       </div>
       }
     </div>
+    <div class="mt-4">
+      <h3 class="text-sm text-[var(--tw-border-dark)]">Available tags</h3>
+      <div class="mt-2 flex flex-wrap gap-2">
+        @for (tag of topThreeMostRecentlyUsedTags(); track tag.id) {
+        <div
+          class="flex items-center gap-2 rounded-full bg-gray-200 px-3 py-1 text-sm text-gray-800"
+        >
+          <span>{{ tag.name }}</span>
+          <button
+            (click)="addTag(tag.name)"
+            class="flex h-4 w-4 items-center justify-center rounded-full bg-gray-500 text-white transition-colors hover:bg-gray-600"
+          >
+            +
+          </button>
+        </div>
+        }
+      </div>
+    </div>
   </div>
+  }
 </div>

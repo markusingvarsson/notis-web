@@ -28,10 +28,13 @@
   }
   <!-- Preview Area -->
   @if (audioBlob()) {
-  <div
-    class="bg-[var(--tw-bg)] rounded-xl p-4 border border-[var(--tw-border-light)]"
-  >
-    <div class="flex items-center gap-3">
+  <div class="space-y-2">
+    <h3 class="text-sm font-semibold text-[var(--tw-primary-dark)]">
+      Audio Preview
+    </h3>
+    <div
+      class="bg-[var(--tw-bg-light)] rounded-lg p-4 border border-[var(--tw-border-light)]"
+    >
       <audio
         #audioElement
         [src]="audioSrc()"
@@ -44,13 +47,15 @@
   } @if (transcriptText()) {
   <div class="space-y-2">
     <h3 class="text-sm font-semibold text-[var(--tw-primary-dark)]">
-      Transcript:
+      Transcript
     </h3>
-    <p
-      class="text-sm text-[var(--tw-primary-dark)] bg-[var(--tw-bg-light)] border border-[var(--tw-border-light)] rounded-lg p-3"
+    <div
+      class="bg-[var(--tw-bg-light)] rounded-lg p-4 border border-[var(--tw-border-light)]"
     >
-      {{ transcriptText() }}
-    </p>
+      <p class="text-sm text-[var(--tw-primary-dark)]">
+        {{ transcriptText() }}
+      </p>
+    </div>
   </div>
   }
 

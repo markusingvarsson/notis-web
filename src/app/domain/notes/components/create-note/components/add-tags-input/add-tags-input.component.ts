@@ -1,4 +1,11 @@
-import { Component, computed, effect, input, model } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  input,
+  model,
+  signal,
+} from '@angular/core';
 import { ButtonComponent } from '../../../../../../components/ui/button/button.component';
 import { FormsModule } from '@angular/forms';
 import { Tag } from '.';
@@ -10,6 +17,7 @@ import { Tag } from '.';
   styleUrl: './add-tags-input.component.scss',
 })
 export class AddTagsInputComponent {
+  isExpanded = signal(false);
   noteTags = model<Record<string, Tag>>({});
   noteTagsAsArray = computed(() => Object.values(this.noteTags()));
   currentTag = model<string>('');
@@ -54,5 +62,9 @@ export class AddTagsInputComponent {
     const newTags = { ...this.noteTags() };
     delete newTags[tagToRemove.id];
     this.noteTags.set(newTags);
+  }
+
+  toggleExpanded() {
+    this.isExpanded.set(!this.isExpanded());
   }
 }
