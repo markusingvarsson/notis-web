@@ -33,9 +33,8 @@ export class NoteListComponent {
       return this.notes();
     }
     return this.notes().filter((note) => {
-      if (!note.tags) return false;
-      const noteTags = Object.values(note.tags).map((tag) => tag.name);
-      return noteTags.includes(selected);
+      if (!note.tagIds) return false;
+      return note.tagIds.includes(selected);
     });
   });
 

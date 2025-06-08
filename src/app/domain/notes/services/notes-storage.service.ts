@@ -2,10 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID, inject } from '@angular/core';
 import { Note, NoteCreated } from '..';
-import {
-  NoteTag,
-  Tag,
-} from '../components/create-note/components/add-tags-input';
+import { Tag } from '../components/create-note/components/add-tags-input';
 import { ToasterService } from '../../../components/ui/toaster/toaster.service';
 
 // If there are no stored mime type, use the mime type of the blob.
@@ -54,23 +51,30 @@ export class NotesStorageService {
 
     request.onsuccess = (event) => {
       this.db = (event.target as IDBOpenDBRequest).result;
-      Promise.all([this.loadNotes(), this.loadTags()]).then(() => {
-        this.scheduleCleanupUnusedTags();
-      });
+      this.loadNotes();
+      this.loadTags();
     };
 
     request.onupgradeneeded = (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
-      const oldV = event.oldVersion;
+      const oldVersion = event.oldVersion;
+      const transaction = (event.target as IDBOpenDBRequest).transaction;
 
-      if (oldV < 1) {
-        if (!db.objectStoreNames.contains(this.storeName)) {
-          db.createObjectStore(this.storeName, { keyPath: 'id' });
-        }
+      if (oldVersion < 1) {
+        // Version 1: Create the initial notes store
+        db.createObjectStore(this.storeName, { keyPath: 'id' });
       }
-      if (oldV < 2) {
+
+      if (oldVersion < 2) {
+        // Version 2: Add the tags store and index the notes store
         if (!db.objectStoreNames.contains(this.tagsStoreName)) {
           db.createObjectStore(this.tagsStoreName, { keyPath: 'id' });
+        }
+        if (transaction) {
+          const noteStore = transaction.objectStore(this.storeName);
+          if (!noteStore.indexNames.contains('tagIds')) {
+            noteStore.createIndex('tagIds', 'tagIds', { multiEntry: true });
+          }
         }
       }
     };
@@ -205,14 +209,21 @@ export class NotesStorageService {
   async deleteNote(noteId: string) {
     if (!this.db) return;
 
-    const transaction = this.db.transaction(this.storeName, 'readwrite');
-    const store = transaction.objectStore(this.storeName);
+    const noteToDelete = this.notes().find((n) => n.id === noteId);
+    const tagsToCheck = noteToDelete?.tagIds ?? [];
+
+    const transaction = this.db.transaction(
+      [this.storeName, this.tagsStoreName],
+      'readwrite'
+    );
+    const noteStore = transaction.objectStore(this.storeName);
 
     return new Promise<void>((resolve, reject) => {
-      const request = store.delete(noteId);
+      const request = noteStore.delete(noteId);
 
       request.onsuccess = () => {
         this.notes.update((notes) => notes.filter((n) => n.id !== noteId));
+        this.cleanupTags(tagsToCheck);
         resolve();
       };
 
@@ -223,6 +234,23 @@ export class NotesStorageService {
         reject(request.error);
       };
     });
+  }
+
+  private async cleanupTags(tagIds: string[]) {
+    if (!this.db || tagIds.length === 0) return;
+
+    for (const tagId of tagIds) {
+      const transaction = this.db.transaction(this.storeName, 'readonly');
+      const store = transaction.objectStore(this.storeName);
+      const index = store.index('tagIds');
+      const request = index.count(tagId);
+
+      request.onsuccess = () => {
+        if (request.result === 0) {
+          this.deleteTagNote(tagId);
+        }
+      };
+    }
   }
 
   async addTagNote(tag: Tag) {
@@ -340,6 +368,9 @@ export class NotesStorageService {
 
       const duration = await this.getAudioDuration(noteCreated.audioBlob);
 
+      const noteTags = noteCreated.tags ?? {};
+      const tagIds = Object.keys(noteTags);
+
       note = {
         id: crypto.randomUUID(),
         title: noteCreated.title,
@@ -349,18 +380,9 @@ export class NotesStorageService {
         duration,
         transcript: noteCreated.transcript,
         updatedAt: new Date().toISOString(),
-        tags: Object.entries(noteCreated.tags ?? {}).reduce(
-          (acc, [tagId, tag]) => {
-            acc[tagId] = {
-              tagId,
-              name: tag.name,
-            };
-            return acc;
-          },
-          {} as Record<string, NoteTag>
-        ),
+        tagIds: tagIds,
       };
-      Object.values(noteCreated.tags ?? {}).forEach((tag) => {
+      Object.values(noteTags).forEach((tag) => {
         this.createTag(tag);
       });
     } else {
@@ -387,71 +409,5 @@ export class NotesStorageService {
     } else {
       await this.addTagNote(tag);
     }
-  }
-
-  private scheduleCleanupUnusedTags(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      if ('requestIdleCallback' in window) {
-        window.requestIdleCallback(() => this.cleanupUnusedTags());
-      } else {
-        // Fallback for browsers that don't support requestIdleCallback
-        setTimeout(() => this.cleanupUnusedTags(), 500);
-      }
-    }
-  }
-
-  private cleanupUnusedTags(): void {
-    const notes = this.notes();
-    const allTags = this.tags();
-
-    if (Object.keys(allTags).length === 0) {
-      return;
-    }
-
-    const usedTagIds = new Set<string>();
-    notes.forEach((note) => {
-      if (note.tags) {
-        Object.keys(note.tags).forEach((tagId) => usedTagIds.add(tagId));
-      }
-    });
-
-    const unusedTagIds = Object.keys(allTags).filter(
-      (tagId) => !usedTagIds.has(tagId)
-    );
-
-    if (unusedTagIds.length === 0) {
-      return;
-    }
-
-    if (!this.db) {
-      return;
-    }
-
-    console.log(`Found ${unusedTagIds.length} unused tags. Cleaning up...`);
-
-    const transaction = this.db.transaction(this.tagsStoreName, 'readwrite');
-    const store = transaction.objectStore(this.tagsStoreName);
-
-    unusedTagIds.forEach((tagId) => {
-      store.delete(tagId);
-    });
-
-    transaction.oncomplete = () => {
-      this.tags.update((currentTags) => {
-        const newTags = { ...currentTags };
-        unusedTagIds.forEach((tagId) => {
-          delete newTags[tagId];
-        });
-        return newTags;
-      });
-      console.log('Cleanup of unused tags completed.');
-    };
-
-    transaction.onerror = () => {
-      console.error('Error during tag cleanup:', transaction.error);
-      this.#toastService.error(
-        'Error during tag cleanup. Please contact support.'
-      );
-    };
   }
 }

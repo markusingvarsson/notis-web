@@ -3,8 +3,3 @@ export interface Tag {
   id: string;
   updatedAt: string;
 }
-
-export interface NoteTag {
-  tagId: string;
-  name: string;
-}

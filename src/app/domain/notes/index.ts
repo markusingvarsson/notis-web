@@ -1,7 +1,4 @@
-import {
-  NoteTag,
-  Tag,
-} from './components/create-note/components/add-tags-input';
+import { Tag } from './components/create-note/components/add-tags-input';
 
 export type NoteType = 'text' | 'audio';
 
@@ -10,7 +7,7 @@ export interface BaseNote {
   title: string;
   type: NoteType;
   updatedAt: string;
-  tags?: Record<string, NoteTag>;
+  tagIds?: string[];
 }
 
 export interface TextNote extends BaseNote {
