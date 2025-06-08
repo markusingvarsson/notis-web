@@ -1,26 +1,12 @@
+@if (isExpanded()) {
 <div
   class="flex flex-col p-3 rounded-lg bg-[var(--tw-bg-light)] border border-[var(--tw-border-light)]"
 >
-  <div
-    (click)="toggleExpanded()"
-    (keydown.enter)="toggleExpanded()"
-    tabindex="0"
-    role="button"
-    class="flex items-center justify-between cursor-pointer"
-  >
-    <span class="text-sm font-medium text-[var(--tw-primary-dark)]"
-      >Add Tags</span
-    >
-    <span class="text-lg text-[var(--tw-primary-dark)]">{{
-      isExpanded() ? "-" : "+"
-    }}</span>
-  </div>
-
-  @if (isExpanded()) {
-  <div
-    class="flex flex-col gap-2 mt-4 border-t border-[var(--tw-border-light)] pt-4"
-  >
+  <div class="flex flex-col gap-2">
     <div class="flex flex-col gap-2 w-full">
+      <label for="tag-input" class="text-sm text-[var(--tw-border-dark)]">
+        Add tags
+      </label>
       <div class="flex items-center gap-2">
         <input
           id="tag-input"
@@ -77,5 +63,13 @@
       </div>
     </div>
   </div>
-  }
 </div>
+} @else {
+<button
+  (click)="toggleExpanded()"
+  class="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-[var(--tw-border-light)] px-4 py-2 text-sm font-medium text-[var(--tw-border-dark)] transition-colors duration-150 ease-in-out hover:bg-[var(--tw-bg-light)]"
+>
+  <i class="ri-price-tag-3-line"></i>
+  <span>Add Tags</span>
+</button>
+}
