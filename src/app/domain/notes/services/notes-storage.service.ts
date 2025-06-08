@@ -49,8 +49,9 @@ export class NotesStorageService {
 
     request.onsuccess = (event) => {
       this.db = (event.target as IDBOpenDBRequest).result;
-      this.loadNotes();
-      this.loadTags();
+      Promise.all([this.loadNotes(), this.loadTags()]).then(() => {
+        this.scheduleCleanupUnusedTags();
+      });
     };
 
     request.onupgradeneeded = (event) => {
@@ -64,60 +65,72 @@ export class NotesStorageService {
     };
   }
 
-  private loadNotes() {
-    if (!this.db) return;
+  private loadNotes(): Promise<void> {
+    if (!this.db) {
+      return Promise.resolve();
+    }
 
-    const transaction = this.db.transaction(this.storeName, 'readonly');
-    const store = transaction.objectStore(this.storeName);
-    const request = store.getAll();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(this.storeName, 'readonly');
+      const store = transaction.objectStore(this.storeName);
+      const request = store.getAll();
 
-    request.onerror = (event) => {
-      console.error('Error loading notes:', event);
-    };
+      request.onerror = (event) => {
+        console.error('Error loading notes:', event);
+        reject(request.error);
+      };
 
-    request.onsuccess = () => {
-      const rawNotes = request.result;
+      request.onsuccess = () => {
+        const rawNotes = request.result;
 
-      const notes = rawNotes.map(
-        (
-          note: Omit<Note, 'audioBlob'> & {
-            audioBlob?: Blob | ArrayBuffer;
-            audioMimeType?: string;
+        const notes = rawNotes.map(
+          (
+            note: Omit<Note, 'audioBlob'> & {
+              audioBlob?: Blob | ArrayBuffer;
+              audioMimeType?: string;
+            }
+          ) => {
+            // Reconstruct audioBlob with MIME type if needed
+            if (note.type === 'audio' && note.audioBlob) {
+              const mimeType =
+                note.audioMimeType ?? getDefaultMimeType(note.audioBlob);
+              note.audioBlob = new Blob([note.audioBlob], { type: mimeType });
+            }
+            return note as Note;
           }
-        ) => {
-          // Reconstruct audioBlob with MIME type if needed
-          if (note.type === 'audio' && note.audioBlob) {
-            const mimeType =
-              note.audioMimeType ?? getDefaultMimeType(note.audioBlob);
-            note.audioBlob = new Blob([note.audioBlob], { type: mimeType });
-          }
-          return note as Note;
-        }
-      );
-      notes.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
-      this.notes.set(notes);
-    };
+        );
+        notes.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+        this.notes.set(notes);
+        resolve();
+      };
+    });
   }
 
-  private loadTags() {
-    if (!this.db) return;
+  private loadTags(): Promise<void> {
+    if (!this.db) {
+      return Promise.resolve();
+    }
 
-    const transaction = this.db.transaction(this.tagsStoreName, 'readonly');
-    const store = transaction.objectStore(this.tagsStoreName);
-    const request = store.getAll();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(this.tagsStoreName, 'readonly');
+      const store = transaction.objectStore(this.tagsStoreName);
+      const request = store.getAll();
 
-    request.onerror = (event) => {
-      console.error('Error loading tags:', event);
-    };
+      request.onerror = (event) => {
+        console.error('Error loading tags:', event);
+        reject(request.error);
+      };
 
-    request.onsuccess = () => {
-      const tagsResult: Tag[] = request.result;
-      const tagsRecord = tagsResult.reduce((acc, tag) => {
-        acc[tag.id] = tag;
-        return acc;
-      }, {} as Record<string, Tag>);
-      this.tags.set(tagsRecord);
-    };
+      request.onsuccess = () => {
+        const tagsResult: Tag[] = request.result;
+        const tagsRecord = tagsResult.reduce((acc, tag) => {
+          acc[tag.id] = tag;
+          return acc;
+        }, {} as Record<string, Tag>);
+        this.tags.set(tagsRecord);
+        resolve();
+      };
+    });
   }
 
   getNotes() {
@@ -349,5 +362,68 @@ export class NotesStorageService {
     } else {
       await this.addTagNote(tag);
     }
+  }
+
+  private scheduleCleanupUnusedTags(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(() => this.cleanupUnusedTags());
+      } else {
+        // Fallback for browsers that don't support requestIdleCallback
+        setTimeout(() => this.cleanupUnusedTags(), 500);
+      }
+    }
+  }
+
+  private cleanupUnusedTags(): void {
+    const notes = this.notes();
+    const allTags = this.tags();
+
+    if (Object.keys(allTags).length === 0) {
+      return;
+    }
+
+    const usedTagIds = new Set<string>();
+    notes.forEach((note) => {
+      if (note.tags) {
+        Object.keys(note.tags).forEach((tagId) => usedTagIds.add(tagId));
+      }
+    });
+
+    const unusedTagIds = Object.keys(allTags).filter(
+      (tagId) => !usedTagIds.has(tagId)
+    );
+
+    if (unusedTagIds.length === 0) {
+      return;
+    }
+
+    if (!this.db) {
+      return;
+    }
+
+    console.log(`Found ${unusedTagIds.length} unused tags. Cleaning up...`);
+
+    const transaction = this.db.transaction(this.tagsStoreName, 'readwrite');
+    const store = transaction.objectStore(this.tagsStoreName);
+
+    unusedTagIds.forEach((tagId) => {
+      store.delete(tagId);
+    });
+
+    transaction.oncomplete = () => {
+      this.tags.update((currentTags) => {
+        const newTags = { ...currentTags };
+        unusedTagIds.forEach((tagId) => {
+          delete newTags[tagId];
+        });
+        return newTags;
+      });
+      console.log('Cleanup of unused tags completed.');
+    };
+
+    transaction.onerror = () => {
+      console.error('Error during tag cleanup:', transaction.error);
+    };
   }
 }
