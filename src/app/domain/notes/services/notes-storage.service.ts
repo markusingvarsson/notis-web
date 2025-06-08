@@ -6,6 +6,7 @@ import {
   NoteTag,
   Tag,
 } from '../components/create-note/components/add-tags-input';
+import { ToasterService } from '../../../components/ui/toaster/toaster.service';
 
 // If there are no stored mime type, use the mime type of the blob.
 // If no mime type of the blob, use the audio/webm as it was the default for the first version of the app.
@@ -28,6 +29,7 @@ export class NotesStorageService {
   private tags = signal<Record<string, Tag>>({});
   private version = 2;
   private platformId = inject(PLATFORM_ID);
+  #toastService = inject(ToasterService);
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
@@ -45,6 +47,9 @@ export class NotesStorageService {
 
     request.onerror = (event) => {
       console.error('Error opening IndexedDB:', event);
+      this.#toastService.error(
+        'Error opening IndexedDB. Please contact support.'
+      );
     };
 
     request.onsuccess = (event) => {
@@ -56,11 +61,17 @@ export class NotesStorageService {
 
     request.onupgradeneeded = (event) => {
       const db = (event.target as IDBOpenDBRequest).result;
-      if (!db.objectStoreNames.contains(this.storeName)) {
-        db.createObjectStore(this.storeName, { keyPath: 'id' });
+      const oldV = event.oldVersion;
+
+      if (oldV < 1) {
+        if (!db.objectStoreNames.contains(this.storeName)) {
+          db.createObjectStore(this.storeName, { keyPath: 'id' });
+        }
       }
-      if (!db.objectStoreNames.contains(this.tagsStoreName)) {
-        db.createObjectStore(this.tagsStoreName, { keyPath: 'id' });
+      if (oldV < 2) {
+        if (!db.objectStoreNames.contains(this.tagsStoreName)) {
+          db.createObjectStore(this.tagsStoreName, { keyPath: 'id' });
+        }
       }
     };
   }
@@ -77,6 +88,9 @@ export class NotesStorageService {
 
       request.onerror = (event) => {
         console.error('Error loading notes:', event);
+        this.#toastService.error(
+          'Error loading notes. Please contact support.'
+        );
         reject(request.error);
       };
 
@@ -118,6 +132,7 @@ export class NotesStorageService {
 
       request.onerror = (event) => {
         console.error('Error loading tags:', event);
+        this.#toastService.error('Error loading tags. Please contact support.');
         reject(request.error);
       };
 
@@ -156,6 +171,7 @@ export class NotesStorageService {
       };
 
       request.onerror = () => {
+        this.#toastService.error('Error adding note. Please contact support.');
         reject(request.error);
       };
     });
@@ -178,6 +194,9 @@ export class NotesStorageService {
       };
 
       request.onerror = () => {
+        this.#toastService.error(
+          'Error updating note. Please contact support.'
+        );
         reject(request.error);
       };
     });
@@ -198,6 +217,9 @@ export class NotesStorageService {
       };
 
       request.onerror = () => {
+        this.#toastService.error(
+          'Error deleting note. Please contact support.'
+        );
         reject(request.error);
       };
     });
@@ -218,6 +240,7 @@ export class NotesStorageService {
       };
 
       request.onerror = () => {
+        this.#toastService.error('Error adding tag. Please contact support.');
         reject(request.error);
       };
     });
@@ -238,6 +261,7 @@ export class NotesStorageService {
       };
 
       request.onerror = () => {
+        this.#toastService.error('Error updating tag. Please contact support.');
         reject(request.error);
       };
     });
@@ -262,6 +286,7 @@ export class NotesStorageService {
       };
 
       request.onerror = () => {
+        this.#toastService.error('Error deleting tag. Please contact support.');
         reject(request.error);
       };
     });
@@ -424,6 +449,9 @@ export class NotesStorageService {
 
     transaction.onerror = () => {
       console.error('Error during tag cleanup:', transaction.error);
+      this.#toastService.error(
+        'Error during tag cleanup. Please contact support.'
+      );
     };
   }
 }
