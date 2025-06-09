@@ -431,8 +431,9 @@ export class NotesStorageService {
         // 3. Clear localStorage
         localStorage.clear();
 
-        // 4. Reset the notes signal
+        // 4. Reset the notes and tags signals
         this.notes.set([]);
+        this.tags.set({});
 
         // 5. Re-initialize the DB for future use
         this.initDB();
