@@ -1,3 +1,14 @@
 :host {
     display: block;
+    transition: max-height 0.3s ease-out, opacity 0.3s ease-out, transform 0.3s ease-out;
+    max-height: 500px; /* Set to a value larger than the card's height */
+    overflow: hidden;
+}
+
+:host(.deleting) {
+    max-height: 0;
+    opacity: 0;
+    transform: scale(0.9);
+    margin-bottom: 0; /* Adjust margins as needed */
+    pointer-events: none; /* Prevent interaction during animation */
 }

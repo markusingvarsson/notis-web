@@ -32,12 +32,15 @@ import { TrashIconComponent } from '../../../../components/ui/icons/trash-icon/t
   ],
   templateUrl: './note-card.component.html',
   styleUrls: ['./note-card.component.scss'],
+  host: {
+    '[class.deleting]': 'isDeleting()',
+  },
 })
 export class NoteCardComponent implements OnDestroy {
   /** Inputs as signals */
   readonly note = input.required<Note>();
+  readonly isDeleting = input(false);
   readonly delete = output<Note>();
-
   /** Audio playback state */
   readonly audioElementRef = viewChild<ElementRef<HTMLAudioElement>>('audio');
   private audioUrl?: string;

@@ -1,8 +1,11 @@
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 p-4">
+<div
+  class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 p-4"
+>
   @for (note of notes(); track note.id) {
-    <app-note-card
-      [note]="note"
-      (delete)="onDelete($event)"
-    ></app-note-card>
+  <app-note-card
+    [note]="note"
+    [isDeleting]="nextDeletingNoteId() === note.id"
+    (delete)="onDelete($event)"
+  ></app-note-card>
   }
-</div> 
+</div>
