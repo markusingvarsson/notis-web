@@ -11,4 +11,11 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/notes/notes.component').then((mod) => mod.NotesComponent),
   },
+  {
+    path: 'settings',
+    loadComponent: () =>
+      import('./pages/settings/settings.component').then(
+        (mod) => mod.SettingsComponent
+      ),
+  },
 ];
