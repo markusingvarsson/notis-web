@@ -1,12 +1,11 @@
 import { Component, inject, signal } from '@angular/core';
 import { PagelayoutComponent } from '../../components/layout/pagelayout/pagelayout.component';
-import { CardComponent } from '../../components/ui/card/card.component';
 import { ButtonComponent } from '../../components/ui/button/button.component';
+import { CardComponent } from '../../components/ui/card/card.component';
 import { CardHeaderComponent } from '../../components/ui/card/components/card-header/card-header.component';
 import { CardTitleComponent } from '../../components/ui/card/components/card-title/card-title.component';
 import { CardDescriptionComponent } from '../../components/ui/card/components/card-description/card-description.component';
 import { CardContentComponent } from '../../components/ui/card/components/card-content/card-content.component';
-import { CardFooterComponent } from '../../components/ui/card/components/card-footer/card-footer.component';
 import { ToasterService } from '../../components/ui/toaster/toaster.service';
 import { TranscriptionLanguageSelectorComponent } from '../../domain/notes/components/create-note/components/transcription-language-selector/transcription-language-selector.component';
 import { TranscriptionLanguageSelectorService } from '../../domain/notes/components/create-note/components/transcription-language-selector/transcription-language-selector.service';
@@ -20,13 +19,12 @@ import { ConfirmationModalService } from '../../components/ui/confirmation-modal
   standalone: true,
   imports: [
     PagelayoutComponent,
-    CardComponent,
     ButtonComponent,
+    CardComponent,
     CardHeaderComponent,
     CardTitleComponent,
     CardDescriptionComponent,
     CardContentComponent,
-    CardFooterComponent,
     TranscriptionLanguageSelectorComponent,
     IconChevronDownComponent,
     IconChevronRightComponent,

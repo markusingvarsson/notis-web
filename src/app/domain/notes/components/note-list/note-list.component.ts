@@ -18,6 +18,7 @@ export class NoteListComponent {
   private notes = this.notesStorage.getNotes();
   private allTags = this.notesStorage.getTags();
   readonly selectedTag = signal<string | null>(null);
+  readonly nextDeletingNoteId = signal<string | null>(null);
 
   readonly availableTags = computed(() => {
     return Object.values(this.allTags())
@@ -49,7 +50,12 @@ export class NoteListComponent {
     });
 
     if (confirmed) {
-      await this.notesStorage.deleteNote(note.id);
+      this.nextDeletingNoteId.set(note.id);
+
+      setTimeout(async () => {
+        await this.notesStorage.deleteNote(note.id);
+        this.nextDeletingNoteId.set(null);
+      }, 300);
     }
   }
 
