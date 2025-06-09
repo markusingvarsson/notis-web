@@ -410,4 +410,53 @@ export class NotesStorageService {
       await this.addTagNote(tag);
     }
   }
+
+  async clearAllData(): Promise<void> {
+    if (!isPlatformBrowser(this.platformId)) {
+      console.warn('Cannot clear data in a non-browser environment.');
+      return;
+    }
+
+    // 1. Close the database connection if it's open
+    if (this.db) {
+      this.db.close();
+      this.db = null; // Important to nullify after closing
+    }
+
+    // 2. Delete the IndexedDB database
+    return new Promise((resolve, reject) => {
+      const deleteRequest = window.indexedDB.deleteDatabase(this.dbName);
+
+      deleteRequest.onsuccess = () => {
+        // 3. Clear localStorage
+        localStorage.clear();
+
+        // 4. Reset the notes signal
+        this.notes.set([]);
+
+        // 5. Re-initialize the DB for future use
+        this.initDB();
+
+        resolve();
+      };
+
+      deleteRequest.onerror = (event) => {
+        console.error('Error deleting database:', event);
+        // Attempt to re-initialize the DB anyway
+        this.initDB();
+        reject(deleteRequest.error);
+      };
+
+      deleteRequest.onblocked = (event) => {
+        console.warn('Database deletion is blocked:', event);
+        // This can happen if another tab has the DB open.
+        // We'll reject and let the user know.
+        reject(
+          new Error(
+            'Could not delete database. Please close other tabs with this app open and try again.'
+          )
+        );
+      };
+    });
+  }
 }

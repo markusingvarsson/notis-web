@@ -1,0 +1,120 @@
+<app-pagelayout
+  pageTitle="Settings"
+  pageDescription="Manage your account settings and preferences."
+  pageKeywords="settings, account, preferences"
+  [fullWidth]="false"
+>
+  <div class="mb-4 p-4 sm:px-0">
+    <h1 class="text-3xl font-bold tracking-tight">Settings</h1>
+    <p class="text-muted-foreground mt-2">Customize your app experience</p>
+  </div>
+
+  <div class="space-y-4">
+    <!-- Transcription Settings -->
+    <div class="border border-[var(--tw-border-light)] rounded-lg bg-card">
+      <!-- Desktop: Always expanded -->
+      <div class="hidden sm:block">
+        <app-card-header>
+          <app-card-title>Transcription</app-card-title>
+          <app-card-description
+            >Choose the language for audio transcription.</app-card-description
+          >
+        </app-card-header>
+        <app-card-content>
+          <app-transcription-language-selector
+            [(selectedLanguage)]="selectedLanguage"
+            [disabled]="false"
+          ></app-transcription-language-selector>
+        </app-card-content>
+      </div>
+
+      <!-- Mobile: Accordion -->
+      <div class="sm:hidden">
+        <button
+          type="button"
+          (click)="toggleSection('transcription')"
+          class="w-full p-4 flex items-center justify-between text-left transition-colors rounded-t-lg"
+          [class.rounded-b-lg]="!expandedSections().has('transcription')"
+          [attr.aria-expanded]="expandedSections().has('transcription')"
+        >
+          <h2 class="text-lg font-semibold">Transcription</h2>
+          @if (expandedSections().has('transcription')) {
+          <app-icon-chevron-down />
+          } @else {
+          <app-icon-chevron-right />
+          }
+        </button>
+
+        @if (expandedSections().has('transcription')) {
+        <div class="p-4 border-t border-[var(--tw-border-light)]">
+          <app-transcription-language-selector
+            [(selectedLanguage)]="selectedLanguage"
+            [disabled]="false"
+          ></app-transcription-language-selector>
+        </div>
+        }
+      </div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="border border-[var(--tw-border-light)] rounded-lg bg-card">
+      <!-- Desktop: Always expanded -->
+      <div class="hidden sm:block">
+        <app-card-header>
+          <app-card-title>Danger Zone</app-card-title>
+          <app-card-description>Manage your local data.</app-card-description>
+        </app-card-header>
+        <app-card-content class="p-4 flex justify-between items-center">
+          <div>
+            <h3 class="font-semibold">Clear Local Data</h3>
+            <p class="text-sm text-muted-foreground">
+              Permanently delete all your data from this browser.
+            </p>
+          </div>
+          <app-button
+            size="lg"
+            variant="destructive"
+            (buttonClick)="requestClearData()"
+          >
+            Clear All Data
+          </app-button>
+        </app-card-content>
+      </div>
+
+      <!-- Mobile: Accordion -->
+      <div class="sm:hidden">
+        <button
+          type="button"
+          (click)="toggleSection('danger')"
+          class="w-full p-4 flex items-center justify-between text-left transition-colors rounded-t-lg"
+          [class.rounded-b-lg]="!expandedSections().has('danger')"
+          [attr.aria-expanded]="expandedSections().has('danger')"
+        >
+          <h2 class="text-lg font-semibold">Danger Zone</h2>
+          @if (expandedSections().has('danger')) {
+          <app-icon-chevron-down />
+          } @else {
+          <app-icon-chevron-right />
+          }
+        </button>
+
+        @if (expandedSections().has('danger')) {
+        <div class="p-4 border-t border-[var(--tw-border-light)]">
+          <p class="text-sm text-muted-foreground mb-4">
+            Permanently delete all your data from this browser. This action
+            cannot be undone.
+          </p>
+          <app-button
+            class="w-full"
+            size="lg"
+            variant="destructive"
+            (buttonClick)="requestClearData()"
+          >
+            Clear All Data
+          </app-button>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</app-pagelayout>

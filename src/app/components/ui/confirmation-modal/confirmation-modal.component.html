@@ -1,0 +1,31 @@
+<div
+  role="dialog"
+  aria-modal="true"
+  (click)="onCancel()"
+  (keydown.escape)="onCancel()"
+  tabindex="-1"
+  class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center"
+>
+  <div
+    role="document"
+    (click)="$event.stopPropagation()"
+    (keydown)="$event.stopPropagation()"
+    class="bg-[var(--tw-bg-light)] text-[var(--tw-primary-dark)] rounded-lg shadow-xl p-6 w-full max-w-sm sm:max-w-md mx-4"
+  >
+    <h2 class="text-xl font-bold mb-2">
+      {{ title() }}
+    </h2>
+    <p class="text-muted-foreground mb-6">{{ message() }}</p>
+    <div class="flex justify-end gap-3">
+      <app-button variant="outline" (buttonClick)="onCancel()">
+        Cancel
+      </app-button>
+      <app-button
+        [variant]="confirmButtonVariant()"
+        (buttonClick)="onConfirm()"
+      >
+        {{ confirmButtonText() }}
+      </app-button>
+    </div>
+  </div>
+</div>
