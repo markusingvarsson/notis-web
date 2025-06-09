@@ -10,9 +10,9 @@
     role="document"
     (click)="$event.stopPropagation()"
     (keydown)="$event.stopPropagation()"
-    class="bg-card rounded-lg shadow-xl p-6 w-full max-w-sm sm:max-w-md mx-4"
+    class="bg-[var(--tw-bg-light)] text-[var(--tw-primary-dark)] rounded-lg shadow-xl p-6 w-full max-w-sm sm:max-w-md mx-4"
   >
-    <h2 class="text-xl font-bold text-card-foreground mb-2">
+    <h2 class="text-xl font-bold mb-2">
       {{ title() }}
     </h2>
     <p class="text-muted-foreground mb-6">{{ message() }}</p>

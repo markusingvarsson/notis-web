@@ -13,7 +13,7 @@ import { TranscriptionLanguageSelectorService } from '../../domain/notes/compone
 import { IconChevronDownComponent } from '../../components/ui/icons/icon-chevron-down/icon-chevron-down.component';
 import { IconChevronRightComponent } from '../../components/ui/icons/icon-chevron-right/icon-chevron-right.component';
 import { NotesStorageService } from '../../domain/notes/services/notes-storage.service';
-import { ConfirmationModalComponent } from '../../components/ui/confirmation-modal/confirmation-modal.component';
+import { ConfirmationModalService } from '../../components/ui/confirmation-modal/confirmation-modal.service';
 
 @Component({
   selector: 'app-settings',
@@ -30,7 +30,6 @@ import { ConfirmationModalComponent } from '../../components/ui/confirmation-mod
     TranscriptionLanguageSelectorComponent,
     IconChevronDownComponent,
     IconChevronRightComponent,
-    ConfirmationModalComponent,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
@@ -41,12 +40,12 @@ export class SettingsComponent {
     TranscriptionLanguageSelectorService
   );
   #notesStorageService = inject(NotesStorageService);
+  #confirmationModalService = inject(ConfirmationModalService);
 
   readonly selectedLanguage = signal<string | null>(
     this.#transcriptionLanguageSelectorService.getSelectedLanguage()
   );
   readonly expandedSections = signal<Set<string>>(new Set(['account']));
-  readonly showDeleteConfirmation = signal(false);
 
   toggleSection(section: string): void {
     this.expandedSections.update((sections) => {
@@ -60,24 +59,25 @@ export class SettingsComponent {
     });
   }
 
-  requestClearData(): void {
-    this.showDeleteConfirmation.set(true);
-  }
+  async requestClearData(): Promise<void> {
+    const confirmed = await this.#confirmationModalService.open({
+      title: 'Are you absolutely sure?',
+      message:
+        'This action cannot be undone. This will permanently delete all your notes and settings from this device.',
+      confirmButtonText: 'Yes, delete everything',
+      confirmButtonVariant: 'destructive',
+    });
 
-  async onClearDataConfirm(): Promise<void> {
-    this.showDeleteConfirmation.set(false);
-    try {
-      await this.#notesStorageService.clearAllData();
-      this.toasterService.success('All data has been cleared.');
-    } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : 'Failed to clear data.';
-      this.toasterService.error(errorMessage);
-      console.error('Error clearing data:', error);
+    if (confirmed) {
+      try {
+        await this.#notesStorageService.clearAllData();
+        this.toasterService.success('All data has been cleared.');
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Failed to clear data.';
+        this.toasterService.error(errorMessage);
+        console.error('Error clearing data:', error);
+      }
     }
-  }
-
-  onClearDataCancel(): void {
-    this.showDeleteConfirmation.set(false);
   }
 }
