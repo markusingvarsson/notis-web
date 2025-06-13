@@ -1,0 +1,22 @@
+<section
+  class="py-24 bg-[var(--tw-bg)] border-b border-[var(--tw-border-light)] shadow-lg rounded-lg mx-4 my-8"
+>
+  <div class="container mx-auto px-6">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-4xl font-bold text-[var(--tw-primary-dark)]">
+        Ready to Start Taking Beautiful Notes?
+      </h2>
+      <p class="mt-6 text-xl text-[var(--tw-text-muted)]">
+        Experience a smarter way to capture your thoughts.
+      </p>
+      <app-button
+        [link]="'/notes'"
+        [queryParams]="{ CTA: 'true' }"
+        class="mt-8"
+      >
+        <app-microphone-icon [size]="16" />
+        <span class="font-bold text-white">Get Started</span>
+      </app-button>
+    </div>
+  </div>
+</section>
