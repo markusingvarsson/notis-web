@@ -168,6 +168,9 @@ export class NotesStorageService {
       this.notes.update((notes) => notes.filter((n) => n.id !== noteId));
     } catch (error) {
       this.#toastService.error('Error deleting note. Please contact support.');
+      this.#toastService.error(
+        error instanceof Error ? error.message : 'Unknown error'
+      );
       throw error;
     }
   }
