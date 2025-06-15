@@ -5,6 +5,7 @@ export interface BaseNote {
   title: string;
   type: NoteType;
   updatedAt: string;
+  tagIds?: string[];
 }
 
 export interface TextNote extends BaseNote {
@@ -15,7 +16,7 @@ export interface TextNote extends BaseNote {
 export interface AudioNote extends BaseNote {
   type: 'audio';
   audioBlob: Blob;
-  audioMimeType?: string;
+  audioMimeType: string;
   duration: number;
   transcript?: string;
 }
@@ -26,6 +27,7 @@ export interface TextNoteCreated {
   type: 'text';
   title: string;
   content: string;
+  tags?: Record<string, Tag>;
 }
 
 export interface AudioNoteCreated {
@@ -34,9 +36,16 @@ export interface AudioNoteCreated {
   audioBlob: Blob;
   audioMimeType: string;
   transcript?: string;
+  tags?: Record<string, Tag>;
 }
 
 export type NoteCreated = TextNoteCreated | AudioNoteCreated;
+
+export interface Tag {
+  name: string;
+  id: string;
+  updatedAt: string;
+}
 
 export const RECORDER_STATE = {
   IDLE: 'idle',
@@ -51,7 +60,6 @@ export type RecorderState =
 // Interfaces for SpeechRecognition
 export interface SpeechRecognitionEvent extends Event {
   results: SpeechRecognitionResultList;
-  // Add other properties if defined in the original component, e.g., resultIndex
 }
 
 export interface SpeechRecognitionResultList {
@@ -76,11 +84,11 @@ export interface WebkitSpeechRecognition extends EventTarget {
   interimResults: boolean;
   lang: string;
   onresult: (event: SpeechRecognitionEvent) => void;
-  onerror: (event: Event) => void; // Or a more specific error event if available
-  onend?: () => void; // Optional based on usage
+  onerror: (event: Event) => void;
+  onend?: () => void;
   start: () => void;
   stop: () => void;
-  abort: () => void; // Added abort based on usage in cleanup
+  abort: () => void;
 }
 
 // Global declaration for webkitSpeechRecognition

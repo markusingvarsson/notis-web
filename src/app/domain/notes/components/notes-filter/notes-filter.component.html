@@ -1,0 +1,35 @@
+<div class="relative mb-6">
+  @if (showLeftFade()) {
+  <div class="absolute left-0 top-0 w-8 h-full tag-scroll-fade-left z-10"></div>
+  }
+  <div class="bg-gray-50 rounded-xl overflow-hidden">
+    <div
+      #tagContainer
+      (scroll)="onScroll()"
+      class="tag-container flex items-center space-x-2 overflow-x-auto py-3 px-2"
+    >
+      <app-button
+        (click)="onClearFilters()"
+        [variant]="getButtonVariant(null)"
+        [className]="'px-4 py-2 text-sm font-medium rounded-full flex-shrink-0'"
+      >
+        All
+      </app-button>
+
+      @for (tag of availableTags(); track tag) {
+      <app-button
+        (click)="onTagToggle(tag)"
+        [variant]="getButtonVariant(tag)"
+        [className]="'px-4 py-2 text-sm font-medium rounded-full flex-shrink-0'"
+      >
+        {{ tag }}
+      </app-button>
+      }
+    </div>
+  </div>
+  @if (showRightFade()) {
+  <div
+    class="absolute right-0 top-0 w-8 h-full tag-scroll-fade-right z-10"
+  ></div>
+  }
+</div>

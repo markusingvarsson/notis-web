@@ -16,8 +16,9 @@ export class NotesComponent {
   private notesStorageService = inject(NotesStorageService);
 
   readonly CTA = input<boolean>(false);
+  readonly availableTags = this.notesStorageService.getTags();
 
   onCreateNote(event: NoteCreated) {
-    this.notesStorageService.createNote(event);
+    this.notesStorageService.addNote(event);
   }
 }

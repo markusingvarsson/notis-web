@@ -1,7 +1,15 @@
+@if (hasTags()) {
+<app-notes-filter
+  [availableTags]="availableTags()"
+  [selectedTag]="selectedTag()"
+  (tagToggle)="onTagToggle($event)"
+  (clearFilters)="onClearFilters()"
+></app-notes-filter>
+}
 <div
   class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 p-4"
 >
-  @for (note of notes(); track note.id) {
+  @for (note of filteredNotes(); track note.id) {
   <app-note-card
     [note]="note"
     [isDeleting]="nextDeletingNoteId() === note.id"

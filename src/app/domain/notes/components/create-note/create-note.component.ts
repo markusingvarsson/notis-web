@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { isPlatformBrowser } from '@angular/common';
-import { NoteCreated, RECORDER_STATE } from '../..';
+import { NoteCreated, RECORDER_STATE, Tag } from '../..';
 import { RecordAudioService } from '../../services/record-audio.service';
 import { Router } from '@angular/router';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
@@ -27,6 +27,8 @@ export class CreateNoteComponent {
   #recordAudioService = inject(RecordAudioService);
   #router = inject(Router);
   readonly CTA = input<boolean>(false);
+  readonly tags = input<Record<string, Tag>>({});
+  readonly availableTags = input<Record<string, Tag>>({});
 
   readonly noteCreated = output<NoteCreated>();
   readonly recordingState = this.#recordAudioService.recordingState;

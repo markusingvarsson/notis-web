@@ -1,0 +1,41 @@
+:host {
+  display: block;
+}
+
+.tag-container {
+  /* Hide scrollbar by default */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, and Opera */
+  }
+
+  /* Show scrollbar on desktop */
+  @media (hover: hover) and (pointer: fine) {
+    scrollbar-width: auto; /* Firefox */
+    &::-webkit-scrollbar {
+      display: block; /* Chrome, Safari, and Opera */
+      height: 8px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 4px;
+    }
+  }
+}
+
+/* 
+  The fade effects use a linear gradient to smoothly transition from the
+  background color to transparent. This creates a visual cue that there 
+  is more content to scroll to. The background color of the gradient 
+  matches the container's background color (bg-gray-50).
+*/
+.tag-scroll-fade-left {
+  background: linear-gradient(to right, #f9fafb, rgba(249, 250, 251, 0));
+  pointer-events: none; /* Allows clicking through the fade effect */
+}
+
+.tag-scroll-fade-right {
+  background: linear-gradient(to left, #f9fafb, rgba(249, 250, 251, 0));
+  pointer-events: none; /* Allows clicking through the fade effect */
+} 

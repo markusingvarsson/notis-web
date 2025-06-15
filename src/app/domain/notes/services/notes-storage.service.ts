@@ -1,27 +1,42 @@
 import { Injectable, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID, inject } from '@angular/core';
-import { Note, NoteCreated } from '..';
+import { Note, NoteCreated, Tag } from '..';
+import { ToasterService } from '../../../components/ui/toaster/toaster.service';
+import {
+  openDB,
+  DBSchema,
+  IDBPDatabase,
+  deleteDB,
+  IDBPTransaction,
+  IDBPObjectStore,
+} from 'idb';
 
-// If there are no stored mime type, use the mime type of the blob.
-// If no mime type of the blob, use the audio/webm as it was the default for the first version of the app.
-const getDefaultMimeType = (blob: Blob | ArrayBuffer) => {
-  if (blob instanceof Blob) {
-    return blob.type;
-  }
-  return 'audio/webm';
-};
+interface NotisDB extends DBSchema {
+  notes: {
+    key: string;
+    value: Note;
+    indexes: {
+      tagIds: string[];
+    };
+  };
+  tags: {
+    key: string;
+    value: Tag;
+  };
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class NotesStorageService {
   private dbName = 'notisDB';
-  private storeName = 'notes';
-  private db: IDBDatabase | null = null;
-  private notes = signal<Note[]>([]);
-  private version = 1;
+  private version = 2;
   private platformId = inject(PLATFORM_ID);
+  #toastService = inject(ToasterService);
+  private db: IDBPDatabase<NotisDB> | null = null;
+  private notes = signal<Note[]>([]);
+  private tags = signal<Record<string, Tag>>({});
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
@@ -29,126 +44,164 @@ export class NotesStorageService {
     }
   }
 
-  private initDB() {
+  private async initDB() {
     if (typeof window === 'undefined' || !window.indexedDB) {
       console.warn('IndexedDB is not available in this environment');
       return;
     }
 
-    const request = window.indexedDB.open(this.dbName, this.version);
+    try {
+      this.db = await openDB<NotisDB>(this.dbName, this.version, {
+        upgrade(db, oldVersion, newVersion, transaction) {
+          if (oldVersion < 1) {
+            // Version 1: Create the initial notes store
+            db.createObjectStore('notes', { keyPath: 'id' });
+          }
 
-    request.onerror = (event) => {
-      console.error('Error opening IndexedDB:', event);
-    };
+          if (oldVersion < 2) {
+            // Version 2: Add the tags store and index the notes store
+            if (!db.objectStoreNames.contains('tags')) {
+              db.createObjectStore('tags', { keyPath: 'id' });
+            }
+            const noteStore = transaction.objectStore('notes');
+            if (!noteStore.indexNames.contains('tagIds')) {
+              noteStore.createIndex('tagIds', 'tagIds', { multiEntry: true });
+            }
+          }
+        },
+      });
 
-    request.onsuccess = (event) => {
-      this.db = (event.target as IDBOpenDBRequest).result;
-      this.loadNotes();
-    };
-
-    request.onupgradeneeded = (event) => {
-      const db = (event.target as IDBOpenDBRequest).result;
-      if (!db.objectStoreNames.contains(this.storeName)) {
-        db.createObjectStore(this.storeName, { keyPath: 'id' });
-      }
-    };
+      await this.loadNotes();
+      await this.loadTags();
+    } catch (error) {
+      console.error('Error opening IndexedDB:', error);
+      this.#toastService.error(
+        'Error opening IndexedDB. Please contact support.'
+      );
+    }
   }
 
-  private loadNotes() {
+  private async loadNotes(): Promise<void> {
     if (!this.db) return;
 
-    const transaction = this.db.transaction(this.storeName, 'readonly');
-    const store = transaction.objectStore(this.storeName);
-    const request = store.getAll();
-
-    request.onsuccess = () => {
-      const rawNotes = request.result;
-
-      const notes = rawNotes.map(
-        (
-          note: Omit<Note, 'audioBlob'> & {
-            audioBlob?: Blob | ArrayBuffer;
-            audioMimeType?: string;
-          }
-        ) => {
-          // Reconstruct audioBlob with MIME type if needed
-          if (note.type === 'audio' && note.audioBlob) {
-            const mimeType =
-              note.audioMimeType ?? getDefaultMimeType(note.audioBlob);
-            note.audioBlob = new Blob([note.audioBlob], { type: mimeType });
-          }
-          return note as Note;
-        }
-      );
+    try {
+      const notes = await this.db.getAll('notes');
       notes.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
       this.notes.set(notes);
-    };
+    } catch (error) {
+      console.error('Error loading notes:', error);
+      this.#toastService.error('Error loading notes. Please contact support.');
+    }
+  }
+
+  private async loadTags(): Promise<void> {
+    if (!this.db) return;
+
+    try {
+      const tagsResult = await this.db.getAll('tags');
+      const tagsRecord = tagsResult.reduce((acc, tag) => {
+        acc[tag.id] = tag;
+        return acc;
+      }, {} as Record<string, Tag>);
+      this.tags.set(tagsRecord);
+    } catch (error) {
+      console.error('Error loading tags:', error);
+      this.#toastService.error('Error loading tags. Please contact support.');
+    }
   }
 
   getNotes() {
     return this.notes;
   }
 
-  async addNote(note: Note) {
-    if (!this.db) return;
-
-    const transaction = this.db.transaction(this.storeName, 'readwrite');
-    const store = transaction.objectStore(this.storeName);
-
-    return new Promise<void>((resolve, reject) => {
-      const request = store.add(note);
-
-      request.onsuccess = () => {
-        this.notes.update((notes) => [note, ...notes]);
-        resolve();
-      };
-
-      request.onerror = () => {
-        reject(request.error);
-      };
-    });
+  getTags() {
+    return this.tags;
   }
 
-  async updateNote(note: Note) {
+  private async updateTag(
+    tx: IDBPTransaction<NotisDB, ('notes' | 'tags')[], 'readwrite'>,
+    tagId: string
+  ): Promise<void> {
     if (!this.db) return;
 
-    const transaction = this.db.transaction(this.storeName, 'readwrite');
-    const store = transaction.objectStore(this.storeName);
-
-    return new Promise<void>((resolve, reject) => {
-      const request = store.put(note);
-
-      request.onsuccess = () => {
-        this.notes.update((notes) =>
-          notes.map((n) => (n.id === note.id ? note : n))
-        );
-        resolve();
+    const tag = this.tags()[tagId];
+    if (tag) {
+      const updatedTag = {
+        ...tag,
+        updatedAt: new Date().toISOString(),
       };
-
-      request.onerror = () => {
-        reject(request.error);
-      };
-    });
+      await tx.objectStore('tags').put(updatedTag);
+      this.tags.update((tags) => ({ ...tags, [tagId]: updatedTag }));
+    }
   }
 
-  async deleteNote(noteId: string) {
+  private async addTag(
+    tx: IDBPTransaction<NotisDB, ('notes' | 'tags')[], 'readwrite'>,
+    tag: Tag
+  ): Promise<void> {
+    if (!this.db) return;
+    await tx.objectStore('tags').add(tag);
+    this.tags.update((tags) => ({ ...tags, [tag.id]: tag }));
+  }
+
+  async deleteNote(noteId: string): Promise<void> {
     if (!this.db) return;
 
-    const transaction = this.db.transaction(this.storeName, 'readwrite');
-    const store = transaction.objectStore(this.storeName);
+    const noteToDelete = this.notes().find((n) => n.id === noteId);
+    const tagsToCheck = noteToDelete?.tagIds ?? [];
 
-    return new Promise<void>((resolve, reject) => {
-      const request = store.delete(noteId);
+    try {
+      const tx = this.db.transaction(['notes', 'tags'], 'readwrite');
+      const notesStore = tx.objectStore('notes');
+      const tagsStore = tx.objectStore('tags');
 
-      request.onsuccess = () => {
-        this.notes.update((notes) => notes.filter((n) => n.id !== noteId));
-        resolve();
-      };
+      // Delete the note
+      await notesStore.delete(noteId);
 
-      request.onerror = () => {
-        reject(request.error);
-      };
-    });
+      // Clean up any orphaned tags
+      await this.cleanupUnusedTags(tagsToCheck, notesStore, tagsStore);
+
+      await tx.done;
+
+      // Update the notes signal after transaction is complete
+      this.notes.update((notes) => notes.filter((n) => n.id !== noteId));
+    } catch (error) {
+      this.#toastService.error('Error deleting note. Please contact support.');
+      this.#toastService.error(
+        error instanceof Error ? error.message : 'Unknown error'
+      );
+      throw error;
+    }
+  }
+
+  private async cleanupUnusedTags(
+    tagsToCheck: string[],
+    notesStore: IDBPObjectStore<
+      NotisDB,
+      ('notes' | 'tags')[],
+      'notes',
+      'readwrite'
+    >,
+    tagsStore: IDBPObjectStore<
+      NotisDB,
+      ('notes' | 'tags')[],
+      'tags',
+      'readwrite'
+    >
+  ) {
+    for (const tagId of tagsToCheck) {
+      const count = await notesStore
+        .index('tagIds')
+        .count(IDBKeyRange.only(tagId));
+      if (count === 0) {
+        await tagsStore.delete(tagId);
+        this.tags.update((tags) => {
+          const newTags = { ...tags };
+          delete newTags[tagId];
+          return newTags;
+        });
+      }
+    }
   }
 
   private async getAudioDuration(audioBlob: Blob): Promise<number> {
@@ -189,7 +242,9 @@ export class NotesStorageService {
     });
   }
 
-  async createNote(noteCreated: NoteCreated): Promise<void> {
+  async addNote(noteCreated: NoteCreated): Promise<void> {
+    if (!this.db) return;
+
     let note: Note;
 
     if (noteCreated.type === 'audio') {
@@ -198,6 +253,8 @@ export class NotesStorageService {
       }
 
       const duration = await this.getAudioDuration(noteCreated.audioBlob);
+      const noteTags = noteCreated.tags ?? {};
+      const tagIds = Object.keys(noteTags);
 
       note = {
         id: crypto.randomUUID(),
@@ -208,6 +265,7 @@ export class NotesStorageService {
         duration,
         transcript: noteCreated.transcript,
         updatedAt: new Date().toISOString(),
+        tagIds: tagIds,
       };
     } else {
       note = {
@@ -219,7 +277,31 @@ export class NotesStorageService {
       };
     }
 
-    await this.addNote(note);
+    try {
+      const tx = this.db.transaction(['notes', 'tags'], 'readwrite');
+      await tx.objectStore('notes').add(note);
+
+      if (note.tagIds?.length) {
+        for (const tagId of note.tagIds) {
+          const doesTagExist = Boolean(this.tags()[tagId]);
+          if (doesTagExist) {
+            await this.updateTag(tx, tagId);
+          } else {
+            await this.addTag(tx, {
+              id: tagId,
+              name: tagId,
+              updatedAt: new Date().toISOString(),
+            });
+          }
+        }
+      }
+
+      await tx.done;
+      this.notes.update((notes) => [note, ...notes]);
+    } catch (error) {
+      this.#toastService.error('Error creating note. Please contact support.');
+      throw error;
+    }
   }
 
   async clearAllData(): Promise<void> {
@@ -231,43 +313,27 @@ export class NotesStorageService {
     // 1. Close the database connection if it's open
     if (this.db) {
       this.db.close();
-      this.db = null; // Important to nullify after closing
+      this.db = null;
     }
 
-    // 2. Delete the IndexedDB database
-    return new Promise((resolve, reject) => {
-      const deleteRequest = window.indexedDB.deleteDatabase(this.dbName);
+    try {
+      // 2. Delete the IndexedDB database
+      await deleteDB(this.dbName);
 
-      deleteRequest.onsuccess = () => {
-        // 3. Clear localStorage
-        localStorage.clear();
+      // 3. Clear localStorage
+      localStorage.clear();
 
-        // 4. Reset the notes signal
-        this.notes.set([]);
+      // 4. Reset the notes and tags signals
+      this.notes.set([]);
+      this.tags.set({});
 
-        // 5. Re-initialize the DB for future use
-        this.initDB();
-
-        resolve();
-      };
-
-      deleteRequest.onerror = (event) => {
-        console.error('Error deleting database:', event);
-        // Attempt to re-initialize the DB anyway
-        this.initDB();
-        reject(deleteRequest.error);
-      };
-
-      deleteRequest.onblocked = (event) => {
-        console.warn('Database deletion is blocked:', event);
-        // This can happen if another tab has the DB open.
-        // We'll reject and let the user know.
-        reject(
-          new Error(
-            'Could not delete database. Please close other tabs with this app open and try again.'
-          )
-        );
-      };
-    });
+      // 5. Re-initialize the DB for future use
+      await this.initDB();
+    } catch (error) {
+      console.error('Error clearing data:', error);
+      // Attempt to re-initialize the DB anyway
+      await this.initDB();
+      throw error;
+    }
   }
 }

@@ -2,11 +2,12 @@ import {
   Component,
   computed,
   inject,
+  input,
   output,
   PLATFORM_ID,
   signal,
 } from '@angular/core';
-import { NoteCreated, RECORDER_STATE } from '../../..';
+import { NoteCreated, RECORDER_STATE, Tag } from '../../..';
 import { RecordAudioService } from '../../../services/record-audio.service';
 import { FormsModule } from '@angular/forms';
 import { RecordButtonComponent } from '../components/record-button/record-button.component';
@@ -16,6 +17,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { TranscriptionLanguageSelectorComponent } from '../components/transcription-language-selector/transcription-language-selector.component';
 import { TranscriptionLanguageSelectorService } from '../components/transcription-language-selector/transcription-language-selector.service';
+import { AddTagsComponent } from '../components/add-tags/add-tags.component';
 
 @Component({
   selector: 'app-create-audio-note',
@@ -24,6 +26,7 @@ import { TranscriptionLanguageSelectorService } from '../components/transcriptio
     FormsModule,
     NoteNameInputComponent,
     TranscriptionLanguageSelectorComponent,
+    AddTagsComponent,
   ],
   templateUrl: './create-audio-note.component.html',
   styleUrl: './create-audio-note.component.scss',
@@ -49,6 +52,8 @@ export class CreateAudioNoteComponent {
 
   readonly noteCreated = output<NoteCreated>();
   readonly noteName = signal('');
+  readonly noteTags = signal<Record<string, Tag>>({});
+  readonly availableTags = input<Record<string, Tag>>({});
   readonly currentView = signal<'recording' | 'preview'>('recording');
   readonly selectedLanguage = signal<string | null>(
     this.#transcriptionLanguageSelectorService.getSelectedLanguage()
@@ -94,6 +99,7 @@ export class CreateAudioNoteComponent {
       audioBlob: blob,
       audioMimeType: blob.type,
       transcript: this.transcriptText(),
+      tags: this.noteTags(),
     });
 
     this.clearRecording();
@@ -102,6 +108,7 @@ export class CreateAudioNoteComponent {
   clearRecording(): void {
     this.#recordAudioService.clearRecording();
     this.noteName.set('');
+    this.noteTags.set({});
     this.currentView.set('recording');
   }
 }
