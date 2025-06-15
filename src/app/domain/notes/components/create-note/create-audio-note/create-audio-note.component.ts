@@ -7,7 +7,7 @@ import {
   PLATFORM_ID,
   signal,
 } from '@angular/core';
-import { NoteCreated, RECORDER_STATE } from '../../..';
+import { NoteCreated, RECORDER_STATE, Tag } from '../../..';
 import { RecordAudioService } from '../../../services/record-audio.service';
 import { FormsModule } from '@angular/forms';
 import { RecordButtonComponent } from '../components/record-button/record-button.component';
@@ -18,7 +18,6 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import { TranscriptionLanguageSelectorComponent } from '../components/transcription-language-selector/transcription-language-selector.component';
 import { TranscriptionLanguageSelectorService } from '../components/transcription-language-selector/transcription-language-selector.service';
 import { AddTagsComponent } from '../components/add-tags/add-tags.component';
-import { Tag } from '../components/add-tags';
 
 @Component({
   selector: 'app-create-audio-note',

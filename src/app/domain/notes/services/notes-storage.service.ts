@@ -1,8 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID, inject } from '@angular/core';
-import { Note, NoteCreated } from '..';
-import { Tag } from '../components/create-note/components/add-tags';
+import { Note, NoteCreated, Tag } from '..';
 import { ToasterService } from '../../../components/ui/toaster/toaster.service';
 import {
   openDB,

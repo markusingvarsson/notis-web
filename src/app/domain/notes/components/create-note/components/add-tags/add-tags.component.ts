@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { ButtonComponent } from '../../../../../../components/ui/button/button.component';
 import { FormsModule } from '@angular/forms';
-import { Tag } from '.';
+import { Tag } from '../../../..';
 
 @Component({
   selector: 'app-add-tags',

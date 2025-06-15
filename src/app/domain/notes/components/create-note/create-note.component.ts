@@ -8,12 +8,11 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { isPlatformBrowser } from '@angular/common';
-import { NoteCreated, RECORDER_STATE } from '../..';
+import { NoteCreated, RECORDER_STATE, Tag } from '../..';
 import { RecordAudioService } from '../../services/record-audio.service';
 import { Router } from '@angular/router';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
 import { CreateAudioNoteComponent } from './create-audio-note/create-audio-note.component';
-import { Tag } from './components/add-tags';
 
 @Component({
   selector: 'app-create-note',

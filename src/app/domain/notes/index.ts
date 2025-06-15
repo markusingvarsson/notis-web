@@ -1,5 +1,3 @@
-import { Tag } from './components/create-note/components/add-tags';
-
 export type NoteType = 'text' | 'audio';
 
 export interface BaseNote {
@@ -42,6 +40,12 @@ export interface AudioNoteCreated {
 }
 
 export type NoteCreated = TextNoteCreated | AudioNoteCreated;
+
+export interface Tag {
+  name: string;
+  id: string;
+  updatedAt: string;
+}
 
 export const RECORDER_STATE = {
   IDLE: 'idle',
