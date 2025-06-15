@@ -11,6 +11,7 @@
 
   <div class="space-y-4">
     <!-- Transcription Settings -->
+    @if (hasSpeechRecognition()) {
     <app-card
       [className]="'border border-[var(--tw-border-light)] rounded-lg bg-card'"
     >
@@ -56,7 +57,7 @@
         }
       </div>
     </app-card>
-
+    }
     <!-- Danger Zone -->
     <app-card
       [className]="'border border-[var(--tw-border-light)] rounded-lg bg-card'"

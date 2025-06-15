@@ -1,4 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  PLATFORM_ID,
+  signal,
+} from '@angular/core';
 import { PagelayoutComponent } from '../../components/layout/pagelayout/pagelayout.component';
 import { ButtonComponent } from '../../components/ui/button/button.component';
 import { CardComponent } from '../../components/ui/card/card.component';
@@ -13,6 +19,8 @@ import { IconChevronDownComponent } from '../../components/ui/icons/icon-chevron
 import { IconChevronRightComponent } from '../../components/ui/icons/icon-chevron-right/icon-chevron-right.component';
 import { NotesStorageService } from '../../domain/notes/services/notes-storage.service';
 import { ConfirmationModalService } from '../../components/ui/confirmation-modal/confirmation-modal.service';
+import { isPlatformBrowser } from '@angular/common';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-settings',
@@ -39,11 +47,20 @@ export class SettingsComponent {
   );
   #notesStorageService = inject(NotesStorageService);
   #confirmationModalService = inject(ConfirmationModalService);
+  #platformId = inject(PLATFORM_ID);
+  #deviceService = inject(DeviceDetectorService);
 
   readonly selectedLanguage = signal<string | null>(
     this.#transcriptionLanguageSelectorService.getSelectedLanguage()
   );
   readonly expandedSections = signal<Set<string>>(new Set(['account']));
+  readonly hasSpeechRecognition = computed(() => {
+    const isSpeechRecognitionSupported =
+      isPlatformBrowser(this.#platformId) &&
+      'webkitSpeechRecognition' in window;
+
+    return isSpeechRecognitionSupported && this.#deviceService.isDesktop();
+  });
 
   toggleSection(section: string): void {
     this.expandedSections.update((sections) => {
