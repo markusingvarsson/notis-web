@@ -1,4 +1,4 @@
-import { Tag } from './components/create-note/components/add-tags-input';
+import { Tag } from './components/create-note/components/add-tags';
 
 export type NoteType = 'text' | 'audio';
 

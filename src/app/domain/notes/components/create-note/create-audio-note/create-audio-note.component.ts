@@ -17,8 +17,8 @@ import { isPlatformBrowser } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { TranscriptionLanguageSelectorComponent } from '../components/transcription-language-selector/transcription-language-selector.component';
 import { TranscriptionLanguageSelectorService } from '../components/transcription-language-selector/transcription-language-selector.service';
-import { AddTagsInputComponent } from '../components/add-tags-input/add-tags-input.component';
-import { Tag } from '../components/add-tags-input';
+import { AddTagsComponent } from '../components/add-tags/add-tags.component';
+import { Tag } from '../components/add-tags';
 
 @Component({
   selector: 'app-create-audio-note',
@@ -27,7 +27,7 @@ import { Tag } from '../components/add-tags-input';
     FormsModule,
     NoteNameInputComponent,
     TranscriptionLanguageSelectorComponent,
-    AddTagsInputComponent,
+    AddTagsComponent,
   ],
   templateUrl: './create-audio-note.component.html',
   styleUrl: './create-audio-note.component.scss',

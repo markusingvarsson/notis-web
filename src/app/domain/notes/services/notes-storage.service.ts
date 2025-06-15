@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID, inject } from '@angular/core';
 import { Note, NoteCreated } from '..';
-import { Tag } from '../components/create-note/components/add-tags-input';
+import { Tag } from '../components/create-note/components/add-tags';
 import { ToasterService } from '../../../components/ui/toaster/toaster.service';
 import {
   openDB,

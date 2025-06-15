@@ -11,12 +11,12 @@ import { FormsModule } from '@angular/forms';
 import { Tag } from '.';
 
 @Component({
-  selector: 'app-add-tags-input',
+  selector: 'app-add-tags',
   imports: [ButtonComponent, FormsModule],
-  templateUrl: './add-tags-input.component.html',
-  styleUrl: './add-tags-input.component.scss',
+  templateUrl: './add-tags.component.html',
+  styleUrl: './add-tags.component.scss',
 })
-export class AddTagsInputComponent {
+export class AddTagsComponent {
   isExpanded = signal(false);
   noteTags = model<Record<string, Tag>>({});
   noteTagsAsArray = computed(() => Object.values(this.noteTags()));

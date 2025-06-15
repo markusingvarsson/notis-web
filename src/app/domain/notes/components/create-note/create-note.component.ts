@@ -13,7 +13,7 @@ import { RecordAudioService } from '../../services/record-audio.service';
 import { Router } from '@angular/router';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
 import { CreateAudioNoteComponent } from './create-audio-note/create-audio-note.component';
-import { Tag } from './components/add-tags-input';
+import { Tag } from './components/add-tags';
 
 @Component({
   selector: 'app-create-note',
