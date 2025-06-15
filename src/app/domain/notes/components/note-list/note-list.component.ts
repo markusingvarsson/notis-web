@@ -55,6 +55,13 @@ export class NoteListComponent {
       setTimeout(async () => {
         await this.notesStorage.deleteNote(note.id);
         this.nextDeletingNoteId.set(null);
+        const selectedTag = this.selectedTag();
+        if (
+          selectedTag !== null &&
+          !this.availableTags().includes(selectedTag)
+        ) {
+          this.selectedTag.set(null);
+        }
       }, 300);
     }
   }
