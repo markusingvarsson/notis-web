@@ -4,7 +4,14 @@ import { PLATFORM_ID, inject } from '@angular/core';
 import { Note, NoteCreated } from '..';
 import { Tag } from '../components/create-note/components/add-tags-input';
 import { ToasterService } from '../../../components/ui/toaster/toaster.service';
-import { openDB, DBSchema, IDBPDatabase, deleteDB } from 'idb';
+import {
+  openDB,
+  DBSchema,
+  IDBPDatabase,
+  deleteDB,
+  IDBPTransaction,
+  IDBPObjectStore,
+} from 'idb';
 
 interface NotisDB extends DBSchema {
   notes: {
@@ -112,30 +119,30 @@ export class NotesStorageService {
     return this.tags;
   }
 
-  async addNote(note: Note): Promise<void> {
+  private async updateTag(
+    tx: IDBPTransaction<NotisDB, ('notes' | 'tags')[], 'readwrite'>,
+    tagId: string
+  ): Promise<void> {
     if (!this.db) return;
 
-    try {
-      await this.db.add('notes', note);
-      this.notes.update((notes) => [note, ...notes]);
-    } catch (error) {
-      this.#toastService.error('Error adding note. Please contact support.');
-      throw error;
+    const tag = this.tags()[tagId];
+    if (tag) {
+      const updatedTag = {
+        ...tag,
+        updatedAt: new Date().toISOString(),
+      };
+      await tx.objectStore('tags').put(updatedTag);
+      this.tags.update((tags) => ({ ...tags, [tagId]: updatedTag }));
     }
   }
 
-  async updateNote(note: Note): Promise<void> {
+  private async addTag(
+    tx: IDBPTransaction<NotisDB, ('notes' | 'tags')[], 'readwrite'>,
+    tag: Tag
+  ): Promise<void> {
     if (!this.db) return;
-
-    try {
-      await this.db.put('notes', note);
-      this.notes.update((notes) =>
-        notes.map((n) => (n.id === note.id ? note : n))
-      );
-    } catch (error) {
-      this.#toastService.error('Error updating note. Please contact support.');
-      throw error;
-    }
+    await tx.objectStore('tags').add(tag);
+    this.tags.update((tags) => ({ ...tags, [tag.id]: tag }));
   }
 
   async deleteNote(noteId: string): Promise<void> {
@@ -145,67 +152,53 @@ export class NotesStorageService {
     const tagsToCheck = noteToDelete?.tagIds ?? [];
 
     try {
-      await this.db.delete('notes', noteId);
+      const tx = this.db.transaction(['notes', 'tags'], 'readwrite');
+      const notesStore = tx.objectStore('notes');
+      const tagsStore = tx.objectStore('tags');
+
+      // Delete the note
+      await notesStore.delete(noteId);
+
+      // Clean up any orphaned tags
+      await this.cleanupUnusedTags(tagsToCheck, notesStore, tagsStore);
+
+      await tx.done;
+
+      // Update the notes signal after transaction is complete
       this.notes.update((notes) => notes.filter((n) => n.id !== noteId));
-      await this.cleanupTags(tagsToCheck);
     } catch (error) {
       this.#toastService.error('Error deleting note. Please contact support.');
       throw error;
     }
   }
 
-  private async cleanupTags(tagIds: string[]): Promise<void> {
-    if (!this.db || tagIds.length === 0) return;
-
-    for (const tagId of tagIds) {
-      const count = await this.db.countFromIndex(
-        'notes',
-        'tagIds',
-        IDBKeyRange.only(tagId)
-      );
+  private async cleanupUnusedTags(
+    tagsToCheck: string[],
+    notesStore: IDBPObjectStore<
+      NotisDB,
+      ('notes' | 'tags')[],
+      'notes',
+      'readwrite'
+    >,
+    tagsStore: IDBPObjectStore<
+      NotisDB,
+      ('notes' | 'tags')[],
+      'tags',
+      'readwrite'
+    >
+  ) {
+    for (const tagId of tagsToCheck) {
+      const count = await notesStore
+        .index('tagIds')
+        .count(IDBKeyRange.only(tagId));
       if (count === 0) {
-        await this.deleteTagNote(tagId);
+        await tagsStore.delete(tagId);
+        this.tags.update((tags) => {
+          const newTags = { ...tags };
+          delete newTags[tagId];
+          return newTags;
+        });
       }
-    }
-  }
-
-  async addTagNote(tag: Tag): Promise<void> {
-    if (!this.db) return;
-
-    try {
-      await this.db.add('tags', tag);
-      this.tags.update((tags) => ({ ...tags, [tag.id]: tag }));
-    } catch (error) {
-      this.#toastService.error('Error adding tag. Please contact support.');
-      throw error;
-    }
-  }
-
-  async updateTagNote(tag: Tag): Promise<void> {
-    if (!this.db) return;
-
-    try {
-      await this.db.put('tags', tag);
-      this.tags.update((tags) => ({ ...tags, [tag.id]: tag }));
-    } catch (error) {
-      this.#toastService.error('Error updating tag. Please contact support.');
-      throw error;
-    }
-  }
-
-  async deleteTagNote(tagId: string): Promise<void> {
-    if (!this.db) return;
-
-    try {
-      await this.db.delete('tags', tagId);
-      this.tags.update((tags) => {
-        const newTags = { ...tags };
-        delete newTags[tagId];
-        return newTags;
-      });
-    } catch (error) {
-      this.#toastService.error('Error deleting tag. Please contact support.');
-      throw error;
     }
   }
 
@@ -247,7 +240,9 @@ export class NotesStorageService {
     });
   }
 
-  async createNote(noteCreated: NoteCreated): Promise<void> {
+  async addNote(noteCreated: NoteCreated): Promise<void> {
+    if (!this.db) return;
+
     let note: Note;
 
     if (noteCreated.type === 'audio') {
@@ -270,9 +265,6 @@ export class NotesStorageService {
         updatedAt: new Date().toISOString(),
         tagIds: tagIds,
       };
-      await Promise.all(
-        Object.values(noteTags).map((tag) => this.createTag(tag))
-      );
     } else {
       note = {
         id: crypto.randomUUID(),
@@ -283,19 +275,30 @@ export class NotesStorageService {
       };
     }
 
-    await this.addNote(note);
-  }
+    try {
+      const tx = this.db.transaction(['notes', 'tags'], 'readwrite');
+      await tx.objectStore('notes').add(note);
 
-  async deleteTag(tagId: string): Promise<void> {
-    await this.deleteTagNote(tagId);
-  }
+      if (note.tagIds?.length) {
+        for (const tagId of note.tagIds) {
+          const doesTagExist = Boolean(this.tags()[tagId]);
+          if (doesTagExist) {
+            await this.updateTag(tx, tagId);
+          } else {
+            await this.addTag(tx, {
+              id: tagId,
+              name: tagId,
+              updatedAt: new Date().toISOString(),
+            });
+          }
+        }
+      }
 
-  async createTag(tag: Tag): Promise<void> {
-    const doesTagExist = Boolean(this.tags()[tag.id]);
-    if (doesTagExist) {
-      await this.updateTagNote(tag);
-    } else {
-      await this.addTagNote(tag);
+      await tx.done;
+      this.notes.update((notes) => [note, ...notes]);
+    } catch (error) {
+      this.#toastService.error('Error creating note. Please contact support.');
+      throw error;
     }
   }
 

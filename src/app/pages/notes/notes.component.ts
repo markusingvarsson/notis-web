@@ -19,6 +19,6 @@ export class NotesComponent {
   readonly availableTags = this.notesStorageService.getTags();
 
   onCreateNote(event: NoteCreated) {
-    this.notesStorageService.createNote(event);
+    this.notesStorageService.addNote(event);
   }
 }
