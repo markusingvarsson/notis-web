@@ -1,7 +1,6 @@
 import {
   Component,
   computed,
-  effect,
   input,
   model,
   signal,
@@ -39,11 +38,6 @@ export class AddTagsComponent {
       .slice(0, 3);
   });
 
-  constructor() {
-    effect(() => {
-      console.log(this.availableTags());
-    });
-  }
   addTag(tagStr: string) {
     if (!tagStr) return;
 
