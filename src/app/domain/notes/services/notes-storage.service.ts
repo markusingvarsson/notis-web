@@ -31,7 +31,7 @@ interface NotisDB extends DBSchema {
 })
 export class NotesStorageService {
   private dbName = 'notisDB';
-  private version = 2;
+  private version = 4;
   private platformId = inject(PLATFORM_ID);
   #toastService = inject(ToasterService);
   private db: IDBPDatabase<NotisDB> | null = null;
