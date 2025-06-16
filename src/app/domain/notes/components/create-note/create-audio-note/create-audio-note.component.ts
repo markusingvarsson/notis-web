@@ -123,6 +123,7 @@ export class CreateAudioNoteComponent {
         title: 'Add Unsaved Tag?',
         message: `Would you like to add "${this.currentTag()}" as a tag to this note?`,
         confirmButtonText: 'Add',
+        cancelButtonText: 'Skip',
       });
       if (shouldAddUnsavedTag) {
         this.noteTags.set({
@@ -133,8 +134,8 @@ export class CreateAudioNoteComponent {
             updatedAt: new Date().toISOString(),
           },
         });
-        this.currentTag.set('');
       }
+      this.currentTag.set('');
     }
   }
 }
