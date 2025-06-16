@@ -12,6 +12,7 @@ export class ConfirmationModalComponent {
   readonly title = input.required<string>();
   readonly message = input.required<string>();
   readonly confirmButtonText = input<string>('Confirm');
+  readonly cancelButtonText = input<string>('Cancel');
   readonly confirmButtonVariant = input<'default' | 'destructive'>('default');
 
   readonly confirm = output<void>();

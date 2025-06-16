@@ -12,6 +12,7 @@ export interface ConfirmationModalOptions {
   title: string;
   message: string;
   confirmButtonText?: string;
+  cancelButtonText?: string;
   confirmButtonVariant?: 'default' | 'destructive';
 }
 
@@ -34,6 +35,10 @@ export class ConfirmationModalService {
       componentRef.setInput(
         'confirmButtonText',
         options.confirmButtonText ?? 'Confirm'
+      );
+      componentRef.setInput(
+        'cancelButtonText',
+        options.cancelButtonText ?? 'Cancel'
       );
       componentRef.setInput(
         'confirmButtonVariant',
