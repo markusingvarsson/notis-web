@@ -11,6 +11,7 @@ import { NoteCreated, RECORDER_STATE, Tag } from '../../..';
 import { RecordAudioService } from '../../../services/record-audio.service';
 import { FormsModule } from '@angular/forms';
 import { RecordButtonComponent } from '../components/record-button/record-button.component';
+import { AudioLevelBarComponent } from '../components/audio-level-bar/audio-level-bar.component';
 import { NoteNameInputComponent } from '../components/note-name-input/note-name-input.component';
 import { ToasterService } from '../../../../../components/ui/toaster/toaster.service';
 import { isPlatformBrowser } from '@angular/common';
@@ -24,6 +25,7 @@ import { ConfirmationModalService } from '../../../../../components/ui/confirmat
   selector: 'app-create-audio-note',
   imports: [
     RecordButtonComponent,
+    AudioLevelBarComponent,
     FormsModule,
     NoteNameInputComponent,
     TranscriptionLanguageSelectorComponent,
@@ -49,6 +51,7 @@ export class CreateAudioNoteComponent {
   readonly recordingState = this.#recordAudioService.recordingState;
   readonly audioBlob = this.#recordAudioService.audioBlob;
   readonly audioSrc = this.#recordAudioService.audioSrc;
+  readonly voiceLevel = this.#recordAudioService.voiceLevel;
   readonly recordLabel = this.#recordAudioService.recordLabel;
   readonly transcriptText = this.#recordAudioService.transcriptText;
 

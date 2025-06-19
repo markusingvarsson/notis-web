@@ -26,6 +26,10 @@ export class RecordAudioService implements OnDestroy {
   readonly recordingState = signal<RecorderState>(RECORDER_STATE.IDLE);
   readonly audioBlob = signal<Blob | null>(null);
   readonly transcriptText = signal('');
+
+  // Audio visualization signals
+  readonly voiceLevel = signal<number>(0);
+
   readonly isRecordingDone = computed(() => {
     return this.recordingState() === RECORDER_STATE.IDLE && this.audioBlob();
   });
@@ -49,6 +53,11 @@ export class RecordAudioService implements OnDestroy {
   private recognition: WebkitSpeechRecognition | null = null;
   private permissionStatusSubscription: PermissionStatus | null = null;
 
+  // Audio analysis properties
+  private audioContext: AudioContext | null = null;
+  private analyser: AnalyserNode | null = null;
+  private animationId: number | null = null;
+
   constructor() {
     if (isPlatformBrowser(this.#platformId)) {
       this.checkInitialMicrophonePermission();
@@ -67,6 +76,7 @@ export class RecordAudioService implements OnDestroy {
       this.permissionStatusSubscription = null;
     }
     this.cleanupSpeechRecognition();
+    this.stopAudioAnalysis();
   }
 
   // Computed value for audio source URL
@@ -214,12 +224,14 @@ export class RecordAudioService implements OnDestroy {
       };
       this.mediaRecorder.onstart = () => {
         this.recordingState.set(RECORDER_STATE.RECORDING);
+        this.startAudioAnalysis(stream);
       };
       this.mediaRecorder.onstop = () => {
         const blob = new Blob(chunks, { type: this.mediaRecorder?.mimeType });
         this.audioBlob.set(blob);
         stream.getTracks().forEach((t) => t.stop()); // Stop all tracks from the stream
         this.recordingState.set(RECORDER_STATE.IDLE);
+        this.stopAudioAnalysis();
         // If speech recognition was active, it should already be stopped by stopRecordingInternal or handled in its own error/end events.
       };
       this.mediaRecorder.onerror = (event) => {
@@ -227,6 +239,7 @@ export class RecordAudioService implements OnDestroy {
         this.recordingState.set(RECORDER_STATE.IDLE);
         stream.getTracks().forEach((track) => track.stop()); // Ensure stream is cleaned up
         this.cleanupSpeechRecognition(); // Clean up speech recognition resources
+        this.stopAudioAnalysis();
       };
 
       if (transcriptionLanguage && window.webkitSpeechRecognition) {
@@ -261,6 +274,7 @@ export class RecordAudioService implements OnDestroy {
         this.mediaRecorder.stream.getTracks().forEach((track) => track.stop());
       }
       this.cleanupSpeechRecognition();
+      this.stopAudioAnalysis();
     }
   }
 
@@ -275,6 +289,7 @@ export class RecordAudioService implements OnDestroy {
     if (this.recognition) {
       this.recognition.stop();
     }
+    this.stopAudioAnalysis();
   }
 
   private clearPreviousRecordingArtifacts(): void {
@@ -304,5 +319,105 @@ export class RecordAudioService implements OnDestroy {
     this.clearPreviousRecordingArtifacts();
     this.recordingState.set(RECORDER_STATE.IDLE);
     // No need to reset noteName here as it's a concern of the component
+  }
+
+  private startAudioAnalysis(stream: MediaStream): void {
+    try {
+      // Setup audio context
+      this.audioContext = new AudioContext();
+      const source = this.audioContext.createMediaStreamSource(stream);
+      this.analyser = this.audioContext.createAnalyser();
+      this.analyser.fftSize = 512;
+      this.analyser.smoothingTimeConstant = 0.3;
+
+      source.connect(this.analyser);
+
+      // Start updating audio levels
+      this.updateAudioLevels();
+    } catch (err) {
+      console.error('Error starting audio analysis:', err);
+    }
+  }
+
+  private stopAudioAnalysis(): void {
+    // Close audio context
+    if (this.audioContext) {
+      this.audioContext.close();
+      this.audioContext = null;
+    }
+
+    // Cancel animation
+    if (this.animationId) {
+      cancelAnimationFrame(this.animationId);
+      this.animationId = null;
+    }
+
+    // Reset visualization
+    this.voiceLevel.set(0);
+  }
+
+  private updateAudioLevels(): void {
+    if (!this.analyser || this.recordingState() !== RECORDER_STATE.RECORDING)
+      return;
+
+    const bufferLength = this.analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+    this.analyser.getByteFrequencyData(dataArray);
+
+    // Calculate voice-specific level focusing on speech frequencies
+    const voiceLevel = this.calculateVoiceLevel(dataArray);
+    this.voiceLevel.set(voiceLevel);
+
+    this.animationId = requestAnimationFrame(() => this.updateAudioLevels());
+  }
+
+  private calculateVoiceLevel(dataArray: Uint8Array): number {
+    if (!this.audioContext) return 0;
+
+    const sampleRate = this.audioContext.sampleRate;
+    const nyquist = sampleRate / 2;
+    const binWidth = nyquist / dataArray.length;
+
+    // Focus on key speech frequency ranges
+    // Fundamental frequencies: 85-255 Hz (most energy for voice)
+    // Formant frequencies: 2-4 kHz (clarity and intelligibility)
+    const fundamentalStart = Math.floor(85 / binWidth);
+    const fundamentalEnd = Math.floor(255 / binWidth);
+    const formantStart = Math.floor(2000 / binWidth);
+    const formantEnd = Math.floor(4000 / binWidth);
+
+    // Calculate weighted average focusing on speech frequencies
+    let fundamentalSum = 0;
+    let formantSum = 0;
+    let fundamentalCount = 0;
+    let formantCount = 0;
+
+    // Fundamental frequency range (weighted higher)
+    for (
+      let i = fundamentalStart;
+      i <= Math.min(fundamentalEnd, dataArray.length - 1);
+      i++
+    ) {
+      fundamentalSum += dataArray[i];
+      fundamentalCount++;
+    }
+
+    // Formant frequency range
+    for (
+      let i = formantStart;
+      i <= Math.min(formantEnd, dataArray.length - 1);
+      i++
+    ) {
+      formantSum += dataArray[i];
+      formantCount++;
+    }
+
+    const fundamentalAvg =
+      fundamentalCount > 0 ? fundamentalSum / fundamentalCount : 0;
+    const formantAvg = formantCount > 0 ? formantSum / formantCount : 0;
+
+    // Weighted combination (fundamental frequencies are more important for voice detection)
+    const voiceLevel = (fundamentalAvg * 0.7 + formantAvg * 0.3) / 255;
+    return Math.min(voiceLevel, 1);
   }
 }
