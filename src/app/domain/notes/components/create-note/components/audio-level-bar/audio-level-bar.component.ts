@@ -38,15 +38,6 @@ import { Component, computed, input } from '@angular/core';
             ></div>
           </div>
         </div>
-
-        <!-- Audio level text -->
-        <div
-          class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs font-medium"
-        >
-          <span [class]="levelTextClass()">
-            {{ audioLevelText() }}
-          </span>
-        </div>
       </div>
     </div>
   `,
@@ -119,21 +110,5 @@ export class AudioLevelBarComponent {
 
   readonly sparkleDuration = computed(() => {
     return Math.max(1.5 - this.voiceLevel(), 0.3);
-  });
-
-  readonly levelTextClass = computed(() => {
-    const level = this.voiceLevel();
-    if (level < 0.3) return 'text-blue-400';
-    if (level < 0.6) return 'text-yellow-400';
-    if (level < 0.8) return 'text-orange-400';
-    return 'text-red-400';
-  });
-
-  readonly audioLevelText = computed(() => {
-    const level = this.voiceLevel();
-    if (level < 0.3) return 'Low';
-    if (level < 0.6) return 'Medium';
-    if (level < 0.8) return 'High';
-    return 'Loud';
   });
 }
