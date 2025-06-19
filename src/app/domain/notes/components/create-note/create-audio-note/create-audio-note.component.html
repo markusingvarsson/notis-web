@@ -19,11 +19,9 @@
       ></app-record-button>
 
       <!-- Audio Level Bar -->
-      <app-audio-level-bar
-        [voiceLevel]="voiceLevel()"
-        [isRecording]="isRecording()"
-      ></app-audio-level-bar>
-
+      @if (isRecording()) {
+      <app-audio-level-bar [voiceLevel]="voiceLevel()"></app-audio-level-bar>
+      }
       <p class="text-center text-sm text-[var(--tw-border-dark)]">
         {{ recordLabel() }}
       </p>

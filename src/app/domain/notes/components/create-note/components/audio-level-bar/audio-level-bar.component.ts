@@ -60,11 +60,9 @@ import { Component, computed, input } from '@angular/core';
 })
 export class AudioLevelBarComponent {
   readonly voiceLevel = input.required<number>();
-  readonly isRecording = input.required<boolean>();
 
   // Computed signals for all audio level properties
   readonly audioLevelPercentage = computed(() => {
-    if (!this.isRecording()) return 0;
     return Math.max(this.voiceLevel(), 0.05) * 100;
   });
 
@@ -133,7 +131,6 @@ export class AudioLevelBarComponent {
 
   readonly audioLevelText = computed(() => {
     const level = this.voiceLevel();
-    if (!this.isRecording()) return 'Ready';
     if (level < 0.3) return 'Low';
     if (level < 0.6) return 'Medium';
     if (level < 0.8) return 'High';
