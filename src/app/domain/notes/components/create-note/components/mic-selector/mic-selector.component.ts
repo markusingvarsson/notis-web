@@ -9,6 +9,8 @@ import {
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MicrophoneIconComponent } from '../../../../../../components/ui/icons/microphone-icon/microphone-icon.component';
+import { ButtonComponent } from '../../../../../../components/ui/button/button.component';
 
 interface AudioDevice {
   deviceId: string;
@@ -18,7 +20,7 @@ interface AudioDevice {
 @Component({
   selector: 'app-mic-selector',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, MicrophoneIconComponent, ButtonComponent],
   template: `
     <div class="space-y-3">
       <div class="flex items-center gap-2">
@@ -26,6 +28,11 @@ interface AudioDevice {
         <p class="text-[var(--tw-primary-dark)] text-sm">
           Loading microphones...
         </p>
+        } @else if (!hasPermission()) {
+        <app-button (buttonClick)="requestPermission()">
+          <app-microphone-icon [size]="16" />
+          Pick Microphone
+        </app-button>
         } @else {
         <div class="space-y-2 w-full">
           <div class="relative">
@@ -33,7 +40,6 @@ interface AudioDevice {
               id="mic-select"
               [ngModel]="selectedDevice()"
               (ngModelChange)="onDeviceChange($event)"
-              (focus)="onSelectorFocus()"
               class="w-full bg-[var(--tw-bg-light)] border border-[var(--tw-border-light)] text-[var(--tw-primary-dark)] rounded-md py-2 px-3 pr-10 focus:outline-none focus:ring-2 focus:ring-[var(--tw-primary)] focus:border-transparent appearance-none text-sm"
             >
               @for (device of audioDevices(); track device.deviceId) {
@@ -84,8 +90,9 @@ export class MicSelectorComponent implements OnInit {
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     if (isPlatformBrowser(this.#platformId)) {
+      await this.checkPermissionStatus();
       this.loadAudioDevices();
     }
   }
@@ -114,15 +121,25 @@ export class MicSelectorComponent implements OnInit {
     }
   }
 
-  async onSelectorFocus() {
-    if (!this.hasPermission()) {
-      try {
-        await navigator.mediaDevices.getUserMedia({ audio: true });
-        this.hasPermission.set(true);
-        await this.loadAudioDevices();
-      } catch (err) {
-        console.error('Permission denied:', err);
-      }
+  async checkPermissionStatus() {
+    try {
+      const permission = await navigator.permissions.query({
+        name: 'microphone' as PermissionName,
+      });
+      this.hasPermission.set(permission.state === 'granted');
+    } catch {
+      // Fallback for browsers without permissions API
+      this.hasPermission.set(false);
+    }
+  }
+
+  async requestPermission() {
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+      this.hasPermission.set(true);
+      await this.loadAudioDevices();
+    } catch (err) {
+      console.error('Permission denied:', err);
     }
   }
 
