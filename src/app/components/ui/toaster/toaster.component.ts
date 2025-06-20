@@ -1,4 +1,9 @@
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  inject,
+  ChangeDetectionStrategy,
+  computed,
+} from '@angular/core';
 import { ToasterService } from './toaster.service';
 import { Toast } from './toast.types';
 import { NgClass } from '@angular/common';
@@ -15,7 +20,16 @@ export class ToasterComponent {
   toasterService = inject(ToasterService);
   toasts = this.toasterService.toasts;
 
-  getToastClass(toast: Toast): string {
+  toastClasses = computed(() => {
+    const toasts = this.toasts();
+    const classes: Record<string, string> = {};
+    toasts.forEach((toast) => {
+      classes[toast.id] = this.getToastClass(toast);
+    });
+    return classes;
+  });
+
+  private getToastClass(toast: Toast): string {
     switch (toast.type) {
       case 'success':
         return 'toast-success';

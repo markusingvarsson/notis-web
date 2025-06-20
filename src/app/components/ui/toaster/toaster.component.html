@@ -7,7 +7,7 @@
   <div
     class="toast-item p-4 rounded-md shadow-lg text-white flex items-center space-x-2"
     [ngClass]="[
-      getToastClass(toast),
+      toastClasses()[toast.id],
       toast.state === 'entering' ? 'toast-entering' : '',
       toast.state === 'visible' ? 'toast-visible' : '',
       toast.state === 'leaving' ? 'toast-leaving' : ''
