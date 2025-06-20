@@ -87,6 +87,9 @@ export class MicSelectorComponent implements OnInit {
     }
 
     try {
+      // Need to await access until we can list devices
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+
       const devices = await navigator.mediaDevices.enumerateDevices();
       const audioInputs = devices
         .filter((device) => device.kind === 'audioinput')
