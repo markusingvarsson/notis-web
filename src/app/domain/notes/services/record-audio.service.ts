@@ -26,6 +26,7 @@ export class RecordAudioService implements OnDestroy {
   readonly recordingState = signal<RecorderState>(RECORDER_STATE.IDLE);
   readonly audioBlob = signal<Blob | null>(null);
   readonly transcriptText = signal('');
+  readonly selectedDeviceId = signal<string>('');
 
   // Audio visualization signals
   readonly voiceLevel = signal<number>(0);
@@ -90,6 +91,10 @@ export class RecordAudioService implements OnDestroy {
     this.audioUrl = URL.createObjectURL(blob);
     return this.audioUrl;
   });
+
+  setSelectedDevice(deviceId: string): void {
+    this.selectedDeviceId.set(deviceId);
+  }
 
   private async checkInitialMicrophonePermission(): Promise<void> {
     if (!isPlatformBrowser(this.#platformId) || !navigator.permissions) {
@@ -214,7 +219,13 @@ export class RecordAudioService implements OnDestroy {
     this.clearPreviousRecordingArtifacts(); // Clear any old data
 
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const constraints: MediaStreamConstraints = {
+        audio: this.selectedDeviceId()
+          ? { deviceId: { exact: this.selectedDeviceId() } }
+          : true,
+      };
+
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
       this.mediaRecorder = new MediaRecorder(stream, {
         mimeType: this.#audioMimeType,
       });

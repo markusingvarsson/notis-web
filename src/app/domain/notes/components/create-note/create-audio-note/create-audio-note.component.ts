@@ -20,6 +20,7 @@ import { TranscriptionLanguageSelectorComponent } from '../components/transcript
 import { TranscriptionLanguageSelectorService } from '../components/transcription-language-selector/transcription-language-selector.service';
 import { AddTagsComponent } from '../components/add-tags/add-tags.component';
 import { ConfirmationModalService } from '../../../../../components/ui/confirmation-modal/confirmation-modal.service';
+import { MicSelectorComponent } from '../components/mic-selector/mic-selector.component';
 
 @Component({
   selector: 'app-create-audio-note',
@@ -30,6 +31,7 @@ import { ConfirmationModalService } from '../../../../../components/ui/confirmat
     NoteNameInputComponent,
     TranscriptionLanguageSelectorComponent,
     AddTagsComponent,
+    MicSelectorComponent,
   ],
   templateUrl: './create-audio-note.component.html',
   styleUrl: './create-audio-note.component.scss',
@@ -72,6 +74,14 @@ export class CreateAudioNoteComponent {
 
     return isSpeechRecognitionSupported && this.#deviceService.isDesktop();
   });
+
+  readonly hasMicrophonePermission = computed(() => {
+    return this.recordingState() !== RECORDER_STATE.BLOCKED;
+  });
+
+  onDeviceSelected(deviceId: string): void {
+    this.#recordAudioService.setSelectedDevice(deviceId);
+  }
 
   toggleRecording(): void {
     if (this.recordingState() === RECORDER_STATE.BLOCKED) {

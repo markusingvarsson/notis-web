@@ -18,9 +18,13 @@
         (buttonClick)="toggleRecording()"
       ></app-record-button>
 
-      <!-- Audio Level Bar -->
+      <!-- Audio Level Bar or Mic Selector -->
       @if (isRecording()) {
       <app-audio-level-bar [voiceLevel]="voiceLevel()"></app-audio-level-bar>
+      } @else if (hasMicrophonePermission()) {
+      <app-mic-selector
+        (deviceSelected)="onDeviceSelected($event)"
+      ></app-mic-selector>
       }
       <p class="text-center text-sm text-[var(--tw-border-dark)]">
         {{ recordLabel() }}
