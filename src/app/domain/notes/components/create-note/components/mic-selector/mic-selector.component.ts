@@ -5,6 +5,7 @@ import {
   output,
   inject,
   PLATFORM_ID,
+  effect,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -32,6 +33,7 @@ interface AudioDevice {
               id="mic-select"
               [ngModel]="selectedDevice()"
               (ngModelChange)="onDeviceChange($event)"
+              (focus)="onSelectorFocus()"
               class="w-full bg-[var(--tw-bg-light)] border border-[var(--tw-border-light)] text-[var(--tw-primary-dark)] rounded-md py-2 px-3 pr-10 focus:outline-none focus:ring-2 focus:ring-[var(--tw-primary)] focus:border-transparent appearance-none text-sm"
             >
               @for (device of audioDevices(); track device.deviceId) {
@@ -71,9 +73,16 @@ export class MicSelectorComponent implements OnInit {
   // Signals
   audioDevices = signal<AudioDevice[]>([]);
   selectedDevice = signal<string>('');
+  hasPermission = signal<boolean>(false);
 
   // Output events
   readonly deviceSelected = output<string>();
+
+  constructor() {
+    effect(() => {
+      this.deviceSelected.emit(this.selectedDevice());
+    });
+  }
 
   ngOnInit() {
     if (isPlatformBrowser(this.#platformId)) {
@@ -87,9 +96,6 @@ export class MicSelectorComponent implements OnInit {
     }
 
     try {
-      // Need to await access until we can list devices
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-
       const devices = await navigator.mediaDevices.enumerateDevices();
       const audioInputs = devices
         .filter((device) => device.kind === 'audioinput')
@@ -101,19 +107,26 @@ export class MicSelectorComponent implements OnInit {
       this.audioDevices.set(audioInputs);
 
       if (audioInputs.length > 0 && !this.selectedDevice()) {
-        this.setSelectedDevice(audioInputs[0].deviceId);
+        this.selectedDevice.set(audioInputs[0].deviceId);
       }
     } catch (err) {
       console.error('Error loading devices:', err);
     }
   }
 
-  onDeviceChange(deviceId: string) {
-    this.setSelectedDevice(deviceId);
+  async onSelectorFocus() {
+    if (!this.hasPermission()) {
+      try {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+        this.hasPermission.set(true);
+        await this.loadAudioDevices();
+      } catch (err) {
+        console.error('Permission denied:', err);
+      }
+    }
   }
 
-  setSelectedDevice(deviceId: string) {
+  onDeviceChange(deviceId: string) {
     this.selectedDevice.set(deviceId);
-    this.deviceSelected.emit(deviceId);
   }
 }
