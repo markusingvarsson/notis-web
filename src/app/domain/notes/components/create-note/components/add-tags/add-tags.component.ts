@@ -4,6 +4,7 @@ import {
   input,
   model,
   signal,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { ButtonComponent } from '../../../../../../components/ui/button/button.component';
 import { FormsModule } from '@angular/forms';
@@ -14,6 +15,7 @@ import { Tag } from '../../../..';
   imports: [ButtonComponent, FormsModule],
   templateUrl: './add-tags.component.html',
   styleUrl: './add-tags.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AddTagsComponent {
   isExpanded = signal(false);

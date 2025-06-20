@@ -6,6 +6,7 @@ import {
   inject,
   PLATFORM_ID,
   effect,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -72,6 +73,7 @@ interface AudioDevice {
     </div>
   `,
   styles: [],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MicSelectorComponent implements OnInit {
   #platformId = inject(PLATFORM_ID);

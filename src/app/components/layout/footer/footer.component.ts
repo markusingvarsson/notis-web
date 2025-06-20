@@ -1,4 +1,4 @@
-import { Component, computed } from '@angular/core';
+import { Component, computed, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -7,6 +7,7 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink],
   templateUrl: './footer.component.html',
   styleUrl: './footer.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FooterComponent {
   readonly currentYear = computed(() => new Date().getFullYear());

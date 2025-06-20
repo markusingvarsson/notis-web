@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-mail-icon',
@@ -21,6 +21,7 @@ import { Component, input } from '@angular/core';
       ></path>
     </svg>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MailIconComponent {
   readonly size = input<number>(20);

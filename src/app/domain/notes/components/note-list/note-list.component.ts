@@ -1,4 +1,10 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  inject,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { NoteCardComponent } from '../note-card/note-card.component';
 import { NotesStorageService } from '../../services/notes-storage.service';
 import { Note } from '../..';
@@ -11,6 +17,7 @@ import { NotesFilterComponent } from '../notes-filter/notes-filter.component';
   imports: [NoteCardComponent, NotesFilterComponent],
   templateUrl: './note-list.component.html',
   styleUrl: './note-list.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NoteListComponent {
   private notesStorage = inject(NotesStorageService);

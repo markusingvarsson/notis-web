@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { UpdateAppService } from '../../services/update-app.service';
 
@@ -8,6 +8,7 @@ import { UpdateAppService } from '../../services/update-app.service';
   imports: [CommonModule],
   templateUrl: './update-prompt.component.html',
   styleUrls: ['./update-prompt.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UpdatePromptComponent {
   protected updateService = inject(UpdateAppService);

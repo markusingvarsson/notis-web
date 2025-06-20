@@ -1,4 +1,9 @@
-import { Component, input, output } from '@angular/core';
+import {
+  Component,
+  input,
+  output,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { ButtonComponent } from '../button/button.component';
 
 @Component({
@@ -7,6 +12,7 @@ import { ButtonComponent } from '../button/button.component';
   imports: [ButtonComponent],
   templateUrl: './confirmation-modal.component.html',
   styleUrl: './confirmation-modal.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConfirmationModalComponent {
   readonly title = input.required<string>();

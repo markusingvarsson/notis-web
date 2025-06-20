@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-stop-icon',
@@ -28,6 +28,7 @@ import { Component, input } from '@angular/core';
       </g>
     </svg>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StopIconComponent {
   readonly size = input<number>(40);

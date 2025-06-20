@@ -1,4 +1,10 @@
-import { Component, computed, input, output } from '@angular/core';
+import {
+  Component,
+  computed,
+  input,
+  output,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { RECORDER_STATE, RecorderState } from '../../../../index';
 import { MicrophoneIconComponent } from '../../../../../../components/ui/icons/microphone-icon/microphone-icon.component';
 import { StopIconComponent } from '../../../../../../components/ui/icons/stop-icon/stop-icon.component';
@@ -43,6 +49,7 @@ import { MicrophoneSlashIconComponent } from '../../../../../../components/ui/ic
       }
     `,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RecordButtonComponent {
   readonly state = input.required<RecorderState>();

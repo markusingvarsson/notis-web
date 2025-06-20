@@ -1,5 +1,12 @@
 // File: src/app/button/button.component.ts
-import { Component, signal, computed, input, output } from '@angular/core';
+import {
+  Component,
+  signal,
+  computed,
+  input,
+  output,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
@@ -21,6 +28,7 @@ type Size = 'default' | 'sm' | 'lg' | 'icon';
   host: {
     '[style.cursor]': 'disabled() ? "not-allowed" : "pointer"',
   },
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ButtonComponent {
   readonly link = input<string | undefined>(undefined);

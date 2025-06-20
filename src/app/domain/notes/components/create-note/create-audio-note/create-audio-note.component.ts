@@ -6,6 +6,7 @@ import {
   output,
   PLATFORM_ID,
   signal,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { NoteCreated, RECORDER_STATE, Tag } from '../../..';
 import { RecordAudioService } from '../../../services/record-audio.service';
@@ -35,6 +36,7 @@ import { MicSelectorComponent } from '../components/mic-selector/mic-selector.co
   ],
   templateUrl: './create-audio-note.component.html',
   styleUrl: './create-audio-note.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateAudioNoteComponent {
   readonly isRecording = computed(() => {

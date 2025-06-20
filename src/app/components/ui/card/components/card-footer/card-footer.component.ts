@@ -1,5 +1,11 @@
 // File: src/app/card/card-footer.component.ts
-import { Component, signal, computed, input } from '@angular/core';
+import {
+  Component,
+  signal,
+  computed,
+  input,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 
 @Component({
   selector: 'app-card-footer',
@@ -7,6 +13,7 @@ import { Component, signal, computed, input } from '@angular/core';
   imports: [],
   templateUrl: './card-footer.component.html',
   styleUrls: ['./card-footer.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardFooterComponent {
   className = input('');

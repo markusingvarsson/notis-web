@@ -1,4 +1,9 @@
-import { Component, computed, input } from '@angular/core';
+import {
+  Component,
+  computed,
+  input,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 
 @Component({
   selector: 'app-audio-level-bar',
@@ -48,6 +53,7 @@ import { Component, computed, input } from '@angular/core';
       }
     `,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AudioLevelBarComponent {
   readonly voiceLevel = input.required<number>();

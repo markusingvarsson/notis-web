@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-trash-icon',
@@ -23,6 +23,7 @@ import { Component, input } from '@angular/core';
       <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
     </svg>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TrashIconComponent {
   readonly size = input<number>(20);

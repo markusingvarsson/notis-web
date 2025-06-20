@@ -1,4 +1,10 @@
-import { Component, input, effect, inject } from '@angular/core';
+import {
+  Component,
+  input,
+  effect,
+  inject,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { NgClass } from '@angular/common';
 import { FooterComponent } from '../footer/footer.component';
@@ -9,6 +15,7 @@ import { MetaService } from '../../../core/services/meta.service';
   imports: [NavbarComponent, NgClass, FooterComponent],
   templateUrl: './pagelayout.component.html',
   styleUrl: './pagelayout.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PagelayoutComponent {
   fullWidth = input(true);

@@ -1,5 +1,11 @@
 // File: src/app/card/card.component.ts
-import { Component, signal, computed, input } from '@angular/core';
+import {
+  Component,
+  signal,
+  computed,
+  input,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 
 @Component({
   selector: 'app-card',
@@ -7,6 +13,7 @@ import { Component, signal, computed, input } from '@angular/core';
   imports: [],
   templateUrl: './card.component.html',
   styleUrls: ['./card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CardComponent {
   className = input('');

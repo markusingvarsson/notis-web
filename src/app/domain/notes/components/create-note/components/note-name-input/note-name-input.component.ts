@@ -1,4 +1,4 @@
-import { Component, model } from '@angular/core';
+import { Component, model, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
   imports: [FormsModule],
   templateUrl: './note-name-input.component.html',
   styleUrl: './note-name-input.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NoteNameInputComponent {
   noteName = model<string>();

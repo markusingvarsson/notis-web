@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-microphone-icon',
@@ -25,6 +25,7 @@ import { Component, input } from '@angular/core';
       </g>
     </svg>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MicrophoneIconComponent {
   readonly size = input<number>(32);

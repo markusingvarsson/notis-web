@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { ButtonComponent } from '../../ui/button/button.component';
 
@@ -8,5 +8,6 @@ import { ButtonComponent } from '../../ui/button/button.component';
   imports: [RouterLink, RouterLinkActive, ButtonComponent],
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavbarComponent {}

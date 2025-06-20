@@ -6,6 +6,7 @@ import {
   output,
   signal,
   viewChild,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { ButtonComponent } from '../../../../components/ui/button/button.component';
 
@@ -15,6 +16,7 @@ import { ButtonComponent } from '../../../../components/ui/button/button.compone
   imports: [ButtonComponent],
   templateUrl: './notes-filter.component.html',
   styleUrls: ['./notes-filter.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NotesFilterComponent implements AfterViewInit {
   /** Inputs as signals */

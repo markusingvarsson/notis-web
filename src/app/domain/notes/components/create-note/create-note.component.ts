@@ -5,6 +5,7 @@ import {
   inject,
   effect,
   input,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { isPlatformBrowser } from '@angular/common';
@@ -21,6 +22,7 @@ import { CreateAudioNoteComponent } from './create-audio-note/create-audio-note.
   templateUrl: './create-note.component.html',
   styleUrls: ['./create-note.component.scss'],
   providers: [RecordAudioService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CreateNoteComponent {
   #platformId = inject(PLATFORM_ID);

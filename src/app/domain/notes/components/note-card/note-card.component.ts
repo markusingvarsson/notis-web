@@ -7,6 +7,7 @@ import {
   ElementRef,
   viewChild,
   OnDestroy,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { formatDistanceToNow, isAfter, subDays } from 'date-fns';
 import { CardComponent } from '../../../../components/ui/card/card.component';
@@ -35,6 +36,7 @@ import { TrashIconComponent } from '../../../../components/ui/icons/trash-icon/t
   host: {
     '[class.deleting]': 'isDeleting()',
   },
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NoteCardComponent implements OnDestroy {
   /** Inputs as signals */

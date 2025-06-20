@@ -1,4 +1,9 @@
-import { Component, inject, input } from '@angular/core';
+import {
+  Component,
+  inject,
+  input,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { PagelayoutComponent } from '../../components/layout/pagelayout/pagelayout.component';
 import { NoteListComponent } from '../../domain/notes/components/note-list/note-list.component';
 import { CreateNoteComponent } from '../../domain/notes/components/create-note/create-note.component';
@@ -11,6 +16,7 @@ import { NoteCreated } from '../../domain/notes';
   imports: [PagelayoutComponent, NoteListComponent, CreateNoteComponent],
   templateUrl: './notes.component.html',
   styleUrls: ['./notes.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NotesComponent {
   private notesStorageService = inject(NotesStorageService);

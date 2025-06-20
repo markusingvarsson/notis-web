@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-icon-chevron-down',
@@ -18,6 +18,7 @@ import { Component, input } from '@angular/core';
       <path d="m6 9 6 6 6-6" />
     </svg>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IconChevronDownComponent {
   readonly size = input<number | string>(24);

@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-spinner-icon',
@@ -28,6 +28,7 @@ import { Component, input } from '@angular/core';
       ></path>
     </svg>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SpinnerIconComponent {
   readonly size = input<number>(32);

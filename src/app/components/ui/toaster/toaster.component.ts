@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { ToasterService } from './toaster.service';
 import { Toast } from './toast.types';
 import { NgClass } from '@angular/common';
@@ -9,6 +9,7 @@ import { NgClass } from '@angular/common';
   imports: [NgClass],
   templateUrl: './toaster.component.html',
   styleUrls: ['./toaster.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ToasterComponent {
   toasterService = inject(ToasterService);

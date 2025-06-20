@@ -4,6 +4,7 @@ import {
   inject,
   PLATFORM_ID,
   signal,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { PagelayoutComponent } from '../../components/layout/pagelayout/pagelayout.component';
 import { ButtonComponent } from '../../components/ui/button/button.component';
@@ -39,6 +40,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsComponent {
   private toasterService = inject(ToasterService);

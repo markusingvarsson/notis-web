@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-shield-heart-icon',
@@ -30,6 +30,7 @@ import { Component, input } from '@angular/core';
       ></path>
     </svg>
   `,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ShieldHeartIconComponent {
   readonly size = input<number>(48);

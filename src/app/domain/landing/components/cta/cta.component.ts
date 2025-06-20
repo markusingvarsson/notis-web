@@ -1,6 +1,6 @@
 // File: src/app/cta/cta.component.ts
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { ButtonComponent } from '../../../../components/ui/button/button.component';
 import { MicrophoneIconComponent } from '../../../../components/ui/icons/microphone-icon/microphone-icon.component';
 
@@ -9,5 +9,6 @@ import { MicrophoneIconComponent } from '../../../../components/ui/icons/microph
   imports: [CommonModule, ButtonComponent, MicrophoneIconComponent],
   templateUrl: './cta.component.html',
   styleUrls: ['./cta.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CtaComponent {}

@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-page-header',
@@ -28,6 +28,7 @@ import { Component, input } from '@angular/core';
       }
     `,
   ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PageHeaderComponent {
   title = input.required<string>();
