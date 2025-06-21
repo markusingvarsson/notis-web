@@ -8,7 +8,7 @@ import {
 @Injectable({
   providedIn: 'root',
 })
-export class TranscriptionLanguageSelectorService {
+export class TranscriptionSettingsPickerService {
   #platformId = inject(PLATFORM_ID);
 
   storeTranscriptionSettings(

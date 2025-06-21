@@ -11,24 +11,24 @@ import {
   Language,
   SupportedLanguageCode,
 } from '../../../../../../core/services/language-picker.service';
-import { TranscriptionLanguageSelectorService } from './transcription-language-selector.service';
+import { TranscriptionSettingsPickerService } from './transcription-settings-picker.service';
 
 @Component({
-  selector: 'app-transcription-language-selector',
+  selector: 'app-transcription-settings-picker',
   standalone: true,
   imports: [FormsModule, CommonModule],
-  templateUrl: './transcription-language-selector.component.html',
-  styleUrl: './transcription-language-selector.component.scss',
+  templateUrl: './transcription-settings-picker.component.html',
+  styleUrl: './transcription-settings-picker.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TranscriptionLanguageSelectorComponent {
+export class TranscriptionSettingsPickerComponent {
   readonly disabled = input.required<boolean>();
   selectedTranscriptionSetting = model<
     SupportedLanguageCode | 'no-transcription'
   >();
 
-  #transcriptionLanguageSelectorService = inject(
-    TranscriptionLanguageSelectorService
+  #transcriptionSettingsPickerService = inject(
+    TranscriptionSettingsPickerService
   );
 
   readonly languages: Language[] = [
@@ -42,8 +42,6 @@ export class TranscriptionLanguageSelectorComponent {
     $event: SupportedLanguageCode | 'no-transcription'
   ) {
     this.selectedTranscriptionSetting.set($event);
-    this.#transcriptionLanguageSelectorService.storeTranscriptionSettings(
-      $event
-    );
+    this.#transcriptionSettingsPickerService.storeTranscriptionSettings($event);
   }
 }

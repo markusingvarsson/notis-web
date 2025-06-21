@@ -14,7 +14,7 @@ import { CardTitleComponent } from '../../components/ui/card/components/card-tit
 import { CardDescriptionComponent } from '../../components/ui/card/components/card-description/card-description.component';
 import { CardContentComponent } from '../../components/ui/card/components/card-content/card-content.component';
 import { ToasterService } from '../../components/ui/toaster/toaster.service';
-import { TranscriptionLanguageSelectorComponent } from '../../domain/notes/components/create-note/components/transcription-language-selector/transcription-language-selector.component';
+import { TranscriptionSettingsPickerComponent } from '../../domain/notes/components/create-note/components/transcription-settings-picker/transcription-settings-picker.component';
 import { SupportedLanguageCode } from '../../core/services/language-picker.service';
 import { IconChevronDownComponent } from '../../components/ui/icons/icon-chevron-down/icon-chevron-down.component';
 import { IconChevronRightComponent } from '../../components/ui/icons/icon-chevron-right/icon-chevron-right.component';
@@ -22,7 +22,7 @@ import { NotesStorageService } from '../../domain/notes/services/notes-storage.s
 import { ConfirmationModalService } from '../../components/ui/confirmation-modal/confirmation-modal.service';
 import { isPlatformBrowser } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { TranscriptionLanguageSelectorService } from '../../domain/notes/components/create-note/components/transcription-language-selector/transcription-language-selector.service';
+import { TranscriptionSettingsPickerService } from '../../domain/notes/components/create-note/components/transcription-settings-picker/transcription-settings-picker.service';
 
 @Component({
   selector: 'app-settings',
@@ -35,7 +35,7 @@ import { TranscriptionLanguageSelectorService } from '../../domain/notes/compone
     CardTitleComponent,
     CardDescriptionComponent,
     CardContentComponent,
-    TranscriptionLanguageSelectorComponent,
+    TranscriptionSettingsPickerComponent,
     IconChevronDownComponent,
     IconChevronRightComponent,
   ],
@@ -45,8 +45,8 @@ import { TranscriptionLanguageSelectorService } from '../../domain/notes/compone
 })
 export class SettingsComponent {
   private toasterService = inject(ToasterService);
-  #transcriptionLanguageSelectorService = inject(
-    TranscriptionLanguageSelectorService
+  #transcriptionSettingsPickerService = inject(
+    TranscriptionSettingsPickerService
   );
   #notesStorageService = inject(NotesStorageService);
   #confirmationModalService = inject(ConfirmationModalService);
@@ -55,7 +55,7 @@ export class SettingsComponent {
 
   readonly selectedTranscriptionSetting = signal<
     SupportedLanguageCode | 'no-transcription'
-  >(this.#transcriptionLanguageSelectorService.getTranscriptionSettings());
+  >(this.#transcriptionSettingsPickerService.getTranscriptionSettings());
   readonly expandedSections = signal<Set<string>>(new Set(['account']));
   readonly hasSpeechRecognition = computed(() => {
     const isSpeechRecognitionSupported =

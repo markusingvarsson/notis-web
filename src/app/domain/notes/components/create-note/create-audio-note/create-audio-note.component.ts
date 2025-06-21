@@ -17,12 +17,12 @@ import { NoteNameInputComponent } from '../components/note-name-input/note-name-
 import { ToasterService } from '../../../../../components/ui/toaster/toaster.service';
 import { isPlatformBrowser } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { TranscriptionLanguageSelectorComponent } from '../components/transcription-language-selector/transcription-language-selector.component';
+import { TranscriptionSettingsPickerComponent } from '../components/transcription-settings-picker/transcription-settings-picker.component';
 import { SupportedLanguageCode } from '../../../../../core/services/language-picker.service';
 import { AddTagsComponent } from '../components/add-tags/add-tags.component';
 import { ConfirmationModalService } from '../../../../../components/ui/confirmation-modal/confirmation-modal.service';
 import { MicSelectorComponent } from '../components/mic-selector/mic-selector.component';
-import { TranscriptionLanguageSelectorService } from '../components/transcription-language-selector/transcription-language-selector.service';
+import { TranscriptionSettingsPickerService } from '../components/transcription-settings-picker/transcription-settings-picker.service';
 
 @Component({
   selector: 'app-create-audio-note',
@@ -31,7 +31,7 @@ import { TranscriptionLanguageSelectorService } from '../components/transcriptio
     AudioLevelBarComponent,
     FormsModule,
     NoteNameInputComponent,
-    TranscriptionLanguageSelectorComponent,
+    TranscriptionSettingsPickerComponent,
     AddTagsComponent,
     MicSelectorComponent,
   ],
@@ -48,8 +48,8 @@ export class CreateAudioNoteComponent {
   #recordAudioService = inject(RecordAudioService);
   #toaster = inject(ToasterService);
   #deviceService = inject(DeviceDetectorService);
-  #transcriptionLanguageSelectorService = inject(
-    TranscriptionLanguageSelectorService
+  #transcriptionSettingsPickerService = inject(
+    TranscriptionSettingsPickerService
   );
   #confirmationModalService = inject(ConfirmationModalService);
 
@@ -68,7 +68,7 @@ export class CreateAudioNoteComponent {
   readonly currentView = signal<'recording' | 'preview'>('recording');
   readonly selectedTranscriptionSetting = signal<
     SupportedLanguageCode | 'no-transcription'
-  >(this.#transcriptionLanguageSelectorService.getTranscriptionSettings());
+  >(this.#transcriptionSettingsPickerService.getTranscriptionSettings());
 
   readonly hasSpeechRecognition = computed(() => {
     const isSpeechRecognitionSupported =

@@ -5,10 +5,10 @@
     @if (currentView() === 'recording') {
     <!-- Language Selector -->
     @if (hasSpeechRecognition()) {
-    <app-transcription-language-selector
+    <app-transcription-settings-picker
       [(selectedTranscriptionSetting)]="selectedTranscriptionSetting"
       [disabled]="isRecording()"
-    ></app-transcription-language-selector>
+    ></app-transcription-settings-picker>
     }
     <!-- Record Button -->
     <div class="flex flex-col items-center space-y-3">

@@ -24,10 +24,10 @@
           >
         </app-card-header>
         <app-card-content>
-          <app-transcription-language-selector
+          <app-transcription-settings-picker
             [(selectedTranscriptionSetting)]="selectedTranscriptionSetting"
             [disabled]="false"
-          ></app-transcription-language-selector>
+          ></app-transcription-settings-picker>
         </app-card-content>
       </div>
 
@@ -49,10 +49,10 @@
 
         @if (expandedSections().has('transcription')) {
         <div class="p-4">
-          <app-transcription-language-selector
+          <app-transcription-settings-picker
             [(selectedTranscriptionSetting)]="selectedTranscriptionSetting"
             [disabled]="false"
-          ></app-transcription-language-selector>
+          ></app-transcription-settings-picker>
         </div>
         }
       </div>
