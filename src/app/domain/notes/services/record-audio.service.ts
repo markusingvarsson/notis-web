@@ -69,7 +69,7 @@ export class RecordAudioService implements OnDestroy {
     });
 
     this.noSoundDetector = new NoSoundDetector({
-      threshold: 0.01,
+      threshold: 0.05,
       delayMs: 2000,
       onNoSoundDetected: () => {
         this.#toaster.warning(
