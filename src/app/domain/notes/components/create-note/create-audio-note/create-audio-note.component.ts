@@ -18,7 +18,7 @@ import { ToasterService } from '../../../../../components/ui/toaster/toaster.ser
 import { isPlatformBrowser } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { TranscriptionLanguageSelectorComponent } from '../components/transcription-language-selector/transcription-language-selector.component';
-import { TranscriptionLanguageSelectorService } from '../components/transcription-language-selector/transcription-language-selector.service';
+import { LanguagePickerService } from '../../../../../core/services/language-picker.service';
 import { AddTagsComponent } from '../components/add-tags/add-tags.component';
 import { ConfirmationModalService } from '../../../../../components/ui/confirmation-modal/confirmation-modal.service';
 import { MicSelectorComponent } from '../components/mic-selector/mic-selector.component';
@@ -47,9 +47,7 @@ export class CreateAudioNoteComponent {
   #recordAudioService = inject(RecordAudioService);
   #toaster = inject(ToasterService);
   #deviceService = inject(DeviceDetectorService);
-  #transcriptionLanguageSelectorService = inject(
-    TranscriptionLanguageSelectorService
-  );
+  #languagePickerService = inject(LanguagePickerService);
   #confirmationModalService = inject(ConfirmationModalService);
 
   readonly recordingState = this.#recordAudioService.recordingState;
@@ -66,7 +64,7 @@ export class CreateAudioNoteComponent {
   readonly currentTag = signal<string>('');
   readonly currentView = signal<'recording' | 'preview'>('recording');
   readonly selectedLanguage = signal<string | null>(
-    this.#transcriptionLanguageSelectorService.getSelectedLanguage()
+    this.#languagePickerService.getSelectedLanguage()
   );
 
   readonly hasSpeechRecognition = computed(() => {

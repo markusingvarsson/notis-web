@@ -1,13 +1,29 @@
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { getSupportedLanguageCode } from '.';
+
+export interface Language {
+  name: string;
+  value: SupportedLanguageCode | null;
+}
+
+export const supportedLanguageCodes = ['en-US', 'sv-SE', 'es-ES'] as const;
+export type SupportedLanguageCode = (typeof supportedLanguageCodes)[number];
+
+export function getSupportedLanguageCode(
+  languageCode: string | null
+): SupportedLanguageCode | null {
+  return supportedLanguageCodes.includes(languageCode as SupportedLanguageCode)
+    ? (languageCode as SupportedLanguageCode)
+    : null;
+}
 
 @Injectable({
   providedIn: 'root',
 })
-export class TranscriptionLanguageSelectorService {
+export class LanguagePickerService {
   #platformId = inject(PLATFORM_ID);
-  storeSelectedLanguage(selectedLanguageStr: string | null) {
+
+  storeSelectedLanguage(selectedLanguageStr: string | null): void {
     const selectedLanguage = getSupportedLanguageCode(selectedLanguageStr);
     if (selectedLanguage) {
       localStorage.setItem('selectedLanguage', selectedLanguage);

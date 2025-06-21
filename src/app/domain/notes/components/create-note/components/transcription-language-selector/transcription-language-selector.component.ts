@@ -7,8 +7,10 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Language } from '.';
-import { TranscriptionLanguageSelectorService } from './transcription-language-selector.service';
+import {
+  Language,
+  LanguagePickerService,
+} from '../../../../../../core/services/language-picker.service';
 
 @Component({
   selector: 'app-transcription-language-selector',
@@ -21,19 +23,17 @@ import { TranscriptionLanguageSelectorService } from './transcription-language-s
 export class TranscriptionLanguageSelectorComponent {
   readonly disabled = input.required<boolean>();
   selectedLanguage = model<string | null>();
-  #transcriptionLanguageSelectorService = inject(
-    TranscriptionLanguageSelectorService
-  );
+  #languagePickerService = inject(LanguagePickerService);
 
   readonly languages: Language[] = [
     { name: 'No transcription', value: null },
     { name: 'English', value: 'en-US' },
-    { name: 'Swedish', value: 'sv-SE' },
-    { name: 'Spanish', value: 'es-ES' },
+    { name: 'Svenska', value: 'sv-SE' },
+    { name: 'Español', value: 'es-ES' },
   ];
 
   onLanguageChange($event: string | null) {
     this.selectedLanguage.set($event);
-    this.#transcriptionLanguageSelectorService.storeSelectedLanguage($event);
+    this.#languagePickerService.storeSelectedLanguage($event);
   }
 }

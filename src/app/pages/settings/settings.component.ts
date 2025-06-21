@@ -15,7 +15,7 @@ import { CardDescriptionComponent } from '../../components/ui/card/components/ca
 import { CardContentComponent } from '../../components/ui/card/components/card-content/card-content.component';
 import { ToasterService } from '../../components/ui/toaster/toaster.service';
 import { TranscriptionLanguageSelectorComponent } from '../../domain/notes/components/create-note/components/transcription-language-selector/transcription-language-selector.component';
-import { TranscriptionLanguageSelectorService } from '../../domain/notes/components/create-note/components/transcription-language-selector/transcription-language-selector.service';
+import { LanguagePickerService } from '../../core/services/language-picker.service';
 import { IconChevronDownComponent } from '../../components/ui/icons/icon-chevron-down/icon-chevron-down.component';
 import { IconChevronRightComponent } from '../../components/ui/icons/icon-chevron-right/icon-chevron-right.component';
 import { NotesStorageService } from '../../domain/notes/services/notes-storage.service';
@@ -44,16 +44,14 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 })
 export class SettingsComponent {
   private toasterService = inject(ToasterService);
-  #transcriptionLanguageSelectorService = inject(
-    TranscriptionLanguageSelectorService
-  );
+  #languagePickerService = inject(LanguagePickerService);
   #notesStorageService = inject(NotesStorageService);
   #confirmationModalService = inject(ConfirmationModalService);
   #platformId = inject(PLATFORM_ID);
   #deviceService = inject(DeviceDetectorService);
 
   readonly selectedLanguage = signal<string | null>(
-    this.#transcriptionLanguageSelectorService.getSelectedLanguage()
+    this.#languagePickerService.getSelectedLanguage()
   );
   readonly expandedSections = signal<Set<string>>(new Set(['account']));
   readonly hasSpeechRecognition = computed(() => {
