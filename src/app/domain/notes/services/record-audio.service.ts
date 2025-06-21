@@ -15,6 +15,7 @@ import {
 } from '../'; // Adjust path as needed
 import { AUDIO_MIME_TYPE } from './mime-type'; // Adjust path as needed
 import { ToasterService } from '../../../components/ui/toaster/toaster.service';
+import { NoSoundDetector } from './no-sound-detector.util';
 
 @Injectable()
 export class RecordAudioService implements OnDestroy {
@@ -58,8 +59,22 @@ export class RecordAudioService implements OnDestroy {
   private audioContext: AudioContext | null = null;
   private analyser: AnalyserNode | null = null;
   private animationId: number | null = null;
+  private noSoundDetector!: NoSoundDetector;
 
   constructor() {
+    this.noSoundDetector = new NoSoundDetector({
+      threshold: 0.01,
+      delayMs: 2000,
+      onNoSoundDetected: () => {
+        this.#toaster.warning(
+          'No sound detected. Please check your microphone settings.'
+        );
+      },
+      onSoundDetected: () => {
+        this.#toaster.success('Sound detected! Microphone is working.');
+      },
+    });
+
     if (isPlatformBrowser(this.#platformId)) {
       this.checkInitialMicrophonePermission();
     }
@@ -310,6 +325,7 @@ export class RecordAudioService implements OnDestroy {
     }
     this.audioBlob.set(null);
     this.transcriptText.set('');
+    this.noSoundDetector.reset();
     // Speech recognition artifacts (like the recognition object itself) are typically reset
     // when starting a new recognition or when explicitly clearing.
     this.cleanupSpeechRecognition();
@@ -365,6 +381,7 @@ export class RecordAudioService implements OnDestroy {
 
     // Reset visualization
     this.voiceLevel.set(0);
+    this.noSoundDetector.reset();
   }
 
   private updateAudioLevels(): void {
@@ -378,6 +395,9 @@ export class RecordAudioService implements OnDestroy {
     // Calculate voice-specific level focusing on speech frequencies
     const voiceLevel = this.calculateVoiceLevel(dataArray);
     this.voiceLevel.set(voiceLevel);
+
+    // Check for no sound detection
+    this.noSoundDetector.update(voiceLevel);
 
     this.animationId = requestAnimationFrame(() => this.updateAudioLevels());
   }
