@@ -1,17 +1,10 @@
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
-export interface Language {
-  name: string;
-  value: SupportedLanguageCode | 'no-transcription';
-}
-
 export const supportedLanguageCodes = ['en-US', 'sv-SE', 'es-ES'] as const;
 export type SupportedLanguageCode = (typeof supportedLanguageCodes)[number];
 
-export function getSupportedLanguageCode(
-  languageCode: string
-): SupportedLanguageCode {
+function getSupportedLanguageCode(languageCode: string): SupportedLanguageCode {
   if (languageCode.startsWith('en-') || languageCode == 'en') {
     return 'en-US';
   }

@@ -7,11 +7,11 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { SupportedLanguageCode } from '../../../../../../core/services/language-picker.service';
 import {
-  Language,
-  SupportedLanguageCode,
-} from '../../../../../../core/services/language-picker.service';
-import { TranscriptionSettingsPickerService } from './transcription-settings-picker.service';
+  TranscriptionSetting,
+  TranscriptionSettingsPickerService,
+} from './transcription-settings-picker.service';
 
 @Component({
   selector: 'app-transcription-settings-picker',
@@ -31,7 +31,7 @@ export class TranscriptionSettingsPickerComponent {
     TranscriptionSettingsPickerService
   );
 
-  readonly languages: Language[] = [
+  readonly languages: TranscriptionSetting[] = [
     { name: 'No transcription', value: 'no-transcription' },
     { name: 'English', value: 'en-US' },
     { name: 'Svenska', value: 'sv-SE' },

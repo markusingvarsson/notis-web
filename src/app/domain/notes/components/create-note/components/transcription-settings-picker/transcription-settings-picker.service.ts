@@ -5,6 +5,11 @@ import {
   SupportedLanguageCode,
 } from '../../../../../../core/services/language-picker.service';
 
+export interface TranscriptionSetting {
+  name: string;
+  value: SupportedLanguageCode | 'no-transcription';
+}
+
 @Injectable({
   providedIn: 'root',
 })
