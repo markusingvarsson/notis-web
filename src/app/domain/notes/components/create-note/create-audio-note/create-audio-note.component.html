@@ -6,7 +6,7 @@
     <!-- Language Selector -->
     @if (hasSpeechRecognition()) {
     <app-transcription-language-selector
-      [(selectedLanguage)]="selectedLanguage"
+      [(selectedTranscriptionSetting)]="selectedTranscriptionSetting"
       [disabled]="isRecording()"
     ></app-transcription-language-selector>
     }

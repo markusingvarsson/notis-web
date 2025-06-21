@@ -15,13 +15,14 @@ import { CardDescriptionComponent } from '../../components/ui/card/components/ca
 import { CardContentComponent } from '../../components/ui/card/components/card-content/card-content.component';
 import { ToasterService } from '../../components/ui/toaster/toaster.service';
 import { TranscriptionLanguageSelectorComponent } from '../../domain/notes/components/create-note/components/transcription-language-selector/transcription-language-selector.component';
-import { LanguagePickerService } from '../../core/services/language-picker.service';
+import { SupportedLanguageCode } from '../../core/services/language-picker.service';
 import { IconChevronDownComponent } from '../../components/ui/icons/icon-chevron-down/icon-chevron-down.component';
 import { IconChevronRightComponent } from '../../components/ui/icons/icon-chevron-right/icon-chevron-right.component';
 import { NotesStorageService } from '../../domain/notes/services/notes-storage.service';
 import { ConfirmationModalService } from '../../components/ui/confirmation-modal/confirmation-modal.service';
 import { isPlatformBrowser } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { TranscriptionLanguageSelectorService } from '../../domain/notes/components/create-note/components/transcription-language-selector/transcription-language-selector.service';
 
 @Component({
   selector: 'app-settings',
@@ -44,15 +45,17 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 })
 export class SettingsComponent {
   private toasterService = inject(ToasterService);
-  #languagePickerService = inject(LanguagePickerService);
+  #transcriptionLanguageSelectorService = inject(
+    TranscriptionLanguageSelectorService
+  );
   #notesStorageService = inject(NotesStorageService);
   #confirmationModalService = inject(ConfirmationModalService);
   #platformId = inject(PLATFORM_ID);
   #deviceService = inject(DeviceDetectorService);
 
-  readonly selectedLanguage = signal<string | null>(
-    this.#languagePickerService.getSelectedLanguage()
-  );
+  readonly selectedTranscriptionSetting = signal<
+    SupportedLanguageCode | 'no-transcription'
+  >(this.#transcriptionLanguageSelectorService.getTranscriptionSettings());
   readonly expandedSections = signal<Set<string>>(new Set(['account']));
   readonly hasSpeechRecognition = computed(() => {
     const isSpeechRecognitionSupported =

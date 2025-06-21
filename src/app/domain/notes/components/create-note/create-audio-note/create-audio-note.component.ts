@@ -18,10 +18,11 @@ import { ToasterService } from '../../../../../components/ui/toaster/toaster.ser
 import { isPlatformBrowser } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { TranscriptionLanguageSelectorComponent } from '../components/transcription-language-selector/transcription-language-selector.component';
-import { LanguagePickerService } from '../../../../../core/services/language-picker.service';
+import { SupportedLanguageCode } from '../../../../../core/services/language-picker.service';
 import { AddTagsComponent } from '../components/add-tags/add-tags.component';
 import { ConfirmationModalService } from '../../../../../components/ui/confirmation-modal/confirmation-modal.service';
 import { MicSelectorComponent } from '../components/mic-selector/mic-selector.component';
+import { TranscriptionLanguageSelectorService } from '../components/transcription-language-selector/transcription-language-selector.service';
 
 @Component({
   selector: 'app-create-audio-note',
@@ -47,7 +48,9 @@ export class CreateAudioNoteComponent {
   #recordAudioService = inject(RecordAudioService);
   #toaster = inject(ToasterService);
   #deviceService = inject(DeviceDetectorService);
-  #languagePickerService = inject(LanguagePickerService);
+  #transcriptionLanguageSelectorService = inject(
+    TranscriptionLanguageSelectorService
+  );
   #confirmationModalService = inject(ConfirmationModalService);
 
   readonly recordingState = this.#recordAudioService.recordingState;
@@ -63,9 +66,9 @@ export class CreateAudioNoteComponent {
   readonly availableTags = input<Record<string, Tag>>({});
   readonly currentTag = signal<string>('');
   readonly currentView = signal<'recording' | 'preview'>('recording');
-  readonly selectedLanguage = signal<string | null>(
-    this.#languagePickerService.getSelectedLanguage()
-  );
+  readonly selectedTranscriptionSetting = signal<
+    SupportedLanguageCode | 'no-transcription'
+  >(this.#transcriptionLanguageSelectorService.getTranscriptionSettings());
 
   readonly hasSpeechRecognition = computed(() => {
     const isSpeechRecognitionSupported =
@@ -91,7 +94,12 @@ export class CreateAudioNoteComponent {
     if (this.recordingState() === RECORDER_STATE.IDLE) {
       // Before starting, ensure any previous audio/text is handled or explicitly cleared by user if necessary
       // For now, service's startRecording clears previous artifacts.
-      this.#recordAudioService.startRecording(this.selectedLanguage());
+      const transcriptionLanguage = this.selectedTranscriptionSetting();
+      const languageSetting =
+        transcriptionLanguage === 'no-transcription'
+          ? null
+          : transcriptionLanguage;
+      this.#recordAudioService.startRecording(languageSetting);
     } else if (this.recordingState() === RECORDER_STATE.RECORDING) {
       this.#recordAudioService.stopRecording();
       this.currentView.set('preview');
