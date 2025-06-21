@@ -50,5 +50,6 @@ export class NoSoundDetector {
   reset(): void {
     this.noSoundStartTime = null;
     this.hasShownWarning = false;
+    this.isTerminated = false;
   }
 }
