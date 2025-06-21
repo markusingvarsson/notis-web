@@ -17,6 +17,7 @@ import { AUDIO_MIME_TYPE } from './mime-type'; // Adjust path as needed
 import { ToasterService } from '../../../components/ui/toaster/toaster.service';
 import { NoSoundDetector } from './no-sound-detector.util';
 import { AudioAnalyzer } from './audio-analyzer.util';
+import { SupportedLanguageCode } from '../../../core/services/language-picker.service';
 
 @Injectable()
 export class RecordAudioService implements OnDestroy {
@@ -228,7 +229,7 @@ export class RecordAudioService implements OnDestroy {
   }
 
   async startRecording(
-    transcriptionLanguage: string | null = null
+    transcriptionLanguage: SupportedLanguageCode | null
   ): Promise<void> {
     if (!isPlatformBrowser(this.#platformId)) {
       this.recordingState.set(RECORDER_STATE.BLOCKED);

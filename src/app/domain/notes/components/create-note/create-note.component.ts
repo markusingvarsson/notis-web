@@ -14,6 +14,7 @@ import { RecordAudioService } from '../../services/record-audio.service';
 import { Router } from '@angular/router';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
 import { CreateAudioNoteComponent } from './create-audio-note/create-audio-note.component';
+import { TranscriptionSettingsPickerService } from './components/transcription-settings-picker/transcription-settings-picker.service';
 
 @Component({
   selector: 'app-create-note',
@@ -28,6 +29,9 @@ export class CreateNoteComponent {
   #platformId = inject(PLATFORM_ID);
   #recordAudioService = inject(RecordAudioService);
   #router = inject(Router);
+  #transcriptionSettingsPickerService = inject(
+    TranscriptionSettingsPickerService
+  );
   readonly CTA = input<boolean>(false);
   readonly tags = input<Record<string, Tag>>({});
   readonly availableTags = input<Record<string, Tag>>({});
@@ -40,7 +44,13 @@ export class CreateNoteComponent {
     effect(() => {
       if (isPlatformBrowser(this.#platformId) && this.CTA()) {
         if (this.recordingState() === RECORDER_STATE.IDLE) {
-          this.#recordAudioService.startRecording('audio');
+          const transcriptionLanguage =
+            this.#transcriptionSettingsPickerService.getTranscriptionSettings();
+          const languageSetting =
+            transcriptionLanguage === 'no-transcription'
+              ? null
+              : transcriptionLanguage;
+          this.#recordAudioService.startRecording(languageSetting);
         }
         // remove query param
         this.#router.navigate([], {
