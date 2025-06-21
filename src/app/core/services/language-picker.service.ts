@@ -12,6 +12,18 @@ export type SupportedLanguageCode = (typeof supportedLanguageCodes)[number];
 export function getSupportedLanguageCode(
   languageCode: string
 ): SupportedLanguageCode {
+  if (languageCode.startsWith('en-') || languageCode == 'en') {
+    return 'en-US';
+  }
+
+  if (languageCode.startsWith('sv-') || languageCode == 'sv') {
+    return 'sv-SE';
+  }
+
+  if (languageCode.startsWith('es-') || languageCode == 'es') {
+    return 'es-ES';
+  }
+
   return supportedLanguageCodes.includes(languageCode as SupportedLanguageCode)
     ? (languageCode as SupportedLanguageCode)
     : 'en-US';
@@ -34,8 +46,11 @@ export class LanguagePickerService {
     }
 
     const selectedLanguageStr = localStorage.getItem('selectedLanguage');
-    return selectedLanguageStr
-      ? getSupportedLanguageCode(selectedLanguageStr)
-      : 'en-US';
+    if (selectedLanguageStr) {
+      return getSupportedLanguageCode(selectedLanguageStr);
+    }
+
+    const language = getSupportedLanguageCode(navigator.language);
+    return language;
   }
 }
