@@ -69,8 +69,8 @@ export class RecordAudioService implements OnDestroy {
     });
 
     this.noSoundDetector = new NoSoundDetector({
-      threshold: 0,
-      delayMs: 2000,
+      threshold: 0.01,
+      delayMs: 3500,
       onNoSoundDetected: () => {
         this.#toaster.warning(
           'No sound detected. Please check your microphone settings.'
