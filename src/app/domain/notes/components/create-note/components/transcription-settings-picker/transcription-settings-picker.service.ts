@@ -1,7 +1,7 @@
 import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import {
-  getSupportedLanguageCode,
+  LanguagePickerService,
   SupportedLanguageCode,
 } from '../../../../../../core/services/language-picker.service';
 
@@ -10,6 +10,7 @@ import {
 })
 export class TranscriptionSettingsPickerService {
   #platformId = inject(PLATFORM_ID);
+  #languagePickerService = inject(LanguagePickerService);
 
   storeTranscriptionSettings(
     selectedLanguageStr: SupportedLanguageCode | 'no-transcription'
@@ -19,8 +20,7 @@ export class TranscriptionSettingsPickerService {
       return;
     }
 
-    const selectedLanguage = getSupportedLanguageCode(selectedLanguageStr);
-    localStorage.setItem('selectedLanguage', selectedLanguage);
+    this.#languagePickerService.storeSelectedLanguage(selectedLanguageStr);
     localStorage.removeItem('noTranscription');
   }
 
@@ -34,9 +34,6 @@ export class TranscriptionSettingsPickerService {
       return 'no-transcription';
     }
 
-    const selectedLanguageStr = localStorage.getItem('selectedLanguage');
-    return selectedLanguageStr
-      ? getSupportedLanguageCode(selectedLanguageStr)
-      : 'en-US';
+    return this.#languagePickerService.getSelectedLanguage();
   }
 }
