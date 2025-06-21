@@ -15,7 +15,7 @@ export class NoSoundDetector {
   }
 
   update(voiceLevel: number): void {
-    if (voiceLevel < this.config.threshold) {
+    if (voiceLevel <= this.config.threshold) {
       // No sound detected
       const currentTime = Date.now();
       if (this.noSoundStartTime === null) {
