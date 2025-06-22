@@ -1,22 +1,15 @@
 import {
   Component,
   OnInit,
-  signal,
   output,
   inject,
-  PLATFORM_ID,
   effect,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MicrophoneIconComponent } from '../../../../../../components/ui/icons/microphone-icon/microphone-icon.component';
 import { ButtonComponent } from '../../../../../../components/ui/button/button.component';
-
-interface AudioDevice {
-  deviceId: string;
-  label: string;
-}
+import { MicSelectorService } from './mic-selector.service';
 
 @Component({
   selector: 'app-mic-selector',
@@ -25,11 +18,11 @@ interface AudioDevice {
   template: `
     <div class="space-y-3">
       <div class="flex items-center gap-2">
-        @if (audioDevices().length === 0) {
+        @if (micSelectorService.audioDevices().length === 0) {
         <p class="text-[var(--tw-primary-dark)] text-sm">
           Loading microphones...
         </p>
-        } @else if (!hasPermission()) {
+        } @else if (!micSelectorService.hasPermission()) {
         <app-button (buttonClick)="requestPermission()">
           <app-microphone-icon [size]="16" />
           Pick Microphone
@@ -39,11 +32,12 @@ interface AudioDevice {
           <div class="relative">
             <select
               id="mic-select"
-              [ngModel]="selectedDevice()"
+              [ngModel]="micSelectorService.selectedDevice()"
               (ngModelChange)="onDeviceChange($event)"
               class="w-full bg-[var(--tw-bg-light)] border border-[var(--tw-border-light)] text-[var(--tw-primary-dark)] rounded-md py-2 px-3 pr-10 focus:outline-none focus:ring-2 focus:ring-[var(--tw-primary)] focus:border-transparent appearance-none text-sm"
             >
-              @for (device of audioDevices(); track device.deviceId) {
+              @for (device of micSelectorService.audioDevices(); track
+              device.deviceId) {
               <option [value]="device.deviceId" class="bg-[var(--tw-bg)]">
                 {{ device.label }}
               </option>
@@ -76,76 +70,30 @@ interface AudioDevice {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MicSelectorComponent implements OnInit {
-  #platformId = inject(PLATFORM_ID);
-
-  // Signals
-  audioDevices = signal<AudioDevice[]>([]);
-  selectedDevice = signal<string>('');
-  hasPermission = signal<boolean>(false);
+  #micSelectorService = inject(MicSelectorService);
+  get micSelectorService(): MicSelectorService {
+    return this.#micSelectorService;
+  }
 
   // Output events
   readonly deviceSelected = output<string>();
 
   constructor() {
     effect(() => {
-      this.deviceSelected.emit(this.selectedDevice());
+      console.log(this.#micSelectorService.selectedDevice());
+      this.deviceSelected.emit(this.#micSelectorService.selectedDevice());
     });
   }
 
   async ngOnInit() {
-    if (isPlatformBrowser(this.#platformId)) {
-      await this.checkPermissionStatus();
-      this.loadAudioDevices();
-    }
-  }
-
-  async loadAudioDevices() {
-    if (!isPlatformBrowser(this.#platformId)) {
-      return;
-    }
-
-    try {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const audioInputs = devices
-        .filter((device) => device.kind === 'audioinput')
-        .map((device) => ({
-          deviceId: device.deviceId,
-          label: device.label || `Microphone ${device.deviceId.slice(0, 8)}`,
-        }));
-
-      this.audioDevices.set(audioInputs);
-
-      if (audioInputs.length > 0 && !this.selectedDevice()) {
-        this.selectedDevice.set(audioInputs[0].deviceId);
-      }
-    } catch (err) {
-      console.error('Error loading devices:', err);
-    }
-  }
-
-  async checkPermissionStatus() {
-    try {
-      const permission = await navigator.permissions.query({
-        name: 'microphone' as PermissionName,
-      });
-      this.hasPermission.set(permission.state === 'granted');
-    } catch {
-      // Fallback for browsers without permissions API
-      this.hasPermission.set(false);
-    }
+    await this.#micSelectorService.initialize();
   }
 
   async requestPermission() {
-    try {
-      await navigator.mediaDevices.getUserMedia({ audio: true });
-      this.hasPermission.set(true);
-      await this.loadAudioDevices();
-    } catch (err) {
-      console.error('Permission denied:', err);
-    }
+    await this.#micSelectorService.requestPermission();
   }
 
   onDeviceChange(deviceId: string) {
-    this.selectedDevice.set(deviceId);
+    this.#micSelectorService.setSelectedDevice(deviceId);
   }
 }
