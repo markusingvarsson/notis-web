@@ -1,4 +1,4 @@
-import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
+import { effect, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { ToasterService } from '../../../../../../components/ui/toaster/toaster.service';
 
@@ -19,11 +19,18 @@ export class MicSelectorService {
   readonly hasPermission = signal<boolean>(false);
   #toasterService = inject(ToasterService);
 
+  constructor() {
+    effect(() => {
+      if (this.hasPermission() && this.audioDevices().length > 0) {
+        this.initSelectedDevice();
+      }
+    });
+  }
+
   async initialize(): Promise<void> {
     if (isPlatformBrowser(this.#platformId)) {
       await this.checkPermissionStatus();
       await this.loadAudioDevices();
-      this.initSelectedDevice();
     }
   }
 
