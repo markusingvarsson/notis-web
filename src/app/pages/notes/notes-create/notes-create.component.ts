@@ -82,34 +82,6 @@ import { NoteCreated } from '../../../domain/notes';
                 class="bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 dark:border-slate-700/20 overflow-hidden"
               >
                 <div class="p-8">
-                  <div class="text-center mb-8">
-                    <div
-                      class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl shadow-lg mb-4"
-                    >
-                      <svg
-                        class="w-8 h-8 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-                        ></path>
-                      </svg>
-                    </div>
-                    <h1
-                      class="text-3xl font-bold text-slate-900 dark:text-white mb-2"
-                    >
-                      Create Your Note
-                    </h1>
-                    <p class="text-slate-600 dark:text-slate-400">
-                      Record your thoughts and let AI transcribe them instantly
-                    </p>
-                  </div>
-
                   <app-create-note
                     [CTA]="CTA()"
                     (noteCreated)="onCreateNote($event)"
@@ -163,20 +135,6 @@ import { NoteCreated } from '../../../domain/notes';
                       ></path>
                     </svg>
                     <span>Speak clearly and at a moderate pace</span>
-                  </li>
-                  <li class="flex items-start gap-2">
-                    <svg
-                      class="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
-                      ></path>
-                    </svg>
-                    <span>Find a quiet environment</span>
                   </li>
                   <li class="flex items-start gap-2">
                     <svg
