@@ -58,6 +58,49 @@
       </div>
     </app-card>
     }
+
+    <!-- Microphone Settings -->
+    <app-card
+      [className]="'border border-[var(--tw-border-light)] rounded-lg bg-card'"
+    >
+      <!-- Desktop: Always expanded -->
+      <div class="hidden sm:block">
+        <app-card-header>
+          <app-card-title>Microphone</app-card-title>
+          <app-card-description
+            >Select your preferred microphone for audio
+            recording.</app-card-description
+          >
+        </app-card-header>
+        <app-card-content>
+          <app-mic-selector></app-mic-selector>
+        </app-card-content>
+      </div>
+
+      <!-- Mobile: Accordion -->
+      <div class="sm:hidden">
+        <button
+          type="button"
+          (click)="toggleSection('microphone')"
+          class="w-full p-4 flex items-center justify-between text-left transition-colors"
+          [attr.aria-expanded]="expandedSections().has('microphone')"
+        >
+          <h2 class="text-lg font-semibold">Microphone</h2>
+          @if (expandedSections().has('microphone')) {
+          <app-icon-chevron-down />
+          } @else {
+          <app-icon-chevron-right />
+          }
+        </button>
+
+        @if (expandedSections().has('microphone')) {
+        <div class="p-4">
+          <app-mic-selector></app-mic-selector>
+        </div>
+        }
+      </div>
+    </app-card>
+
     <!-- Danger Zone -->
     <app-card
       [className]="'border border-[var(--tw-border-light)] rounded-lg bg-card'"
