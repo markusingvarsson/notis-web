@@ -1,6 +1,5 @@
 import { effect, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { ToasterService } from '../../../../../../components/ui/toaster/toaster.service';
 
 export interface AudioDevice {
   deviceId: string;
@@ -17,7 +16,6 @@ export class MicSelectorService {
   readonly audioDevices = signal<AudioDevice[]>([]);
   readonly selectedDevice = signal<string>('');
   readonly hasPermission = signal<boolean>(false);
-  #toasterService = inject(ToasterService);
 
   constructor() {
     effect(() => {
@@ -102,7 +100,6 @@ export class MicSelectorService {
     const device = this.audioDevices().find((x) => x.deviceId === deviceId);
     if (device) {
       localStorage.setItem('selectedDeviceLabel', device.label);
-      this.#toasterService.success('Microphone selected: ' + device.label);
     }
   }
 }
