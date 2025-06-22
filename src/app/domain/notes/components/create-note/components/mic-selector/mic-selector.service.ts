@@ -61,6 +61,12 @@ export class MicSelectorService {
       this.audioDevices().find((x) => x.deviceId === selectedDevice);
     this.#toasterService.success('Local Storage: ' + selectedDevice);
     this.#toasterService.success(
+      'Audio Devices: ' +
+        this.audioDevices()
+          .map((x) => x.deviceId)
+          .join(', ')
+    );
+    this.#toasterService.success(
       'Selected device: ' + (device as AudioDevice)?.deviceId
     );
     if (device) {
