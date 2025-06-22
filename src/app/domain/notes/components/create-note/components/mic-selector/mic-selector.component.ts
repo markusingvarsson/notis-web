@@ -80,7 +80,6 @@ export class MicSelectorComponent implements OnInit {
 
   constructor() {
     effect(() => {
-      console.log(this.#micSelectorService.selectedDevice());
       this.deviceSelected.emit(this.#micSelectorService.selectedDevice());
     });
   }

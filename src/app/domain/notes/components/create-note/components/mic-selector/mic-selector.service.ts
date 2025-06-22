@@ -21,6 +21,7 @@ export class MicSelectorService {
     if (isPlatformBrowser(this.#platformId)) {
       await this.checkPermissionStatus();
       await this.loadAudioDevices();
+      this.initSelectedDevice();
     }
   }
 
@@ -39,12 +40,20 @@ export class MicSelectorService {
         }));
 
       this.audioDevices.set(audioInputs);
-
-      if (audioInputs.length > 0 && !this.selectedDevice()) {
-        this.selectedDevice.set(audioInputs[0].deviceId);
-      }
     } catch (err) {
       console.error('Error loading devices:', err);
+    }
+  }
+
+  initSelectedDevice() {
+    const selectedDevice = localStorage.getItem('selectedDevice');
+    const device =
+      selectedDevice &&
+      this.audioDevices().find((x) => x.deviceId === selectedDevice);
+    if (device) {
+      this.selectedDevice.set(device.deviceId);
+    } else if (this.audioDevices().length > 0 && !this.selectedDevice()) {
+      this.selectedDevice.set(this.audioDevices()[0].deviceId);
     }
   }
 
@@ -80,5 +89,6 @@ export class MicSelectorService {
 
   setSelectedDevice(deviceId: string): void {
     this.selectedDevice.set(deviceId);
+    localStorage.setItem('selectedDevice', deviceId);
   }
 }
