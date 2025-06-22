@@ -1,4 +1,4 @@
-import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
+import { effect, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 
 export interface AudioDevice {
@@ -17,11 +17,18 @@ export class MicSelectorService {
   readonly selectedDevice = signal<string>('');
   readonly hasPermission = signal<boolean>(false);
 
+  constructor() {
+    effect(() => {
+      if (this.hasPermission() && this.audioDevices().length > 0) {
+        this.initSelectedDevice();
+      }
+    });
+  }
+
   async initialize(): Promise<void> {
     if (isPlatformBrowser(this.#platformId)) {
       await this.checkPermissionStatus();
       await this.loadAudioDevices();
-      this.initSelectedDevice();
     }
   }
 
@@ -46,10 +53,11 @@ export class MicSelectorService {
   }
 
   initSelectedDevice() {
-    const selectedDevice = localStorage.getItem('selectedDevice');
+    const selectedDeviceLabel = localStorage.getItem('selectedDeviceLabel');
     const device =
-      selectedDevice &&
-      this.audioDevices().find((x) => x.deviceId === selectedDevice);
+      selectedDeviceLabel &&
+      this.audioDevices().find((x) => x.label === selectedDeviceLabel);
+
     if (device) {
       this.selectedDevice.set(device.deviceId);
     } else if (this.audioDevices().length > 0 && !this.selectedDevice()) {
@@ -89,6 +97,9 @@ export class MicSelectorService {
 
   setSelectedDevice(deviceId: string): void {
     this.selectedDevice.set(deviceId);
-    localStorage.setItem('selectedDevice', deviceId);
+    const device = this.audioDevices().find((x) => x.deviceId === deviceId);
+    if (device) {
+      localStorage.setItem('selectedDeviceLabel', device.label);
+    }
   }
 }
