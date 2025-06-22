@@ -8,10 +8,5 @@
   "
   [withFooter]="true"
 >
-  <app-create-note
-    [CTA]="CTA()"
-    (noteCreated)="onCreateNote($event)"
-    [availableTags]="availableTags()"
-  ></app-create-note>
-  <app-note-list></app-note-list>
+  <router-outlet></router-outlet>
 </app-pagelayout>

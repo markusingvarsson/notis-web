@@ -10,6 +10,27 @@ export const routes: Routes = [
     path: 'notes',
     loadComponent: () =>
       import('./pages/notes/notes.component').then((mod) => mod.NotesComponent),
+    children: [
+      {
+        path: '',
+        redirectTo: 'list',
+        pathMatch: 'full',
+      },
+      {
+        path: 'list',
+        loadComponent: () =>
+          import('./pages/notes/notes-list/notes-list.component').then(
+            (mod) => mod.NotesListComponent
+          ),
+      },
+      {
+        path: 'create',
+        loadComponent: () =>
+          import('./pages/notes/notes-create/notes-create.component').then(
+            (mod) => mod.NotesCreateComponent
+          ),
+      },
+    ],
   },
   {
     path: 'settings',
