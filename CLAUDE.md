@@ -6,6 +6,7 @@
 - Component templates should use the new built-in control flow syntax (`@if`, `@for`).
 - Use `NgOptimizedImage` for all static images.
 - Selector prefix should be `app-`.
+- Use Tailwind CSS
 
 ## Angular Service Generation
 

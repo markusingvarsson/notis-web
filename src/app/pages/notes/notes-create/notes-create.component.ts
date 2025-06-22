@@ -5,6 +5,7 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { PagelayoutComponent } from '../../../components/layout/pagelayout/pagelayout.component';
 import { CreateNoteComponent } from '../../../domain/notes/components/create-note/create-note.component';
 import { NotesStorageService } from '../../../domain/notes/services/notes-storage.service';
 import { NoteCreated } from '../../../domain/notes';
@@ -12,25 +13,33 @@ import { NoteCreated } from '../../../domain/notes';
 @Component({
   selector: 'app-notes-create',
   standalone: true,
-  imports: [CreateNoteComponent],
+  imports: [PagelayoutComponent, CreateNoteComponent],
   template: `
-    <div class="space-y-8">
-      <div class="space-y-4">
-        <button 
-          type="button" 
-          class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
-          (click)="navigateBack()"
-        >
-          ← Back to Notes
-        </button>
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">Create New Note</h1>
+    <app-pagelayout
+      [pageTitle]="'Create Note - Notis.nu'"
+      [pageDescription]="'Create a new voice with tags and transcription.'"
+      [pageKeywords]="
+        'create note, new note, voice note, audio recording, notis'
+      "
+      [withFooter]="false"
+    >
+      <div class="space-y-8">
+        <div class="space-y-4">
+          <button
+            type="button"
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700"
+            (click)="navigateBack()"
+          >
+            ← Back to Notes
+          </button>
+        </div>
+        <app-create-note
+          [CTA]="CTA()"
+          (noteCreated)="onCreateNote($event)"
+          [availableTags]="availableTags()"
+        ></app-create-note>
       </div>
-      <app-create-note
-        [CTA]="CTA()"
-        (noteCreated)="onCreateNote($event)"
-        [availableTags]="availableTags()"
-      ></app-create-note>
-    </div>
+    </app-pagelayout>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
