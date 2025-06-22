@@ -23,6 +23,8 @@ import { ConfirmationModalService } from '../../components/ui/confirmation-modal
 import { isPlatformBrowser } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { TranscriptionSettingsPickerService } from '../../domain/notes/components/create-note/components/transcription-settings-picker/transcription-settings-picker.service';
+import { MicSelectorComponent } from '../../domain/notes/components/create-note/components/mic-selector/mic-selector.component';
+import { MicSelectorService } from '../../domain/notes/components/create-note/components/mic-selector/mic-selector.service';
 
 @Component({
   selector: 'app-settings',
@@ -38,6 +40,7 @@ import { TranscriptionSettingsPickerService } from '../../domain/notes/component
     TranscriptionSettingsPickerComponent,
     IconChevronDownComponent,
     IconChevronRightComponent,
+    MicSelectorComponent,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
@@ -52,6 +55,7 @@ export class SettingsComponent {
   #confirmationModalService = inject(ConfirmationModalService);
   #platformId = inject(PLATFORM_ID);
   #deviceService = inject(DeviceDetectorService);
+  #micSelectorService = inject(MicSelectorService);
 
   readonly selectedTranscriptionSetting = signal<
     SupportedLanguageCode | 'no-transcription'
@@ -64,6 +68,16 @@ export class SettingsComponent {
 
     return isSpeechRecognitionSupported && this.#deviceService.isDesktop();
   });
+
+  // Mic selector service getter for template access
+  get micSelectorService(): MicSelectorService {
+    return this.#micSelectorService;
+  }
+
+  constructor() {
+    // Initialize mic selector service when component loads
+    this.#micSelectorService.initialize();
+  }
 
   toggleSection(section: string): void {
     this.expandedSections.update((sections) => {
