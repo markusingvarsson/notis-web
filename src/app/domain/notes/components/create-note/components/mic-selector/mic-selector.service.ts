@@ -55,20 +55,11 @@ export class MicSelectorService {
   }
 
   initSelectedDevice() {
-    const selectedDevice = localStorage.getItem('selectedDevice');
+    const selectedDeviceLabel = localStorage.getItem('selectedDeviceLabel');
     const device =
-      selectedDevice &&
-      this.audioDevices().find((x) => x.deviceId === selectedDevice);
-    this.#toasterService.success('Local Storage: ' + selectedDevice);
-    this.#toasterService.success(
-      'Audio Devices: ' +
-        this.audioDevices()
-          .map((x) => x.deviceId)
-          .join(', ')
-    );
-    this.#toasterService.success(
-      'Selected device: ' + (device as AudioDevice)?.deviceId
-    );
+      selectedDeviceLabel &&
+      this.audioDevices().find((x) => x.label === selectedDeviceLabel);
+
     if (device) {
       this.selectedDevice.set(device.deviceId);
     } else if (this.audioDevices().length > 0 && !this.selectedDevice()) {
@@ -108,7 +99,10 @@ export class MicSelectorService {
 
   setSelectedDevice(deviceId: string): void {
     this.selectedDevice.set(deviceId);
-    localStorage.setItem('selectedDevice', deviceId);
-    this.#toasterService.success('Microphone selected: ' + deviceId);
+    const device = this.audioDevices().find((x) => x.deviceId === deviceId);
+    if (device) {
+      localStorage.setItem('selectedDeviceLabel', device.label);
+      this.#toasterService.success('Microphone selected: ' + device.label);
+    }
   }
 }
