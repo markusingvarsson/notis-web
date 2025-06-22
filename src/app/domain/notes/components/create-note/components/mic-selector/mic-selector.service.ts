@@ -52,6 +52,10 @@ export class MicSelectorService {
     const device =
       selectedDevice &&
       this.audioDevices().find((x) => x.deviceId === selectedDevice);
+    this.#toasterService.success('Local Storage: ' + selectedDevice);
+    this.#toasterService.success(
+      'Selected device: ' + (device as AudioDevice)?.deviceId
+    );
     if (device) {
       this.selectedDevice.set(device.deviceId);
     } else if (this.audioDevices().length > 0 && !this.selectedDevice()) {
