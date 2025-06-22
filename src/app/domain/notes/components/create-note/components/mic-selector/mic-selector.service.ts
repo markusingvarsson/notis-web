@@ -1,5 +1,6 @@
 import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { ToasterService } from '../../../../../../components/ui/toaster/toaster.service';
 
 export interface AudioDevice {
   deviceId: string;
@@ -16,6 +17,7 @@ export class MicSelectorService {
   readonly audioDevices = signal<AudioDevice[]>([]);
   readonly selectedDevice = signal<string>('');
   readonly hasPermission = signal<boolean>(false);
+  #toasterService = inject(ToasterService);
 
   async initialize(): Promise<void> {
     if (isPlatformBrowser(this.#platformId)) {
@@ -90,5 +92,6 @@ export class MicSelectorService {
   setSelectedDevice(deviceId: string): void {
     this.selectedDevice.set(deviceId);
     localStorage.setItem('selectedDevice', deviceId);
+    this.#toasterService.success('Microphone selected: ' + deviceId);
   }
 }
