@@ -16,8 +16,7 @@ import { Router } from '@angular/router';
 import { CreateAudioNoteComponent } from './create-audio-note/create-audio-note.component';
 import { TranscriptionSettingsPickerService } from './components/transcription-settings-picker/transcription-settings-picker.service';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
-import { MicrophoneIconComponent } from '../../../../components/ui/icons/microphone-icon/microphone-icon.component';
-import { SaveIconComponent } from '../../../../components/ui/icons/save-icon/save-icon.component';
+import { IconChevronComponent } from '../../../../components/ui/icons/icon-chevron/icon-chevron.component';
 
 @Component({
   selector: 'app-create-note',
@@ -26,8 +25,7 @@ import { SaveIconComponent } from '../../../../components/ui/icons/save-icon/sav
     FormsModule,
     CreateAudioNoteComponent,
     PageHeaderComponent,
-    MicrophoneIconComponent,
-    SaveIconComponent,
+    IconChevronComponent,
   ],
   templateUrl: './create-note.component.html',
   styleUrls: ['./create-note.component.scss'],
@@ -44,8 +42,10 @@ export class CreateNoteComponent {
   readonly CTA = input<boolean>(false);
   readonly tags = input<Record<string, Tag>>({});
   readonly availableTags = input<Record<string, Tag>>({});
+  readonly showBackButton = input<boolean>(false);
 
   readonly noteCreated = output<NoteCreated>();
+  readonly backClick = output<void>();
   readonly recordingState = this.#recordAudioService.recordingState;
   readonly isRecordingDone = this.#recordAudioService.isRecordingDone;
 
@@ -60,7 +60,7 @@ export class CreateNoteComponent {
     if (this.recordingState() === RECORDER_STATE.SAVING) {
       return 'Securing your thoughts...';
     }
-    return 'Record your thoughts securely and privately';
+    return 'Record your thoughts';
   });
 
   constructor() {

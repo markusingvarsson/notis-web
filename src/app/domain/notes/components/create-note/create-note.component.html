@@ -6,11 +6,16 @@
     [title]="headerTitle()"
     [subtitle]="headerSubtitle()"
     [recordingState]="recordingState()"
+    [showBackButton]="showBackButton()"
+    (backClick)="backClick.emit()"
   >
-    @if (recordingState() === 'saving') {
-    <app-save-icon icon [size]="24" [color]="'white'" />
-    } @else {
-    <app-microphone-icon icon [size]="24" [color]="'white'" />
+    @if (showBackButton()) {
+    <app-icon-chevron
+      back-icon
+      [size]="18"
+      [color]="'var(--tw-primary-dark)'"
+      [orientation]="'left'"
+    />
     }
   </app-page-header>
   <div class="p-8">

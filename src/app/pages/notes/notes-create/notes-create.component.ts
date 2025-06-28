@@ -48,27 +48,6 @@ import { CardHeaderWithIconComponent } from '../../../components/ui/card/compone
     >
       <div class="min-h-screen bg-[var(--tw-bg-light)]">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <!-- Navigation Bar -->
-          <nav class="flex items-center justify-between mb-6 sm:mb-8">
-            <button
-              type="button"
-              class="group flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:inline-flex sm:gap-3 sm:px-4 sm:py-3 text-sm font-medium text-[var(--tw-text)] bg-white border border-gray-200 rounded-full sm:rounded-xl hover:bg-gray-50 hover:shadow-sm hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-black/5 transition-all duration-200 active:scale-95"
-              (click)="navigateBack()"
-            >
-              <app-icon-chevron
-                [size]="18"
-                [color]="'currentColor'"
-                [orientation]="'left'"
-                class="transform group-hover:-translate-x-0.5 transition-transform duration-200"
-              />
-              <span class="hidden sm:inline">Back</span>
-            </button>
-
-            <!-- Desktop: Breadcrumb -->
-            <div class="hidden sm:block">
-              <app-breadcrumb [items]="breadcrumbItems()" />
-            </div>
-          </nav>
 
           <!-- Main Content Area -->
           <div class="grid lg:grid-cols-3 gap-8">
@@ -78,6 +57,8 @@ import { CardHeaderWithIconComponent } from '../../../components/ui/card/compone
                 [CTA]="CTA()"
                 (noteCreated)="onCreateNote($event)"
                 [availableTags]="availableTags()"
+                [showBackButton]="true"
+                (backClick)="navigateBack()"
               ></app-create-note>
             </div>
 
