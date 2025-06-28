@@ -49,22 +49,22 @@ import { CardHeaderWithIconComponent } from '../../../components/ui/card/compone
       <div class="min-h-screen bg-[var(--tw-bg-light)]">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <!-- Navigation Bar -->
-          <nav class="flex items-center justify-between mb-8">
+          <nav class="flex items-center justify-between mb-6 sm:mb-8">
             <button
               type="button"
-              class="group inline-flex items-center gap-3 px-4 py-3 text-sm font-semibold text-[var(--tw-primary-dark)] bg-[var(--tw-bg-light)] border border-[var(--tw-border-light)] rounded-xl hover:bg-[var(--tw-bg)] hover:shadow-md hover:border-[var(--tw-border)] focus:outline-none focus:ring-2 focus:ring-[var(--tw-primary)]/20 focus:ring-offset-0 transition-all duration-300"
+              class="group flex items-center justify-center w-10 h-10 sm:w-auto sm:h-auto sm:inline-flex sm:gap-3 sm:px-4 sm:py-3 text-sm font-medium text-[var(--tw-text)] bg-white border border-gray-200 rounded-full sm:rounded-xl hover:bg-gray-50 hover:shadow-sm hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-black/5 transition-all duration-200 active:scale-95"
               (click)="navigateBack()"
             >
               <app-icon-chevron
-                [size]="20"
-                [color]="'var(--tw-border-dark)'"
+                [size]="18"
+                [color]="'currentColor'"
                 [orientation]="'left'"
-                class="group-hover:text-[var(--tw-primary)] transform group-hover:-translate-x-0.5 transition-all duration-200"
+                class="transform group-hover:-translate-x-0.5 transition-transform duration-200"
               />
-              <span>Back to Notes</span>
+              <span class="hidden sm:inline">Back</span>
             </button>
 
-            <!-- Breadcrumb -->
+            <!-- Desktop: Breadcrumb -->
             <div class="hidden sm:block">
               <app-breadcrumb [items]="breadcrumbItems()" />
             </div>
