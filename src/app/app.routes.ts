@@ -13,11 +13,6 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'list',
-        pathMatch: 'full',
-      },
-      {
-        path: 'list',
         loadComponent: () =>
           import('./pages/notes/notes-list/notes-list.component').then(
             (mod) => mod.NotesListComponent

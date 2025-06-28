@@ -323,7 +323,7 @@ export class NotesCreateComponent {
   readonly availableTags = this.notesStorageService.getTags();
 
   readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
-    { label: 'Notes', route: '/notes/list' },
+    { label: 'Notes', route: '/notes' },
     { label: 'Create' },
   ]);
 
@@ -333,7 +333,7 @@ export class NotesCreateComponent {
   }
 
   navigateBack() {
-    this.router.navigate(['/notes/list']);
+    this.router.navigate(['/notes']);
   }
 
   getTotalNotes(): number {
