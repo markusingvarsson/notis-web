@@ -51,6 +51,7 @@ export const RECORDER_STATE = {
   IDLE: 'idle',
   STARTING: 'starting',
   RECORDING: 'recording',
+  SAVING: 'saving',
   BLOCKED: 'blocked',
 } as const;
 

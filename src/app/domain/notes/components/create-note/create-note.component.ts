@@ -6,6 +6,7 @@ import {
   effect,
   input,
   ChangeDetectionStrategy,
+  computed,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { isPlatformBrowser } from '@angular/common';
@@ -16,6 +17,7 @@ import { CreateAudioNoteComponent } from './create-audio-note/create-audio-note.
 import { TranscriptionSettingsPickerService } from './components/transcription-settings-picker/transcription-settings-picker.service';
 import { PageHeaderComponent } from './components/page-header/page-header.component';
 import { MicrophoneIconComponent } from '../../../../components/ui/icons/microphone-icon/microphone-icon.component';
+import { SaveIconComponent } from '../../../../components/ui/icons/save-icon/save-icon.component';
 
 @Component({
   selector: 'app-create-note',
@@ -25,6 +27,7 @@ import { MicrophoneIconComponent } from '../../../../components/ui/icons/microph
     CreateAudioNoteComponent,
     PageHeaderComponent,
     MicrophoneIconComponent,
+    SaveIconComponent,
   ],
   templateUrl: './create-note.component.html',
   styleUrls: ['./create-note.component.scss'],
@@ -45,6 +48,20 @@ export class CreateNoteComponent {
   readonly noteCreated = output<NoteCreated>();
   readonly recordingState = this.#recordAudioService.recordingState;
   readonly isRecordingDone = this.#recordAudioService.isRecordingDone;
+
+  readonly headerTitle = computed(() => {
+    if (this.recordingState() === RECORDER_STATE.SAVING) {
+      return 'Saving Your Note';
+    }
+    return 'Create Your Note';
+  });
+
+  readonly headerSubtitle = computed(() => {
+    if (this.recordingState() === RECORDER_STATE.SAVING) {
+      return 'Securing your thoughts...';
+    }
+    return 'Record your thoughts securely and privately';
+  });
 
   constructor() {
     effect(() => {

@@ -43,6 +43,8 @@ export class RecordAudioService implements OnDestroy {
         return 'Starting...';
       case RECORDER_STATE.RECORDING:
         return 'Recording...';
+      case RECORDER_STATE.SAVING:
+        return 'Saving...';
       case RECORDER_STATE.BLOCKED:
         return 'Please enable microphone access';
       default:
@@ -266,6 +268,7 @@ export class RecordAudioService implements OnDestroy {
         stream.getTracks().forEach((t) => t.stop()); // Stop all tracks from the stream
         this.recordingState.set(RECORDER_STATE.IDLE);
         this.audioAnalyzer.stop();
+        this.recordingState.set(RECORDER_STATE.SAVING);
         // If speech recognition was active, it should already be stopped by stopRecordingInternal or handled in its own error/end events.
       };
       this.mediaRecorder.onerror = (event) => {
