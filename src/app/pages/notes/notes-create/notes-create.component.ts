@@ -233,6 +233,7 @@ export class NotesCreateComponent {
 
   readonly CTA = input<boolean>(false);
   readonly availableTags = this.notesStorageService.getTags();
+  readonly notes = this.notesStorageService.getNotes();
 
   readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
     { label: 'Notes', route: '/notes' },
@@ -249,7 +250,7 @@ export class NotesCreateComponent {
   }
 
   getTotalNotes(): number {
-    return Object.keys(this.notesStorageService.getNotes()).length;
+    return this.notes().length;
   }
 
   getTotalTags(): number {
