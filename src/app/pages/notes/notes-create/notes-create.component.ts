@@ -3,6 +3,7 @@ import {
   inject,
   input,
   ChangeDetectionStrategy,
+  computed,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { PagelayoutComponent } from '../../../components/layout/pagelayout/pagelayout.component';
@@ -10,11 +11,20 @@ import { CreateNoteComponent } from '../../../domain/notes/components/create-not
 import { NotesStorageService } from '../../../domain/notes/services/notes-storage.service';
 import { NoteCreated } from '../../../domain/notes';
 import { IconChevronComponent } from '../../../components/ui/icons/icon-chevron/icon-chevron.component';
+import {
+  BreadcrumbComponent,
+  BreadcrumbItem,
+} from '../../../components/ui/breadcrumb/breadcrumb.component';
 
 @Component({
   selector: 'app-notes-create',
   standalone: true,
-  imports: [PagelayoutComponent, CreateNoteComponent, IconChevronComponent],
+  imports: [
+    PagelayoutComponent,
+    CreateNoteComponent,
+    IconChevronComponent,
+    BreadcrumbComponent,
+  ],
   template: `
     <app-pagelayout
       [pageTitle]="'Create Note - Notis.nu'"
@@ -43,19 +53,8 @@ import { IconChevronComponent } from '../../../components/ui/icons/icon-chevron/
             </button>
 
             <!-- Breadcrumb -->
-            <div
-              class="hidden sm:flex items-center text-sm text-[var(--tw-text-muted)]"
-            >
-              <span>Notes</span>
-              <app-icon-chevron
-                [size]="16"
-                [color]="'var(--tw-text-muted)'"
-                [orientation]="'right'"
-                class="mx-2"
-              />
-              <span class="text-[var(--tw-primary-dark)] font-medium"
-                >Create</span
-              >
+            <div class="hidden sm:block">
+              <app-breadcrumb [items]="breadcrumbItems()" />
             </div>
           </nav>
 
@@ -322,6 +321,11 @@ export class NotesCreateComponent {
 
   readonly CTA = input<boolean>(false);
   readonly availableTags = this.notesStorageService.getTags();
+
+  readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
+    { label: 'Notes', route: '/notes/list' },
+    { label: 'Create' },
+  ]);
 
   onCreateNote(event: NoteCreated) {
     this.notesStorageService.addNote(event);
