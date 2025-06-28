@@ -19,6 +19,7 @@ import { CheckboxIconComponent } from '../../../components/ui/icons/checkbox-ico
 import { BarChartIconComponent } from '../../../components/ui/icons/bar-chart-icon/bar-chart-icon.component';
 import { LightbulbIconComponent } from '../../../components/ui/icons/lightbulb-icon/lightbulb-icon.component';
 import { ShieldCheckIconComponent } from '../../../components/ui/icons/shield-check-icon/shield-check-icon.component';
+import { MicrophoneIconComponent } from '../../../components/ui/icons/microphone-icon/microphone-icon.component';
 
 @Component({
   selector: 'app-notes-create',
@@ -32,6 +33,7 @@ import { ShieldCheckIconComponent } from '../../../components/ui/icons/shield-ch
     BarChartIconComponent,
     LightbulbIconComponent,
     ShieldCheckIconComponent,
+    MicrophoneIconComponent,
   ],
   template: `
     <app-pagelayout
@@ -80,19 +82,10 @@ import { ShieldCheckIconComponent } from '../../../components/ui/icons/shield-ch
                     <div
                       class="w-12 h-12 bg-[var(--tw-primary)] rounded-xl flex items-center justify-center shadow-md"
                     >
-                      <svg
-                        class="w-6 h-6 text-white"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-                        ></path>
-                      </svg>
+                      <app-microphone-icon
+                        [size]="24"
+                        [color]="'white'"
+                      />
                     </div>
                     <div>
                       <h1
