@@ -109,7 +109,131 @@ import {
             </div>
 
             <!-- Sidebar -->
-            <div class="lg:col-span-1 space-y-6">
+            <div class="hidden lg:block lg:col-span-1 space-y-6">
+              <!-- Your Progress -->
+              <div
+                class="bg-[var(--tw-primary-accent-bg)] border border-[var(--tw-primary)]/20 rounded-2xl p-6"
+              >
+                <div class="flex items-center gap-3 mb-4">
+                  <div
+                    class="flex-shrink-0 w-10 h-10 bg-[var(--tw-success)] rounded-xl flex items-center justify-center"
+                  >
+                    <svg
+                      class="w-5 h-5 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                      ></path>
+                    </svg>
+                  </div>
+                  <h3
+                    class="text-lg font-semibold text-[var(--tw-primary-dark)]"
+                  >
+                    Your Progress
+                  </h3>
+                </div>
+                <div class="space-y-3">
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm text-[var(--tw-text-muted)]"
+                      >Total Notes</span
+                    >
+                    <span
+                      class="text-lg font-bold text-[var(--tw-primary-dark)]"
+                      >{{ getTotalNotes() }}</span
+                    >
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-sm text-[var(--tw-text-muted)]"
+                      >Tags Created</span
+                    >
+                    <span
+                      class="text-lg font-bold text-[var(--tw-primary-dark)]"
+                      >{{ getTotalTags() }}</span
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <!-- Recording Tips -->
+              <div
+                class="bg-[var(--tw-primary-accent-bg)] border border-[var(--tw-primary)]/20 rounded-2xl p-6"
+              >
+                <div class="flex items-center gap-3 mb-4">
+                  <div
+                    class="flex-shrink-0 w-10 h-10 bg-[var(--tw-highlight)] rounded-xl flex items-center justify-center"
+                  >
+                    <svg
+                      class="w-5 h-5 text-[var(--tw-primary-dark)]"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                      ></path>
+                    </svg>
+                  </div>
+                  <h3
+                    class="text-lg font-semibold text-[var(--tw-primary-dark)]"
+                  >
+                    Recording Tips
+                  </h3>
+                </div>
+                <ul class="space-y-3 text-sm text-[var(--tw-text-muted)]">
+                  <li class="flex items-start gap-2">
+                    <svg
+                      class="w-4 h-4 text-[var(--tw-primary)] mt-0.5 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clip-rule="evenodd"
+                      ></path>
+                    </svg>
+                    <span>Speak clearly and at a moderate pace</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <svg
+                      class="w-4 h-4 text-[var(--tw-primary)] mt-0.5 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clip-rule="evenodd"
+                      ></path>
+                    </svg>
+                    <span>Keep recordings under 5 minutes</span>
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <svg
+                      class="w-4 h-4 text-[var(--tw-primary)] mt-0.5 flex-shrink-0"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clip-rule="evenodd"
+                      ></path>
+                    </svg>
+                    <span>Use descriptive tags for organization</span>
+                  </li>
+                </ul>
+              </div>
+
               <!-- Security Notice -->
               <div
                 class="bg-[var(--tw-primary-accent-bg)] border border-[var(--tw-primary)]/20 rounded-2xl p-6"
@@ -182,130 +306,6 @@ import {
                     <span>Encrypted local storage</span>
                   </li>
                 </ul>
-              </div>
-
-              <!-- Recording Tips -->
-              <div
-                class="bg-[var(--tw-bg)] border border-[var(--tw-border-light)] rounded-2xl p-6"
-              >
-                <div class="flex items-center gap-3 mb-4">
-                  <div
-                    class="flex-shrink-0 w-10 h-10 bg-[var(--tw-highlight)] rounded-xl flex items-center justify-center"
-                  >
-                    <svg
-                      class="w-5 h-5 text-[var(--tw-primary-dark)]"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
-                      ></path>
-                    </svg>
-                  </div>
-                  <h3
-                    class="text-lg font-semibold text-[var(--tw-primary-dark)]"
-                  >
-                    Recording Tips
-                  </h3>
-                </div>
-                <ul class="space-y-3 text-sm text-[var(--tw-text-muted)]">
-                  <li class="flex items-start gap-2">
-                    <svg
-                      class="w-4 h-4 text-[var(--tw-primary)] mt-0.5 flex-shrink-0"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
-                      ></path>
-                    </svg>
-                    <span>Speak clearly and at a moderate pace</span>
-                  </li>
-                  <li class="flex items-start gap-2">
-                    <svg
-                      class="w-4 h-4 text-[var(--tw-primary)] mt-0.5 flex-shrink-0"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
-                      ></path>
-                    </svg>
-                    <span>Keep recordings under 5 minutes</span>
-                  </li>
-                  <li class="flex items-start gap-2">
-                    <svg
-                      class="w-4 h-4 text-[var(--tw-primary)] mt-0.5 flex-shrink-0"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clip-rule="evenodd"
-                      ></path>
-                    </svg>
-                    <span>Use descriptive tags for organization</span>
-                  </li>
-                </ul>
-              </div>
-
-              <!-- Your Progress -->
-              <div
-                class="bg-[var(--tw-bg)] border border-[var(--tw-border-light)] rounded-2xl p-6"
-              >
-                <div class="flex items-center gap-3 mb-4">
-                  <div
-                    class="flex-shrink-0 w-10 h-10 bg-[var(--tw-success)] rounded-xl flex items-center justify-center"
-                  >
-                    <svg
-                      class="w-5 h-5 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-                      ></path>
-                    </svg>
-                  </div>
-                  <h3
-                    class="text-lg font-semibold text-[var(--tw-primary-dark)]"
-                  >
-                    Your Progress
-                  </h3>
-                </div>
-                <div class="space-y-3">
-                  <div class="flex items-center justify-between">
-                    <span class="text-sm text-[var(--tw-text-muted)]"
-                      >Total Notes</span
-                    >
-                    <span
-                      class="text-lg font-bold text-[var(--tw-primary-dark)]"
-                      >{{ getTotalNotes() }}</span
-                    >
-                  </div>
-                  <div class="flex items-center justify-between">
-                    <span class="text-sm text-[var(--tw-text-muted)]"
-                      >Tags Created</span
-                    >
-                    <span
-                      class="text-lg font-bold text-[var(--tw-primary-dark)]"
-                      >{{ getTotalTags() }}</span
-                    >
-                  </div>
-                </div>
               </div>
             </div>
           </div>
