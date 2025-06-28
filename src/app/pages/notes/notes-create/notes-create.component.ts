@@ -3,18 +3,12 @@ import {
   inject,
   input,
   ChangeDetectionStrategy,
-  computed,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { PagelayoutComponent } from '../../../components/layout/pagelayout/pagelayout.component';
 import { CreateNoteComponent } from '../../../domain/notes/components/create-note/create-note.component';
 import { NotesStorageService } from '../../../domain/notes/services/notes-storage.service';
 import { NoteCreated } from '../../../domain/notes';
-import { IconChevronComponent } from '../../../components/ui/icons/icon-chevron/icon-chevron.component';
-import {
-  BreadcrumbComponent,
-  BreadcrumbItem,
-} from '../../../components/ui/breadcrumb/breadcrumb.component';
 import { CheckboxIconComponent } from '../../../components/ui/icons/checkbox-icon/checkbox-icon.component';
 import { BarChartIconComponent } from '../../../components/ui/icons/bar-chart-icon/bar-chart-icon.component';
 import { LightbulbIconComponent } from '../../../components/ui/icons/lightbulb-icon/lightbulb-icon.component';
@@ -28,8 +22,6 @@ import { CardHeaderWithIconComponent } from '../../../components/ui/card/compone
   imports: [
     PagelayoutComponent,
     CreateNoteComponent,
-    IconChevronComponent,
-    BreadcrumbComponent,
     CheckboxIconComponent,
     BarChartIconComponent,
     LightbulbIconComponent,
@@ -48,7 +40,6 @@ import { CardHeaderWithIconComponent } from '../../../components/ui/card/compone
     >
       <div class="min-h-screen bg-[var(--tw-bg-light)]">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
           <!-- Main Content Area -->
           <div class="grid lg:grid-cols-3 gap-8">
             <!-- Create Note Section -->
@@ -186,11 +177,6 @@ export class NotesCreateComponent {
   readonly CTA = input<boolean>(false);
   readonly availableTags = this.notesStorageService.getTags();
   readonly notes = this.notesStorageService.getNotes();
-
-  readonly breadcrumbItems = computed<BreadcrumbItem[]>(() => [
-    { label: 'Notes', route: '/notes' },
-    { label: 'Create' },
-  ]);
 
   onCreateNote(event: NoteCreated) {
     this.notesStorageService.addNote(event);
