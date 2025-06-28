@@ -15,18 +15,12 @@ import { RecordAudioService } from '../../services/record-audio.service';
 import { Router } from '@angular/router';
 import { CreateAudioNoteComponent } from './create-audio-note/create-audio-note.component';
 import { TranscriptionSettingsPickerService } from './components/transcription-settings-picker/transcription-settings-picker.service';
-import { PageHeaderComponent } from './components/page-header/page-header.component';
 import { IconChevronComponent } from '../../../../components/ui/icons/icon-chevron/icon-chevron.component';
 
 @Component({
   selector: 'app-create-note',
   standalone: true,
-  imports: [
-    FormsModule,
-    CreateAudioNoteComponent,
-    PageHeaderComponent,
-    IconChevronComponent,
-  ],
+  imports: [FormsModule, CreateAudioNoteComponent, IconChevronComponent],
   templateUrl: './create-note.component.html',
   styleUrls: ['./create-note.component.scss'],
   providers: [RecordAudioService],
@@ -56,11 +50,29 @@ export class CreateNoteComponent {
     return 'Create Your Note';
   });
 
-  readonly headerSubtitle = computed(() => {
-    if (this.recordingState() === RECORDER_STATE.SAVING) {
-      return 'Securing your thoughts...';
+  readonly isSaving = computed(
+    () => this.recordingState() === RECORDER_STATE.SAVING
+  );
+
+  readonly headerClasses = computed(() => {
+    if (this.isSaving()) {
+      return 'bg-gradient-to-r from-[var(--tw-primary-accent-bg)] to-[var(--tw-success-accent-bg)]';
     }
-    return 'Record your thoughts';
+    return 'bg-[var(--tw-primary-accent-bg)]';
+  });
+
+  readonly titleClasses = computed(() => {
+    if (this.isSaving()) {
+      return 'text-[var(--tw-success-dark)]';
+    }
+    return 'text-[var(--tw-primary-dark)]';
+  });
+
+  readonly subtitleClasses = computed(() => {
+    if (this.isSaving()) {
+      return 'text-[var(--tw-success-dark)]';
+    }
+    return 'text-[var(--tw-text-muted)]';
   });
 
   constructor() {
