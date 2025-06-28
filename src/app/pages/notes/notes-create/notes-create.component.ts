@@ -19,7 +19,6 @@ import { CheckboxIconComponent } from '../../../components/ui/icons/checkbox-ico
 import { BarChartIconComponent } from '../../../components/ui/icons/bar-chart-icon/bar-chart-icon.component';
 import { LightbulbIconComponent } from '../../../components/ui/icons/lightbulb-icon/lightbulb-icon.component';
 import { ShieldCheckIconComponent } from '../../../components/ui/icons/shield-check-icon/shield-check-icon.component';
-import { MicrophoneIconComponent } from '../../../components/ui/icons/microphone-icon/microphone-icon.component';
 import { CardComponent } from '../../../components/ui/card/card.component';
 import { CardHeaderWithIconComponent } from '../../../components/ui/card/components/card-header-with-icon/card-header-with-icon.component';
 
@@ -35,7 +34,6 @@ import { CardHeaderWithIconComponent } from '../../../components/ui/card/compone
     BarChartIconComponent,
     LightbulbIconComponent,
     ShieldCheckIconComponent,
-    MicrophoneIconComponent,
     CardComponent,
     CardHeaderWithIconComponent,
   ],
@@ -76,38 +74,11 @@ import { CardHeaderWithIconComponent } from '../../../components/ui/card/compone
           <div class="grid lg:grid-cols-3 gap-8">
             <!-- Create Note Section -->
             <div class="lg:col-span-2">
-              <div
-                class="bg-[var(--tw-bg-light)] border border-[var(--tw-border-light)] rounded-2xl shadow-lg overflow-hidden"
-              >
-                <div
-                  class="bg-[var(--tw-primary-accent-bg)] border-b border-[var(--tw-border-light)] px-8 py-6"
-                >
-                  <div class="flex items-center gap-4">
-                    <div
-                      class="w-12 h-12 bg-[var(--tw-primary)] rounded-xl flex items-center justify-center shadow-md"
-                    >
-                      <app-microphone-icon [size]="24" [color]="'white'" />
-                    </div>
-                    <div>
-                      <h1
-                        class="text-2xl font-bold text-[var(--tw-primary-dark)]"
-                      >
-                        Create Your Note
-                      </h1>
-                      <p class="text-[var(--tw-text-muted)] mt-1">
-                        Record your thoughts securely and privately
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div class="p-8">
-                  <app-create-note
-                    [CTA]="CTA()"
-                    (noteCreated)="onCreateNote($event)"
-                    [availableTags]="availableTags()"
-                  ></app-create-note>
-                </div>
-              </div>
+              <app-create-note
+                [CTA]="CTA()"
+                (noteCreated)="onCreateNote($event)"
+                [availableTags]="availableTags()"
+              ></app-create-note>
             </div>
 
             <!-- Sidebar -->
