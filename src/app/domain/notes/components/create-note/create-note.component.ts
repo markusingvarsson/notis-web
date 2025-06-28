@@ -12,14 +12,13 @@ import { isPlatformBrowser } from '@angular/common';
 import { NoteCreated, RECORDER_STATE, Tag } from '../..';
 import { RecordAudioService } from '../../services/record-audio.service';
 import { Router } from '@angular/router';
-import { PageHeaderComponent } from './components/page-header/page-header.component';
 import { CreateAudioNoteComponent } from './create-audio-note/create-audio-note.component';
 import { TranscriptionSettingsPickerService } from './components/transcription-settings-picker/transcription-settings-picker.service';
 
 @Component({
   selector: 'app-create-note',
   standalone: true,
-  imports: [FormsModule, PageHeaderComponent, CreateAudioNoteComponent],
+  imports: [FormsModule, CreateAudioNoteComponent],
   templateUrl: './create-note.component.html',
   styleUrls: ['./create-note.component.scss'],
   providers: [RecordAudioService],

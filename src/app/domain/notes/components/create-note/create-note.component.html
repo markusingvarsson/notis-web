@@ -3,11 +3,6 @@
   <div
     class="bg-gradient-to-br from-[var(--tw-bg-light)] to-[var(--tw-bg)] rounded-2xl shadow-lg border border-[var(--tw-border-light)] overflow-hidden"
   >
-    <app-page-header
-      [title]="!isRecordingDone() ? 'Create a new note' : 'Save your note'"
-      [subtitle]="!isRecordingDone() ? 'Record your thoughts with voice' : ''"
-    ></app-page-header>
-
     <app-create-audio-note
       (noteCreated)="noteCreated.emit($event)"
       [availableTags]="availableTags()"
