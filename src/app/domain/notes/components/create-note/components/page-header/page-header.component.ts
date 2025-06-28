@@ -5,20 +5,25 @@ import { Component, input, ChangeDetectionStrategy } from '@angular/core';
   imports: [],
   template: `
     <div
-      class="bg-gradient-to-r from-[var(--tw-primary-light)] to-[var(--tw-primary)] text-center border-b border-[var(--tw-border-light)]"
-      [class.p-6]="subtitle()"
-      [class.p-3]="!subtitle()"
+      class="bg-[var(--tw-primary-accent-bg)] border-b border-[var(--tw-border-light)] px-8 py-6"
     >
-      <h2
-        class="font-bold text-white"
-        [class.text-2xl]="subtitle()"
-        [class.text-xl]="!subtitle()"
-      >
-        {{ title() }}
-      </h2>
-      @if (subtitle()) {
-      <p class="text-sm text-white mt-2">{{ subtitle() }}</p>
-      }
+      <div class="flex items-center gap-4">
+        <div
+          class="w-12 h-12 bg-[var(--tw-primary)] rounded-xl flex items-center justify-center shadow-md"
+        >
+          <ng-content select="[icon]"></ng-content>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold text-[var(--tw-primary-dark)]">
+            {{ title() }}
+          </h1>
+          @if (subtitle()) {
+          <p class="text-[var(--tw-text-muted)] mt-1">
+            {{ subtitle() }}
+          </p>
+          }
+        </div>
+      </div>
     </div>
   `,
   styles: [

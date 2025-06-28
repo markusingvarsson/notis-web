@@ -2,25 +2,12 @@
 <div
   class="bg-[var(--tw-bg-light)] border border-[var(--tw-border-light)] rounded-2xl shadow-lg overflow-hidden"
 >
-  <div
-    class="bg-[var(--tw-primary-accent-bg)] border-b border-[var(--tw-border-light)] px-8 py-6"
+  <app-page-header
+    title="Create Your Note"
+    subtitle="Record your thoughts securely and privately"
   >
-    <div class="flex items-center gap-4">
-      <div
-        class="w-12 h-12 bg-[var(--tw-primary)] rounded-xl flex items-center justify-center shadow-md"
-      >
-        <app-microphone-icon [size]="24" [color]="'white'" />
-      </div>
-      <div>
-        <h1 class="text-2xl font-bold text-[var(--tw-primary-dark)]">
-          Create Your Note
-        </h1>
-        <p class="text-[var(--tw-text-muted)] mt-1">
-          Record your thoughts securely and privately
-        </p>
-      </div>
-    </div>
-  </div>
+    <app-microphone-icon icon [size]="24" [color]="'white'" />
+  </app-page-header>
   <div class="p-8">
     <app-create-audio-note
       (noteCreated)="noteCreated.emit($event)"

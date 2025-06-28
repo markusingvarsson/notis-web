@@ -14,12 +14,18 @@ import { RecordAudioService } from '../../services/record-audio.service';
 import { Router } from '@angular/router';
 import { CreateAudioNoteComponent } from './create-audio-note/create-audio-note.component';
 import { TranscriptionSettingsPickerService } from './components/transcription-settings-picker/transcription-settings-picker.service';
+import { PageHeaderComponent } from './components/page-header/page-header.component';
 import { MicrophoneIconComponent } from '../../../../components/ui/icons/microphone-icon/microphone-icon.component';
 
 @Component({
   selector: 'app-create-note',
   standalone: true,
-  imports: [FormsModule, CreateAudioNoteComponent, MicrophoneIconComponent],
+  imports: [
+    FormsModule,
+    CreateAudioNoteComponent,
+    PageHeaderComponent,
+    MicrophoneIconComponent,
+  ],
   templateUrl: './create-note.component.html',
   styleUrls: ['./create-note.component.scss'],
   providers: [RecordAudioService],
