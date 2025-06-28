@@ -16,8 +16,7 @@ import { CardContentComponent } from '../../components/ui/card/components/card-c
 import { ToasterService } from '../../components/ui/toaster/toaster.service';
 import { TranscriptionSettingsPickerComponent } from '../../domain/notes/components/create-note/components/transcription-settings-picker/transcription-settings-picker.component';
 import { SupportedLanguageCode } from '../../core/services/language-picker.service';
-import { IconChevronDownComponent } from '../../components/ui/icons/icon-chevron-down/icon-chevron-down.component';
-import { IconChevronRightComponent } from '../../components/ui/icons/icon-chevron-right/icon-chevron-right.component';
+import { IconChevronComponent } from '../../components/ui/icons/icon-chevron/icon-chevron.component';
 import { NotesStorageService } from '../../domain/notes/services/notes-storage.service';
 import { ConfirmationModalService } from '../../components/ui/confirmation-modal/confirmation-modal.service';
 import { isPlatformBrowser } from '@angular/common';
@@ -38,8 +37,7 @@ import { MicSelectorService } from '../../domain/notes/components/create-note/co
     CardDescriptionComponent,
     CardContentComponent,
     TranscriptionSettingsPickerComponent,
-    IconChevronDownComponent,
-    IconChevronRightComponent,
+    IconChevronComponent,
     MicSelectorComponent,
   ],
   templateUrl: './settings.component.html',
