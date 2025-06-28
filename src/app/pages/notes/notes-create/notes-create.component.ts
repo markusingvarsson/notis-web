@@ -20,6 +20,8 @@ import { BarChartIconComponent } from '../../../components/ui/icons/bar-chart-ic
 import { LightbulbIconComponent } from '../../../components/ui/icons/lightbulb-icon/lightbulb-icon.component';
 import { ShieldCheckIconComponent } from '../../../components/ui/icons/shield-check-icon/shield-check-icon.component';
 import { MicrophoneIconComponent } from '../../../components/ui/icons/microphone-icon/microphone-icon.component';
+import { CardComponent } from '../../../components/ui/card/card.component';
+import { CardHeaderWithIconComponent } from '../../../components/ui/card/components/card-header-with-icon/card-header-with-icon.component';
 
 @Component({
   selector: 'app-notes-create',
@@ -34,6 +36,8 @@ import { MicrophoneIconComponent } from '../../../components/ui/icons/microphone
     LightbulbIconComponent,
     ShieldCheckIconComponent,
     MicrophoneIconComponent,
+    CardComponent,
+    CardHeaderWithIconComponent,
   ],
   template: `
     <app-pagelayout
@@ -82,10 +86,7 @@ import { MicrophoneIconComponent } from '../../../components/ui/icons/microphone
                     <div
                       class="w-12 h-12 bg-[var(--tw-primary)] rounded-xl flex items-center justify-center shadow-md"
                     >
-                      <app-microphone-icon
-                        [size]="24"
-                        [color]="'white'"
-                      />
+                      <app-microphone-icon [size]="24" [color]="'white'" />
                     </div>
                     <div>
                       <h1
@@ -112,24 +113,13 @@ import { MicrophoneIconComponent } from '../../../components/ui/icons/microphone
             <!-- Sidebar -->
             <div class="hidden lg:block lg:col-span-1 space-y-6">
               <!-- Your Progress -->
-              <div
-                class="bg-[var(--tw-primary-accent-bg)] border border-[var(--tw-primary)]/20 rounded-2xl p-6"
+              <app-card
+                className="bg-[var(--tw-primary-accent-bg)] border border-[var(--tw-primary)]/20 rounded-2xl p-6"
               >
-                <div class="flex items-center gap-3 mb-4">
-                  <div
-                    class="flex-shrink-0 w-10 h-10 bg-[var(--tw-success)] rounded-xl flex items-center justify-center"
-                  >
-                    <app-bar-chart-icon
-                      [size]="20"
-                      [color]="'white'"
-                    />
-                  </div>
-                  <h3
-                    class="text-lg font-semibold text-[var(--tw-primary-dark)]"
-                  >
-                    Your Progress
-                  </h3>
-                </div>
+                <app-card-header-with-icon [iconBgColor]="'var(--tw-success)'">
+                  <app-bar-chart-icon icon [size]="20" [color]="'white'" />
+                  Your Progress
+                </app-card-header-with-icon>
                 <div class="space-y-3">
                   <div class="flex items-center justify-between">
                     <span class="text-sm text-[var(--tw-text-muted)]"
@@ -150,27 +140,22 @@ import { MicrophoneIconComponent } from '../../../components/ui/icons/microphone
                     >
                   </div>
                 </div>
-              </div>
+              </app-card>
 
               <!-- Recording Tips -->
-              <div
-                class="bg-[var(--tw-primary-accent-bg)] border border-[var(--tw-primary)]/20 rounded-2xl p-6"
+              <app-card
+                className="bg-[var(--tw-primary-accent-bg)] border border-[var(--tw-primary)]/20 rounded-2xl p-6"
               >
-                <div class="flex items-center gap-3 mb-4">
-                  <div
-                    class="flex-shrink-0 w-10 h-10 bg-[var(--tw-highlight)] rounded-xl flex items-center justify-center"
-                  >
-                    <app-lightbulb-icon
-                      [size]="20"
-                      [color]="'var(--tw-primary-dark)'"
-                    />
-                  </div>
-                  <h3
-                    class="text-lg font-semibold text-[var(--tw-primary-dark)]"
-                  >
-                    Recording Tips
-                  </h3>
-                </div>
+                <app-card-header-with-icon
+                  [iconBgColor]="'var(--tw-highlight)'"
+                >
+                  <app-lightbulb-icon
+                    icon
+                    [size]="20"
+                    [color]="'var(--tw-primary-dark)'"
+                  />
+                  Recording Tips
+                </app-card-header-with-icon>
                 <ul class="space-y-3 text-sm text-[var(--tw-text-muted)]">
                   <li class="flex items-start gap-2">
                     <app-checkbox-icon
@@ -197,27 +182,16 @@ import { MicrophoneIconComponent } from '../../../components/ui/icons/microphone
                     <span>Use descriptive tags for organization</span>
                   </li>
                 </ul>
-              </div>
+              </app-card>
 
               <!-- Security Notice -->
-              <div
-                class="bg-[var(--tw-primary-accent-bg)] border border-[var(--tw-primary)]/20 rounded-2xl p-6"
+              <app-card
+                className="bg-[var(--tw-primary-accent-bg)] border border-[var(--tw-primary)]/20 rounded-2xl p-6"
               >
-                <div class="flex items-center gap-3 mb-4">
-                  <div
-                    class="flex-shrink-0 w-10 h-10 bg-[var(--tw-primary)] rounded-xl flex items-center justify-center"
-                  >
-                    <app-shield-check-icon
-                      [size]="20"
-                      [color]="'white'"
-                    />
-                  </div>
-                  <h3
-                    class="text-lg font-semibold text-[var(--tw-primary-dark)]"
-                  >
-                    Secure & Private
-                  </h3>
-                </div>
+                <app-card-header-with-icon [iconBgColor]="'var(--tw-primary)'">
+                  <app-shield-check-icon icon [size]="20" [color]="'white'" />
+                  Secure & Private
+                </app-card-header-with-icon>
                 <ul class="space-y-3 text-sm text-[var(--tw-primary-dark)]">
                   <li class="flex items-start gap-2">
                     <app-checkbox-icon
@@ -244,7 +218,7 @@ import { MicrophoneIconComponent } from '../../../components/ui/icons/microphone
                     <span>Encrypted local storage</span>
                   </li>
                 </ul>
-              </div>
+              </app-card>
             </div>
           </div>
         </div>
