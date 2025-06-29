@@ -6,7 +6,7 @@ import { ContactComponent } from '../../domain/landing/components/contact/contac
 import { CtaComponent } from '../../domain/landing/components/cta/cta.component';
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-home-page',
   imports: [
     PagelayoutComponent,
     HeroComponent,
@@ -14,8 +14,8 @@ import { CtaComponent } from '../../domain/landing/components/cta/cta.component'
     ContactComponent,
     CtaComponent,
   ],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss',
+  templateUrl: './home-page.component.html',
+  styleUrl: './home-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class HomeComponent {}
+export class HomePageComponent {}

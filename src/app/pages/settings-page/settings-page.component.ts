@@ -26,7 +26,7 @@ import { MicSelectorComponent } from '../../domain/notes/components/create-note/
 import { MicSelectorService } from '../../domain/notes/components/create-note/components/mic-selector/mic-selector.service';
 
 @Component({
-  selector: 'app-settings',
+  selector: 'app-settings-page',
   standalone: true,
   imports: [
     PagelayoutComponent,
@@ -40,11 +40,11 @@ import { MicSelectorService } from '../../domain/notes/components/create-note/co
     IconChevronComponent,
     MicSelectorComponent,
   ],
-  templateUrl: './settings.component.html',
-  styleUrl: './settings.component.scss',
+  templateUrl: './settings-page.component.html',
+  styleUrl: './settings-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SettingsComponent {
+export class SettingsPageComponent {
   private toasterService = inject(ToasterService);
   #transcriptionSettingsPickerService = inject(
     TranscriptionSettingsPickerService

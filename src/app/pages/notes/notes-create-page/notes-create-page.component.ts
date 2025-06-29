@@ -17,7 +17,7 @@ import { CardComponent } from '../../../components/ui/card/card.component';
 import { CardHeaderWithIconComponent } from '../../../components/ui/card/components/card-header-with-icon/card-header-with-icon.component';
 
 @Component({
-  selector: 'app-notes-create',
+  selector: 'app-notes-create-page',
   standalone: true,
   imports: [
     PagelayoutComponent,
@@ -170,7 +170,7 @@ import { CardHeaderWithIconComponent } from '../../../components/ui/card/compone
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NotesCreateComponent {
+export class NotesCreatePageComponent {
   private router = inject(Router);
   private notesStorageService = inject(NotesStorageService);
 
