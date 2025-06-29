@@ -48,7 +48,7 @@
     transform: translateY(-50%);
     width: 3px;
     height: 20px;
-    background: linear-gradient(to bottom, #9333ea, #3b82f6);
+    background: lnear-gradient(to bottom, var(--tw-primary), var(--tw-primary-light));
     border-radius: 0 2px 2px 0;
   }
 } 
