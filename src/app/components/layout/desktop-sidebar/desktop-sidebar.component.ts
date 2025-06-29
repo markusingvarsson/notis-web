@@ -11,7 +11,6 @@ import { isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { NotesFilterService } from '../../../domain/notes/services/notes-filter.service';
 import { MicrophoneIconComponent } from '../../ui/icons/microphone-icon/microphone-icon.component';
-import { HomeIconComponent } from '../../ui/icons/home-icon/home-icon.component';
 import { FileTextIconComponent } from '../../ui/icons/file-text-icon/file-text-icon.component';
 import { PlusIconComponent } from '../../ui/icons/plus-icon/plus-icon.component';
 import { SettingsIconComponent } from '../../ui/icons/settings-icon/settings-icon.component';
@@ -26,7 +25,6 @@ import { XIconComponent } from '../../ui/icons/x-icon/x-icon.component';
     RouterLink,
     RouterLinkActive,
     MicrophoneIconComponent,
-    HomeIconComponent,
     FileTextIconComponent,
     PlusIconComponent,
     SettingsIconComponent,
