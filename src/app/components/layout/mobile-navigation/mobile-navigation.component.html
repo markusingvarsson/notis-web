@@ -1,14 +1,14 @@
 <nav
   class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-gray-200/50 z-50 md:hidden"
 >
-  <div class="flex items-center justify-around py-4">
+  <div class="flex items-center justify-around py-2">
     @for (item of navItems; track item.id) { @if (item.action) {
     <!-- Action button (Add) -->
     <button
       (click)="handleItemClick(item)"
-      class="flex flex-col items-center justify-center px-3 py-2 rounded-xl transition-all duration-200 text-white bg-gradient-to-r from-[var(--tw-primary)] to-[var(--tw-primary-light)] shadow-lg scale-110 -mt-2"
+      class="flex flex-col items-center justify-center px-3 py-3 rounded-xl transition-all duration-200 text-white bg-gradient-to-r from-[var(--tw-primary)] to-[var(--tw-primary-light)] hover:shadow-md"
     >
-      <app-plus-icon [size]="24" [color]="'white'" class="mb-1" />
+      <app-plus-icon [size]="20" [color]="'white'" />
     </button>
     } @else {
     <!-- Navigation link -->
@@ -16,7 +16,7 @@
       [routerLink]="item.path"
       routerLinkActive="text-[var(--tw-primary)] bg-[var(--tw-primary-accent-bg)]"
       [routerLinkActiveOptions]="{ exact: true }"
-      class="flex flex-col items-center justify-center px-3 py-2 rounded-xl transition-all duration-200 text-gray-600 hover:text-[var(--tw-primary)] hover:bg-gray-50"
+      class="flex flex-col items-center justify-center px-2 py-1 rounded-xl transition-all duration-200 text-gray-600 hover:text-[var(--tw-primary)] hover:bg-gray-50"
     >
       @switch (item.icon) { @case ('file-text') {
       <app-file-text-icon [size]="20" [color]="'currentColor'" />
