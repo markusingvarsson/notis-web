@@ -39,6 +39,7 @@ import { DesktopSidebarComponent } from '../../../components/layout/desktop-side
         'create note, new note, voice note, audio recording, notis'
       "
       [withFooter]="false"
+      [withNavbar]="false"
     >
       <app-desktop-sidebar></app-desktop-sidebar>
       <div class="min-h-screen bg-[var(--tw-bg-light)]">
