@@ -5,14 +5,21 @@ import {
   inject,
   ChangeDetectionStrategy,
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { NgClass } from '@angular/common';
 import { FooterComponent } from '../footer/footer.component';
+import { MobileNavigationComponent } from '../mobile-navigation/mobile-navigation.component';
 import { MetaService } from '../../../core/services/meta.service';
 
 @Component({
   selector: 'app-pagelayout',
-  imports: [NavbarComponent, NgClass, FooterComponent],
+  imports: [
+    NavbarComponent,
+    NgClass,
+    FooterComponent,
+    MobileNavigationComponent,
+  ],
   templateUrl: './pagelayout.component.html',
   styleUrl: './pagelayout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -28,6 +35,7 @@ export class PagelayoutComponent {
   pageKeywords = input.required<string>();
 
   private metaService = inject(MetaService);
+  private router = inject(Router);
 
   constructor() {
     effect(() => {
@@ -43,5 +51,9 @@ export class PagelayoutComponent {
         });
       }
     });
+  }
+
+  onNewNote() {
+    this.router.navigate(['/notes/create']);
   }
 }

@@ -1,0 +1,27 @@
+// Mobile navigation specific styles
+// Most styling is handled by Tailwind classes in the template
+
+// Ensure the navigation stays above other content
+nav {
+  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 -2px 4px -1px rgba(0, 0, 0, 0.06);
+  
+  // Add safe area inset for devices with home indicators
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+// Ensure consistent height for the navigation container
+nav > div {
+  min-height: 4rem; // 64px minimum height
+}
+
+// Smooth transitions for button interactions
+button, a {
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// Ensure proper spacing for the elevated add button
+button[class*="scale-110"] {
+  z-index: 1;
+} 

@@ -1,7 +1,7 @@
 import { Component, input } from '@angular/core';
 
 @Component({
-  selector: 'app-plus-icon',
+  selector: 'app-home-icon',
   standalone: true,
   template: `
     <svg
@@ -15,12 +15,12 @@ import { Component, input } from '@angular/core';
       stroke-linejoin="round"
       [style.color]="color()"
     >
-      <path d="M5 12h14" />
-      <path d="M12 5v14" />
+      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      <polyline points="9,22 9,12 15,12 15,22" />
     </svg>
   `,
 })
-export class PlusIconComponent {
+export class HomeIconComponent {
   readonly size = input(24);
   readonly color = input('currentColor');
   readonly strokeWidth = input(2);
