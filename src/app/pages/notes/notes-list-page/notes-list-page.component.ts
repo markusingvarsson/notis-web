@@ -1,13 +1,18 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { PagelayoutComponent } from '../../../components/layout/pagelayout/pagelayout.component';
 import { NoteListComponent } from '../../../domain/notes/components/note-list/note-list.component';
 import { DesktopSidebarComponent } from '../../../components/layout/desktop-sidebar/desktop-sidebar.component';
+import { NotesHeaderComponent } from '../../../domain/notes/components/notes-header/notes-header.component';
 
 @Component({
   selector: 'app-notes-list-page',
   standalone: true,
-  imports: [PagelayoutComponent, NoteListComponent, DesktopSidebarComponent],
+  imports: [
+    PagelayoutComponent,
+    NoteListComponent,
+    DesktopSidebarComponent,
+    NotesHeaderComponent,
+  ],
   template: `
     <app-pagelayout
       [pageTitle]="'My Notes - Notis.nu'"
@@ -21,13 +26,11 @@ import { DesktopSidebarComponent } from '../../../components/layout/desktop-side
       [withNavbar]="false"
     >
       <app-desktop-sidebar [showTagsSection]="true"></app-desktop-sidebar>
-      <div class="space-y-8">
+      <div class="space-y-8 p-4">
         <div
           class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
         >
-          <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100">
-            All Notes
-          </h1>
+          <app-notes-header></app-notes-header>
         </div>
         <app-note-list></app-note-list>
       </div>
@@ -35,6 +38,4 @@ import { DesktopSidebarComponent } from '../../../components/layout/desktop-side
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NotesListPageComponent {
-  private router = inject(Router);
-}
+export class NotesListPageComponent {}
