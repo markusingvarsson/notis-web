@@ -7,6 +7,7 @@ import {
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { PagelayoutComponent } from '../../components/layout/pagelayout/pagelayout.component';
+import { DesktopSidebarComponent } from '../../components/layout/desktop-sidebar/desktop-sidebar.component';
 import { ButtonComponent } from '../../components/ui/button/button.component';
 import { CardComponent } from '../../components/ui/card/card.component';
 import { CardHeaderComponent } from '../../components/ui/card/components/card-header/card-header.component';
@@ -30,6 +31,7 @@ import { MicSelectorService } from '../../domain/notes/components/create-note/co
   standalone: true,
   imports: [
     PagelayoutComponent,
+    DesktopSidebarComponent,
     ButtonComponent,
     CardComponent,
     CardHeaderComponent,
