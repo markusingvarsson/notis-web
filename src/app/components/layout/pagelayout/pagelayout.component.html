@@ -19,6 +19,8 @@
     }
   </main>
 
-  <!-- Mobile Navigation - only show on mobile devices -->
+  <!-- Mobile Navigation - only show on mobile devices and when enabled -->
+  @if(withMobileNav()) {
   <app-mobile-navigation [onNewNote]="onNewNote" />
+  }
 </div>

@@ -28,6 +28,7 @@ export class PagelayoutComponent {
   fullWidth = input(true);
   withFooter = input(false);
   withNavbar = input(true);
+  withMobileNav = input(true);
 
   // Meta tag inputs
   pageTitle = input.required<string>();
