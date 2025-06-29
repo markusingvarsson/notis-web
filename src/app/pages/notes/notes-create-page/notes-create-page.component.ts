@@ -15,6 +15,7 @@ import { LightbulbIconComponent } from '../../../components/ui/icons/lightbulb-i
 import { ShieldCheckIconComponent } from '../../../components/ui/icons/shield-check-icon/shield-check-icon.component';
 import { CardComponent } from '../../../components/ui/card/card.component';
 import { CardHeaderWithIconComponent } from '../../../components/ui/card/components/card-header-with-icon/card-header-with-icon.component';
+import { DesktopSidebarComponent } from '../../../components/layout/desktop-sidebar/desktop-sidebar.component';
 
 @Component({
   selector: 'app-notes-create-page',
@@ -28,6 +29,7 @@ import { CardHeaderWithIconComponent } from '../../../components/ui/card/compone
     ShieldCheckIconComponent,
     CardComponent,
     CardHeaderWithIconComponent,
+    DesktopSidebarComponent,
   ],
   template: `
     <app-pagelayout
@@ -38,6 +40,7 @@ import { CardHeaderWithIconComponent } from '../../../components/ui/card/compone
       "
       [withFooter]="false"
     >
+      <app-desktop-sidebar></app-desktop-sidebar>
       <div class="min-h-screen bg-[var(--tw-bg-light)]">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <!-- Main Content Area -->

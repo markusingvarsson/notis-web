@@ -42,7 +42,7 @@ export class DesktopSidebarComponent {
   private filterService = inject(NotesFilterService);
   private platformId = inject(PLATFORM_ID);
 
-  readonly showTagsSection = input(true);
+  readonly showTagsSection = input(false);
   readonly isTagsExpanded = signal(false);
   readonly selectedTags = this.filterService.selectedTags;
   readonly availableTags = this.filterService.availableTags;

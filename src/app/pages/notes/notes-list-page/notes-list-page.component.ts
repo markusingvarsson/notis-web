@@ -2,11 +2,12 @@ import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { PagelayoutComponent } from '../../../components/layout/pagelayout/pagelayout.component';
 import { NoteListComponent } from '../../../domain/notes/components/note-list/note-list.component';
+import { DesktopSidebarComponent } from '../../../components/layout/desktop-sidebar/desktop-sidebar.component';
 
 @Component({
   selector: 'app-notes-list-page',
   standalone: true,
-  imports: [PagelayoutComponent, NoteListComponent],
+  imports: [PagelayoutComponent, NoteListComponent, DesktopSidebarComponent],
   template: `
     <app-pagelayout
       [pageTitle]="'My Notes - Notis.nu'"
@@ -19,6 +20,7 @@ import { NoteListComponent } from '../../../domain/notes/components/note-list/no
       [withFooter]="true"
       [withNavbar]="false"
     >
+      <app-desktop-sidebar [showTagsSection]="true"></app-desktop-sidebar>
       <div class="space-y-8">
         <div
           class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
