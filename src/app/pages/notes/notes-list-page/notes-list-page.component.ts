@@ -17,6 +17,7 @@ import { NoteListComponent } from '../../../domain/notes/components/note-list/no
         'notes, voice notes, my notes, note management, notis, local storage, privacy'
       "
       [withFooter]="true"
+      [withNavbar]="false"
     >
       <div class="space-y-8">
         <div

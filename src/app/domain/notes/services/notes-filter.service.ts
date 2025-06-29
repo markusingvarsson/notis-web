@@ -13,18 +13,13 @@ export class NotesFilterService {
   readonly allTags = this.notesStorage.getTags();
 
   readonly availableTags = computed(() => {
-    const tags = new Set<string>();
-    this.notes().forEach((note: Note) => {
-      if (note.tagIds) {
-        note.tagIds.forEach((tagId: string) => {
-          const tag = this.allTags()[tagId];
-          if (tag) {
-            tags.add(tag.name);
-          }
-        });
-      }
-    });
-    return Array.from(tags).sort();
+    // Get all tags and sort by updatedAt timestamp (most recent first)
+    return Object.values(this.allTags())
+      .sort(
+        (a, b) =>
+          new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      )
+      .map((tag) => tag.name);
   });
 
   readonly filteredNotes = computed(() => {

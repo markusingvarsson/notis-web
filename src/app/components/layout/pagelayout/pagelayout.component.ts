@@ -20,6 +20,7 @@ import { MetaService } from '../../../core/services/meta.service';
 export class PagelayoutComponent {
   fullWidth = input(true);
   withFooter = input(false);
+  withNavbar = input(true);
 
   // Meta tag inputs
   pageTitle = input.required<string>();

@@ -1,8 +1,13 @@
 <div class="min-h-screen flex flex-col">
+  @if(withNavbar()) {
   <app-navbar></app-navbar>
+  }
   <main
-    class="flex-1 pt-16"
-    [ngClass]="{ 'container mx-auto px-4': !fullWidth() }"
+    class="flex-1"
+    [ngClass]="{
+      'pt-16': withNavbar(),
+      'container mx-auto px-4': !fullWidth()
+    }"
   >
     <ng-content></ng-content>
   </main>
