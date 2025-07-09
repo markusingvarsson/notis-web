@@ -3,6 +3,7 @@ import { PagelayoutComponent } from '../../../components/layout/pagelayout/pagel
 import { NoteListComponent } from '../../../domain/notes/components/note-list/note-list.component';
 import { DesktopSidebarComponent } from '../../../components/layout/desktop-sidebar/desktop-sidebar.component';
 import { NotesHeaderComponent } from '../../../domain/notes/components/notes-header/notes-header.component';
+import { TagFilterComponent } from '../../../domain/notes/components/tag-filter/tag-filter.component';
 
 @Component({
   selector: 'app-notes-list-page',
@@ -12,6 +13,7 @@ import { NotesHeaderComponent } from '../../../domain/notes/components/notes-hea
     NoteListComponent,
     DesktopSidebarComponent,
     NotesHeaderComponent,
+    TagFilterComponent,
   ],
   template: `
     <app-pagelayout
@@ -25,7 +27,9 @@ import { NotesHeaderComponent } from '../../../domain/notes/components/notes-hea
       [withFooter]="true"
       [withNavbar]="false"
     >
-      <app-desktop-sidebar [showTagsSection]="true"></app-desktop-sidebar>
+      <app-desktop-sidebar>
+        <app-tag-filter slot="tags"></app-tag-filter>
+      </app-desktop-sidebar>
       <div class="space-y-8 p-4">
         <div
           class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
