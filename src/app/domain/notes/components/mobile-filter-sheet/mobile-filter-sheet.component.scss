@@ -34,27 +34,27 @@ input[type="range"] {
   }
 }
 
-/* Custom scrollbar for tags list */
-.max-h-48 {
+/* Custom scrollbar for sheet content */
+.overflow-y-auto {
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 #f1f5f9;
 }
 
-.max-h-48::-webkit-scrollbar {
+.overflow-y-auto::-webkit-scrollbar {
   width: 6px;
 }
 
-.max-h-48::-webkit-scrollbar-track {
+.overflow-y-auto::-webkit-scrollbar-track {
   background: #f1f5f9;
   border-radius: 10px;
 }
 
-.max-h-48::-webkit-scrollbar-thumb {
+.overflow-y-auto::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 10px;
 }
 
-.max-h-48::-webkit-scrollbar-thumb:hover {
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }
 

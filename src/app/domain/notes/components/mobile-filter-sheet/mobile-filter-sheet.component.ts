@@ -29,13 +29,13 @@ import { ButtonComponent } from '../../../../components/ui/button/button.compone
       role="dialog"
       aria-modal="true"
       aria-labelledby="filter-sheet-title"
-      class="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-xl z-50 md:hidden transform transition-transform duration-300 ease-in-out"
+      class="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-xl z-50 md:hidden transform transition-transform duration-300 ease-in-out flex flex-col"
       [class.translate-y-0]="isOpen()"
       [class.translate-y-full]="!isOpen()"
-      style="height: auto; max-height: 70vh;"
+      style="height: 70vh; max-height: 70vh;"
     >
       <!-- Header -->
-      <div class="flex items-center justify-between p-4 border-b border-gray-200">
+      <div class="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
         <h2 id="filter-sheet-title" class="text-lg font-semibold">Filter by Tags</h2>
         <button
           (click)="onClose()"
@@ -47,7 +47,7 @@ import { ButtonComponent } from '../../../../components/ui/button/button.compone
       </div>
 
       <!-- Content -->
-      <div class="flex-1 overflow-y-auto p-4">
+      <div class="flex-1 overflow-y-auto p-4 pb-20 min-h-0">
         <div class="space-y-4">
           <!-- Header Controls -->
           <div class="flex items-center justify-between">
@@ -84,7 +84,7 @@ import { ButtonComponent } from '../../../../components/ui/button/button.compone
             <p class="text-sm mt-1">Create notes with tags to filter them here</p>
           </div>
           } @else {
-          <div class="space-y-2 max-h-60 overflow-y-auto">
+          <div class="space-y-2">
             @for (tag of availableTags(); track tag) {
             <label
               class="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors border border-gray-100"
