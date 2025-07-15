@@ -58,16 +58,15 @@ input[type="range"] {
   background: #94a3b8;
 }
 
-/* Sheet animation */
-.transform {
-  transform: translateY(100%);
-  transition: transform 0.3s ease-in-out;
+/* Simple sheet slide animation */
+.fixed.bottom-0 {
+  transform: translateY(100%); /* Start hidden below screen */
 }
 
 .translate-y-0 {
-  transform: translateY(0);
+  transform: translateY(0) !important;
 }
 
 .translate-y-full {
-  transform: translateY(100%);
+  transform: translateY(100%) !important;
 }

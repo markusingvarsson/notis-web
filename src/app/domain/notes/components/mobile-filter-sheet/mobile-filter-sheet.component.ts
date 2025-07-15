@@ -15,10 +15,13 @@ import { ButtonComponent } from '../../../../components/ui/button/button.compone
     ButtonComponent,
   ],
   template: `
-    @if (isOpen()) {
     <!-- Backdrop -->
     <div
-      class="fixed inset-0 bg-black/60 z-50 md:hidden"
+      class="fixed inset-0 bg-black/50 z-50 md:hidden transition-opacity duration-200 ease-out"
+      [class.opacity-100]="isOpen()"
+      [class.opacity-0]="!isOpen()"
+      [class.pointer-events-auto]="isOpen()"
+      [class.pointer-events-none]="!isOpen()"
       (click)="onBackdropClick()"
       (keydown.escape)="onClose()"
       tabindex="-1"
@@ -29,9 +32,11 @@ import { ButtonComponent } from '../../../../components/ui/button/button.compone
       role="dialog"
       aria-modal="true"
       aria-labelledby="filter-sheet-title"
-      class="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-xl z-50 md:hidden transform transition-transform duration-300 ease-in-out flex flex-col"
+      class="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-xl z-50 md:hidden transform transition-transform duration-300 ease-out flex flex-col"
       [class.translate-y-0]="isOpen()"
       [class.translate-y-full]="!isOpen()"
+      [class.pointer-events-auto]="isOpen()"
+      [class.pointer-events-none]="!isOpen()"
       style="height: 70vh; max-height: 70vh;"
     >
       <!-- Header -->
@@ -87,7 +92,7 @@ import { ButtonComponent } from '../../../../components/ui/button/button.compone
           <div class="space-y-2">
             @for (tag of availableTags(); track tag) {
             <label
-              class="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors border border-gray-100"
+              class="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors duration-150 border border-gray-100"
             >
               <input
                 type="checkbox"
@@ -113,7 +118,6 @@ import { ButtonComponent } from '../../../../components/ui/button/button.compone
         </div>
       </div>
     </div>
-    }
   `,
   styleUrls: ['./mobile-filter-sheet.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
