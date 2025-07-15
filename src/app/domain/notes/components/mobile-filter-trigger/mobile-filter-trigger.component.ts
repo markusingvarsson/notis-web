@@ -19,11 +19,11 @@ import { ButtonComponent } from '../../../../components/ui/button/button.compone
       className="relative md:hidden"
     >
       <app-filter-icon [size]="16" [color]="'currentColor'" class="mr-2" />
-      Filters @if (activeFiltersCount() > 0) {
+      Filters @if (selectedTagsCount() > 0) {
       <span
         class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
       >
-        {{ activeFiltersCount() }}
+        {{ selectedTagsCount() }}
       </span>
       }
     </app-button>
@@ -31,6 +31,6 @@ import { ButtonComponent } from '../../../../components/ui/button/button.compone
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MobileFilterTriggerComponent {
-  readonly activeFiltersCount = input<number>(0);
+  readonly selectedTagsCount = input<number>(0);
   readonly openSheet = output<void>();
 }

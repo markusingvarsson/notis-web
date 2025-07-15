@@ -7,7 +7,6 @@ import { TagFilterComponent } from '../../../domain/notes/components/tag-filter/
 import { MobileFilterSheetComponent } from '../../../domain/notes/components/mobile-filter-sheet/mobile-filter-sheet.component';
 import { MobileFilterTriggerComponent } from '../../../domain/notes/components/mobile-filter-trigger/mobile-filter-trigger.component';
 import { NotesFilterService } from '../../../domain/notes/services/notes-filter.service';
-import { FilterOptions } from '../../../domain/notes/types/filter-options';
 
 @Component({
   selector: 'app-notes-list-page',
@@ -42,7 +41,7 @@ import { FilterOptions } from '../../../domain/notes/types/filter-options';
         >
           <app-notes-header></app-notes-header>
           <app-mobile-filter-trigger
-            [activeFiltersCount]="activeFiltersCount()"
+            [selectedTagsCount]="filterService.selectedTags().length"
             (openSheet)="openMobileFilterSheet()"
           ></app-mobile-filter-trigger>
         </div>
@@ -52,10 +51,10 @@ import { FilterOptions } from '../../../domain/notes/types/filter-options';
       <!-- Mobile Filter Sheet -->
       <app-mobile-filter-sheet
         [availableTags]="filterService.availableTags()"
-        [filters]="filterService.filterOptions()"
+        [selectedTags]="filterService.selectedTags()"
         [noteCount]="filterService.filteredNotes().length"
         [isOpen]="isMobileFilterSheetOpen()"
-        (filtersChange)="onFiltersChange($event)"
+        (tagsChange)="onTagsChange($event)"
         (clearFilters)="onClearFilters()"
         (closeSheet)="closeMobileFilterSheet()"
       ></app-mobile-filter-sheet>
@@ -67,34 +66,19 @@ export class NotesListPageComponent {
   readonly filterService = inject(NotesFilterService);
   readonly isMobileFilterSheetOpen = signal(false);
 
-  readonly activeFiltersCount = signal(0);
-
   openMobileFilterSheet() {
     this.isMobileFilterSheetOpen.set(true);
-    this.updateActiveFiltersCount();
   }
 
   closeMobileFilterSheet() {
     this.isMobileFilterSheetOpen.set(false);
   }
 
-  onFiltersChange(filters: FilterOptions) {
-    this.filterService.setFilterOptions(filters);
-    this.updateActiveFiltersCount();
+  onTagsChange(tags: string[]) {
+    this.filterService.setSelectedTags(tags);
   }
 
   onClearFilters() {
     this.filterService.clearFilters();
-    this.updateActiveFiltersCount();
-  }
-
-  private updateActiveFiltersCount() {
-    const filters = this.filterService.filterOptions();
-    let count = 0;
-    if (filters.tags.length > 0) count++;
-    if (filters.dateRange !== 'all') count++;
-    if (filters.contentLength[0] > 0 || filters.contentLength[1] < 1000) count++;
-    if (filters.sortBy !== 'newest') count++;
-    this.activeFiltersCount.set(count);
   }
 }
