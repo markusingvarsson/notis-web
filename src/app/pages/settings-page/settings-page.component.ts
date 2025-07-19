@@ -68,6 +68,7 @@ export class SettingsPageComponent {
 
     return isSpeechRecognitionSupported && this.#deviceService.isDesktop();
   });
+  readonly isMobile = computed(() => this.#deviceService.isMobile());
 
   // Mic selector service getter for template access
   get micSelectorService(): MicSelectorService {

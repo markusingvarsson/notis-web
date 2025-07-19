@@ -1,4 +1,10 @@
-import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  inject,
+  signal,
+  computed,
+} from '@angular/core';
 import { PagelayoutComponent } from '../../../components/layout/pagelayout/pagelayout.component';
 import { NoteListComponent } from '../../../domain/notes/components/note-list/note-list.component';
 import { DesktopSidebarComponent } from '../../../components/layout/desktop-sidebar/desktop-sidebar.component';
@@ -7,6 +13,7 @@ import { TagFilterComponent } from '../../../domain/notes/components/tag-filter/
 import { MobileFilterSheetComponent } from '../../../domain/notes/components/mobile-filter-sheet/mobile-filter-sheet.component';
 import { MobileFilterTriggerComponent } from '../../../domain/notes/components/mobile-filter-trigger/mobile-filter-trigger.component';
 import { NotesFilterService } from '../../../domain/notes/services/notes-filter.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-notes-list-page',
@@ -30,7 +37,7 @@ import { NotesFilterService } from '../../../domain/notes/services/notes-filter.
         'notes, voice notes, my notes, note management, notis, local storage, privacy'
       "
       [withFooter]="true"
-      [withNavbar]="false"
+      [withNavbar]="isMobile()"
     >
       <app-desktop-sidebar>
         <app-tag-filter slot="tags"></app-tag-filter>
@@ -47,7 +54,7 @@ import { NotesFilterService } from '../../../domain/notes/services/notes-filter.
         </div>
         <app-note-list></app-note-list>
       </div>
-      
+
       <!-- Mobile Filter Sheet -->
       <app-mobile-filter-sheet
         [availableTags]="filterService.availableTags()"
@@ -63,8 +70,10 @@ import { NotesFilterService } from '../../../domain/notes/services/notes-filter.
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NotesListPageComponent {
+  #deviceService = inject(DeviceDetectorService);
   readonly filterService = inject(NotesFilterService);
   readonly isMobileFilterSheetOpen = signal(false);
+  readonly isMobile = computed(() => this.#deviceService.isMobile());
 
   openMobileFilterSheet() {
     this.isMobileFilterSheetOpen.set(true);
