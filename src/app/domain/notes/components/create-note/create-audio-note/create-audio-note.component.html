@@ -1,7 +1,7 @@
 <div
   class="max-h-[70vh] flex flex-col bg-[var(--tw-bg)] rounded-xl overflow-hidden"
 >
-  <div class="p-6 space-y-6 overflow-y-auto flex-1">
+  <div class="p-3 sm:p-6 space-y-4 sm:space-y-6 overflow-y-auto flex-1">
     @if (currentView() === 'recording') {
     <!-- Language Selector -->
     @if (hasSpeechRecognition()) {
@@ -77,7 +77,7 @@
 
   @if (audioBlob()) {
   <div
-    class="sticky bottom-0 left-0 right-0 bg-[var(--tw-bg)] px-6 py-4 border-t border-[var(--tw-border-light)] flex gap-3 justify-end z-10"
+    class="sticky bottom-0 left-0 right-0 bg-[var(--tw-bg)] px-3 sm:px-6 py-3 sm:py-4 border-t border-[var(--tw-border-light)] flex gap-2 sm:gap-3 justify-end z-10"
   >
     <button
       (click)="clearRecording()"
