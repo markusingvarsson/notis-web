@@ -7,6 +7,7 @@ import {
   input,
   ChangeDetectionStrategy,
   computed,
+  viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { isPlatformBrowser } from '@angular/common';
@@ -16,11 +17,19 @@ import { Router } from '@angular/router';
 import { CreateAudioNoteComponent } from './create-audio-note/create-audio-note.component';
 import { TranscriptionSettingsPickerService } from './components/transcription-settings-picker/transcription-settings-picker.service';
 import { IconChevronComponent } from '../../../../components/ui/icons/icon-chevron/icon-chevron.component';
+import { SaveIconComponent } from '../../../../components/ui/icons/save-icon/save-icon.component';
+import { TrashIconComponent } from '../../../../components/ui/icons/trash-icon/trash-icon.component';
 
 @Component({
   selector: 'app-create-note',
   standalone: true,
-  imports: [FormsModule, CreateAudioNoteComponent, IconChevronComponent],
+  imports: [
+    FormsModule,
+    CreateAudioNoteComponent,
+    IconChevronComponent,
+    SaveIconComponent,
+    TrashIconComponent,
+  ],
   templateUrl: './create-note.component.html',
   styleUrls: ['./create-note.component.scss'],
   providers: [RecordAudioService],
@@ -41,7 +50,9 @@ export class CreateNoteComponent {
   readonly noteCreated = output<NoteCreated>();
   readonly backClick = output<void>();
   readonly recordingState = this.#recordAudioService.recordingState;
-  readonly isRecordingDone = this.#recordAudioService.isRecordingDone;
+
+  readonly audioNoteComponent =
+    viewChild<CreateAudioNoteComponent>('audioNoteComponent');
 
   readonly headerTitle = computed(() => {
     if (this.recordingState() === RECORDER_STATE.SAVING) {
@@ -95,5 +106,13 @@ export class CreateNoteComponent {
         });
       }
     });
+  }
+
+  handleSave(): void {
+    this.audioNoteComponent()?.handleSave();
+  }
+
+  clearRecording(): void {
+    this.audioNoteComponent()?.clearRecording();
   }
 }

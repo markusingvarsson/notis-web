@@ -1,4 +1,3 @@
-<!-- File: src/app/domain/notes/components/create-note/create-note.component.html -->
 <div
   class="bg-[var(--tw-bg-light)] border border-[var(--tw-border-light)] rounded-2xl shadow-lg overflow-hidden"
 >
@@ -28,6 +27,26 @@
           {{ headerTitle() }}
         </h1>
       </div>
+
+      <!-- Action Icons -->
+      @if (isSaving()) {
+      <div class="flex gap-2">
+        <button
+          (click)="clearRecording()"
+          class="flex items-center justify-center w-10 h-10 rounded-full border border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 transition-colors duration-150 ease-in-out"
+          title="Delete recording"
+        >
+          <app-trash-icon [size]="20" />
+        </button>
+        <button
+          (click)="handleSave()"
+          class="flex items-center justify-center w-10 h-10 rounded-full bg-[var(--tw-primary)] text-white hover:bg-[var(--tw-primary-light)] transition-colors duration-150 ease-in-out"
+          title="Save note"
+        >
+          <app-save-icon [size]="20" />
+        </button>
+      </div>
+      }
     </div>
     @if (isSaving()) {
     <div class="mt-4">
@@ -42,6 +61,7 @@
   </div>
   <div class="p-2 sm:p-8">
     <app-create-audio-note
+      #audioNoteComponent
       (noteCreated)="noteCreated.emit($event)"
       [availableTags]="availableTags()"
     ></app-create-audio-note>
