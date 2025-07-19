@@ -32,13 +32,6 @@
       @if (isSaving()) {
       <div class="flex gap-2">
         <button
-          (click)="clearRecording()"
-          class="flex items-center justify-center w-10 h-10 rounded-full border border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 transition-colors duration-150 ease-in-out"
-          title="Delete recording"
-        >
-          <app-trash-icon [size]="20" />
-        </button>
-        <button
           (click)="handleSave()"
           class="flex items-center justify-center w-10 h-10 rounded-full bg-[var(--tw-primary)] text-white hover:bg-[var(--tw-primary-light)] transition-colors duration-150 ease-in-out"
           title="Save note"

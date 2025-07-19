@@ -18,7 +18,6 @@ import { CreateAudioNoteComponent } from './create-audio-note/create-audio-note.
 import { TranscriptionSettingsPickerService } from './components/transcription-settings-picker/transcription-settings-picker.service';
 import { IconChevronComponent } from '../../../../components/ui/icons/icon-chevron/icon-chevron.component';
 import { SaveIconComponent } from '../../../../components/ui/icons/save-icon/save-icon.component';
-import { TrashIconComponent } from '../../../../components/ui/icons/trash-icon/trash-icon.component';
 
 @Component({
   selector: 'app-create-note',
@@ -28,7 +27,6 @@ import { TrashIconComponent } from '../../../../components/ui/icons/trash-icon/t
     CreateAudioNoteComponent,
     IconChevronComponent,
     SaveIconComponent,
-    TrashIconComponent,
   ],
   templateUrl: './create-note.component.html',
   styleUrls: ['./create-note.component.scss'],
@@ -110,9 +108,5 @@ export class CreateNoteComponent {
 
   handleSave(): void {
     this.audioNoteComponent()?.handleSave();
-  }
-
-  clearRecording(): void {
-    this.audioNoteComponent()?.clearRecording();
   }
 }
