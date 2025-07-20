@@ -51,22 +51,27 @@
 
   @if (hasAudio()) {
   <div
-    class="flex items-center gap-2 mb-4 p-2 bg-gradient-to-r from-[var(--tw-primary-accent-bg)] to-[var(--tw-primary-accent-bg)] rounded-lg"
+    class="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg border border-gray-100"
   >
     <button
       (click)="onPlayAudio($event)"
-      class="p-1 bg-[var(--tw-primary-accent-bg)] rounded-full hover:bg-[var(--tw-primary-light)]/30 transition-colors"
+      class="flex items-center justify-center w-8 h-8 bg-[var(--tw-primary)] text-white rounded-full hover:bg-[var(--tw-primary-dark)] transition-colors shadow-sm"
       aria-label="Play audio"
     >
       @if (isPlaying()) {
-      <app-pause-icon />
+      <app-pause-icon [size]="'3'" />
       } @else {
-      <app-play-icon />
+      <app-play-icon [size]="'3'" />
       }
     </button>
-    <div class="flex items-center gap-1 text-[var(--tw-primary)]">
-      <app-microphone-icon />
-      <span class="text-xs font-medium">Voice recording</span>
+    <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1 text-gray-600">
+        <app-microphone-icon color="black" [size]="16" />
+        <span class="text-xs font-medium">Audio</span>
+      </div>
+      @if (formatAudioDuration()) {
+      <span class="text-xs text-gray-500">{{ formatAudioDuration() }}</span>
+      }
     </div>
   </div>
 
@@ -81,25 +86,23 @@
   ></audio>
   }
 
-  <div class="flex items-center justify-between">
-    <div class="flex items-center gap-2 text-xs text-gray-500">
-      <app-calendar-icon />
-      <span>{{ timeAgo() }}</span>
+  @if (tags().length > 0) {
+  <div class="flex items-center gap-1 mb-2">
+    <app-tag-icon />
+    <div class="flex gap-1 flex-wrap">
+      @for (tag of tags().slice(0, 3); track tag) {
+      <span class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs whitespace-nowrap">
+        #{{ tag }}
+      </span>
+      } @if (tags().length > 3) {
+      <span class="text-xs text-gray-500">+{{ tags().length - 3 }}</span>
+      }
     </div>
+  </div>
+  }
 
-    @if (tags().length > 0) {
-    <div class="flex items-center gap-1">
-      <app-tag-icon />
-      <div class="flex gap-1">
-        @for (tag of tags().slice(0, 2); track tag) {
-        <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">
-          #{{ tag }}
-        </span>
-        } @if (tags().length > 2) {
-        <span class="text-xs text-gray-500">+{{ tags().length - 2 }}</span>
-        }
-      </div>
-    </div>
-    }
+  <div class="flex items-center gap-2 text-xs text-gray-500">
+    <app-calendar-icon />
+    <span>{{ timeAgo() }}</span>
   </div>
 </div>

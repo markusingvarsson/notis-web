@@ -129,6 +129,12 @@ export class NoteCardComponent implements OnDestroy {
       .sort();
   });
 
+  readonly formatAudioDuration = computed(() => {
+    const note = this.note();
+    if (note.type !== 'audio' || note.duration <= 0) return '';
+    return formatDuration(note.duration);
+  });
+
   onDelete(e: Event) {
     e.stopPropagation();
     this.delete.emit(this.note());
