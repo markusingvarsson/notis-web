@@ -1,12 +1,12 @@
 <div class="min-h-screen flex flex-col">
   @if(withNavbar()) {
-  <app-navbar></app-navbar>
+  <app-navbar [fixed]="fixedNavbar()"></app-navbar>
   }
   <main
     class="flex-1 flex flex-col"
     [ngClass]="{
-      'pt-16': withNavbar(),
-      'pb-28 md:pb-0': true,
+      'pt-16': withNavbar() && fixedNavbar(),
+      'pb-18 md:pb-0': true,
       'container mx-auto px-4': !fullWidth()
     }"
   >

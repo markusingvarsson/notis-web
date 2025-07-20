@@ -38,6 +38,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
       "
       [withFooter]="true"
       [withNavbar]="isMobile()"
+      [fixedNavbar]="!isMobile()"
     >
       <app-desktop-sidebar>
         <app-tag-filter slot="tags"></app-tag-filter>
