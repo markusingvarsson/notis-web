@@ -1,4 +1,4 @@
-import { Injectable, signal, computed, inject } from '@angular/core';
+import { Injectable, signal, computed, inject, effect } from '@angular/core';
 import { NotesStorageService } from './notes-storage.service';
 import { Note } from '../index';
 
@@ -40,6 +40,22 @@ export class NotesFilterService {
 
   setSelectedTags(tags: string[]) {
     this.selectedTags.set(tags);
+  }
+
+  constructor() {
+    // Clean up selectedTags when availableTags change
+    effect(() => {
+      const available = this.availableTags();
+      const selected = this.selectedTags();
+      
+      // Filter out any selected tags that no longer exist in available tags
+      const validSelectedTags = selected.filter(tag => available.includes(tag));
+      
+      // Only update if there's a difference to avoid infinite loops
+      if (validSelectedTags.length !== selected.length) {
+        this.selectedTags.set(validSelectedTags);
+      }
+    });
   }
 
   clearFilters() {
