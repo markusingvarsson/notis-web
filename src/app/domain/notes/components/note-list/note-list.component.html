@@ -1,5 +1,5 @@
 <div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5">
-  <div class="px-4 pt-6 pb-24 md:pb-6">
+  <div class="px-4 pt-6 pb-24 md:pb-6" #scrollContainer>
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
       <div>
@@ -12,7 +12,7 @@
       </div>
     </div>
 
-    @if (filteredNotes().length === 0) {
+    @if (visibleNotes().length === 0) {
     <div class="text-center py-12">
       <div
         class="w-16 h-16 bg-[var(--tw-primary-accent-bg)] rounded-full mx-auto mb-4 flex items-center justify-center"
@@ -47,7 +47,7 @@
           : 'grid-cols-1 max-w-2xl mx-auto'
       "
     >
-      @for (note of filteredNotes(); track note.id) {
+      @for (note of visibleNotes(); track note.id) {
       <app-note-card
         [note]="note"
         [isDeleting]="nextDeletingNoteId() === note.id"
@@ -55,6 +55,27 @@
       ></app-note-card>
       }
     </div>
+
+    <!-- Loading indicator -->
+    @if (isLoading()) {
+    <div class="text-center py-8">
+      <div class="flex items-center justify-center gap-2 text-gray-500">
+        <div
+          class="w-4 h-4 border-2 border-gray-300 border-t-[var(--tw-primary)] rounded-full animate-spin"
+        ></div>
+        <span class="text-sm">Loading more notes...</span>
+      </div>
+    </div>
     }
+
+    <!-- End of list indicator -->
+    @if (!hasMoreNotes() && visibleNotes().length > 0) {
+    <div class="text-center py-8">
+      <div class="text-gray-400 text-sm">
+        <div class="w-16 h-0.5 bg-gray-200 mx-auto mb-2"></div>
+        <span>You've reached the end</span>
+      </div>
+    </div>
+    } }
   </div>
 </div>

@@ -4,6 +4,10 @@ import {
   signal,
   ChangeDetectionStrategy,
   computed,
+  effect,
+  ElementRef,
+  viewChild,
+  HostListener,
 } from '@angular/core';
 import { NoteCardComponent } from '../note-card/note-card.component';
 import { NotesStorageService } from '../../services/notes-storage.service';
@@ -39,9 +43,69 @@ export class NoteListComponent {
   readonly nextDeletingNoteId = signal<string | null>(null);
   readonly viewMode = signal<ViewMode>('grid');
 
-  readonly filteredNotes = this.filterService.filteredNotes;
+  // Virtual scrolling state
+  readonly isLoading = signal(false);
+  readonly currentPage = signal(0);
+  readonly pageSize = 10; // Number of notes to load per "page"
+  readonly scrollThreshold = 200; // Pixels from bottom to trigger load
 
+  readonly scrollContainerRef =
+    viewChild<ElementRef<HTMLDivElement>>('scrollContainer');
+
+  readonly filteredNotes = this.filterService.filteredNotes;
   readonly notesCount = computed(() => this.filteredNotes().length);
+
+  // Virtual scrolling: only show current page of notes
+  readonly visibleNotes = computed(() => {
+    const allNotes = this.filteredNotes();
+    const page = this.currentPage();
+    const startIndex = 0;
+    const endIndex = (page + 1) * this.pageSize;
+    return allNotes.slice(startIndex, endIndex);
+  });
+
+  readonly hasMoreNotes = computed(() => {
+    const allNotes = this.filteredNotes();
+    const page = this.currentPage();
+    return (page + 1) * this.pageSize < allNotes.length;
+  });
+
+  constructor() {
+    // Reset page when filtered notes change
+    effect(() => {
+      this.filteredNotes();
+      this.currentPage.set(0);
+    });
+  }
+
+  @HostListener('window:scroll', ['$event'])
+  onScroll() {
+    if (this.isLoading() || !this.hasMoreNotes()) return;
+
+    const scrollContainer = this.scrollContainerRef()?.nativeElement;
+    if (!scrollContainer) return;
+
+    const scrollTop = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+
+    // Check if we're near the bottom
+    if (scrollTop + windowHeight >= documentHeight - this.scrollThreshold) {
+      this.loadMoreNotes();
+    }
+  }
+
+  private loadMoreNotes() {
+    if (this.isLoading() || !this.hasMoreNotes()) return;
+
+    this.isLoading.set(true);
+
+    // Simulate loading delay (remove in production)
+    setTimeout(() => {
+      this.currentPage.update((page) => page + 1);
+      this.isLoading.set(false);
+    }, 300);
+  }
 
   async onDelete(note: Note) {
     const confirmed = await this.confirmationModalService.open({
