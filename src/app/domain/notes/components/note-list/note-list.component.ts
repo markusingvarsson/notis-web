@@ -8,7 +8,10 @@ import {
   ElementRef,
   viewChild,
   HostListener,
+  PLATFORM_ID,
 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { ViewportScroller } from '@angular/common';
 import { NoteCardComponent } from '../note-card/note-card.component';
 import { NotesStorageService } from '../../services/notes-storage.service';
 import { NotesFilterService } from '../../services/notes-filter.service';
@@ -39,6 +42,8 @@ export class NoteListComponent {
   private notesStorage = inject(NotesStorageService);
   private filterService = inject(NotesFilterService);
   private confirmationModalService = inject(ConfirmationModalService);
+  private platformId = inject(PLATFORM_ID);
+  private viewportScroller = inject(ViewportScroller);
 
   readonly nextDeletingNoteId = signal<string | null>(null);
   readonly viewMode = signal<ViewMode>('grid');
@@ -47,7 +52,10 @@ export class NoteListComponent {
   readonly isLoading = signal(false);
   readonly currentPage = signal(0);
   readonly pageSize = 10; // Number of notes to load per "page"
-  readonly scrollThreshold = 200; // Pixels from bottom to trigger load
+  readonly scrollThreshold = computed(() => {
+    if (!isPlatformBrowser(this.platformId)) return 200;
+    return window.innerWidth < 768 ? 400 : 200;
+  });
 
   readonly scrollContainerRef =
     viewChild<ElementRef<HTMLDivElement>>('scrollContainer');
@@ -80,17 +88,20 @@ export class NoteListComponent {
 
   @HostListener('window:scroll', ['$event'])
   onScroll() {
+    if (!isPlatformBrowser(this.platformId)) return;
     if (this.isLoading() || !this.hasMoreNotes()) return;
 
     const scrollContainer = this.scrollContainerRef()?.nativeElement;
     if (!scrollContainer) return;
 
-    const scrollTop = window.scrollY;
-    const windowHeight = window.innerHeight;
+    const scrollPosition = this.viewportScroller.getScrollPosition();
+    const scrollY = scrollPosition[1];
+    const viewportHeight = window.innerHeight;
     const documentHeight = document.documentElement.scrollHeight;
+    const threshold = this.scrollThreshold();
 
     // Check if we're near the bottom
-    if (scrollTop + windowHeight >= documentHeight - this.scrollThreshold) {
+    if (scrollY + viewportHeight >= documentHeight - threshold) {
       this.loadMoreNotes();
     }
   }
@@ -100,11 +111,13 @@ export class NoteListComponent {
 
     this.isLoading.set(true);
 
-    // Simulate loading delay (remove in production)
+    // Responsive loading delay
+    const delay =
+      isPlatformBrowser(this.platformId) && window.innerWidth < 768 ? 150 : 300;
     setTimeout(() => {
       this.currentPage.update((page) => page + 1);
       this.isLoading.set(false);
-    }, 300);
+    }, delay);
   }
 
   async onDelete(note: Note) {
