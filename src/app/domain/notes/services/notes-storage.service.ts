@@ -37,6 +37,7 @@ export class NotesStorageService {
   private db: IDBPDatabase<NotisDB> | null = null;
   private notes = signal<Note[]>([]);
   private tags = signal<Record<string, Tag>>({});
+  private isInitialLoading = signal(true);
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
@@ -73,7 +74,9 @@ export class NotesStorageService {
 
       await this.loadNotes();
       await this.loadTags();
+      this.isInitialLoading.set(false);
     } catch (error) {
+      this.isInitialLoading.set(false);
       console.error('Error opening IndexedDB:', error);
       this.#toastService.error(
         'Error opening IndexedDB. Please contact support.'
@@ -116,6 +119,10 @@ export class NotesStorageService {
 
   getTags() {
     return this.tags;
+  }
+
+  getIsInitialLoading() {
+    return this.isInitialLoading;
   }
 
   private async updateTag(

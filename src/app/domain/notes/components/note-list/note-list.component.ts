@@ -72,6 +72,7 @@ export class NoteListComponent {
 
   readonly filteredNotes = this.filterService.filteredNotes;
   readonly notesCount = computed(() => this.filteredNotes().length);
+  readonly isInitialLoading = this.notesStorage.getIsInitialLoading();
 
   // Virtual scrolling: only show current page of notes
   readonly visibleNotes = computed(() => {

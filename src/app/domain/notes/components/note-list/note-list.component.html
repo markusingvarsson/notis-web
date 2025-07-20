@@ -12,7 +12,16 @@
       </div>
     </div>
 
-    @if (visibleNotes().length === 0) {
+    @if (isInitialLoading()) {
+    <div class="text-center py-12">
+      <div class="flex items-center justify-center gap-3 text-gray-500">
+        <div
+          class="w-6 h-6 border-2 border-gray-300 border-t-[var(--tw-primary)] rounded-full animate-spin"
+        ></div>
+        <span class="text-lg">Loading notes...</span>
+      </div>
+    </div>
+    } @else if (visibleNotes().length === 0) {
     <div class="text-center py-12">
       <div
         class="w-16 h-16 bg-[var(--tw-primary-accent-bg)] rounded-full mx-auto mb-4 flex items-center justify-center"
