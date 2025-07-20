@@ -17,6 +17,7 @@ import { NotesStorageService } from '../../services/notes-storage.service';
 import { NotesFilterService } from '../../services/notes-filter.service';
 import { Note } from '../..';
 import { ConfirmationModalService } from '../../../../components/ui/confirmation-modal/confirmation-modal.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 import {
   ViewModeToggleComponent,
@@ -24,6 +25,9 @@ import {
 } from '../../../../components/ui/view-mode-toggle/view-mode-toggle.component';
 import { ButtonComponent } from '../../../../components/ui/button/button.component';
 import { MicrophoneIconComponent } from '../../../../components/ui/icons/microphone-icon/microphone-icon.component';
+import { NotesHeaderComponent } from '../notes-header/notes-header.component';
+import { MobileFilterSheetComponent } from '../mobile-filter-sheet/mobile-filter-sheet.component';
+import { MobileFilterTriggerComponent } from '../mobile-filter-trigger/mobile-filter-trigger.component';
 
 @Component({
   selector: 'app-note-list',
@@ -33,6 +37,9 @@ import { MicrophoneIconComponent } from '../../../../components/ui/icons/microph
     ViewModeToggleComponent,
     ButtonComponent,
     MicrophoneIconComponent,
+    NotesHeaderComponent,
+    MobileFilterSheetComponent,
+    MobileFilterTriggerComponent,
   ],
   templateUrl: './note-list.component.html',
   styleUrl: './note-list.component.scss',
@@ -40,13 +47,16 @@ import { MicrophoneIconComponent } from '../../../../components/ui/icons/microph
 })
 export class NoteListComponent {
   private notesStorage = inject(NotesStorageService);
-  private filterService = inject(NotesFilterService);
+  readonly filterService = inject(NotesFilterService);
   private confirmationModalService = inject(ConfirmationModalService);
   private platformId = inject(PLATFORM_ID);
   private viewportScroller = inject(ViewportScroller);
+  #deviceService = inject(DeviceDetectorService);
 
   readonly nextDeletingNoteId = signal<string | null>(null);
   readonly viewMode = signal<ViewMode>('grid');
+  readonly isMobileFilterSheetOpen = signal(false);
+  readonly isMobile = computed(() => this.#deviceService.isMobile());
 
   // Virtual scrolling state
   readonly isLoading = signal(false);
@@ -84,6 +94,22 @@ export class NoteListComponent {
       this.filteredNotes();
       this.currentPage.set(0);
     });
+  }
+
+  openMobileFilterSheet() {
+    this.isMobileFilterSheetOpen.set(true);
+  }
+
+  closeMobileFilterSheet() {
+    this.isMobileFilterSheetOpen.set(false);
+  }
+
+  onTagsChange(tags: string[]) {
+    this.filterService.setSelectedTags(tags);
+  }
+
+  onClearFilters() {
+    this.filterService.clearFilters();
   }
 
   @HostListener('window:scroll', ['$event'])
