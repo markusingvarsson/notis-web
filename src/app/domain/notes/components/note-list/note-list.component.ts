@@ -12,11 +12,13 @@ import { Note } from '../..';
 import { ConfirmationModalService } from '../../../../components/ui/confirmation-modal/confirmation-modal.service';
 import { truncateContent } from '../../utils/text.utils';
 import { ViewModeToggleComponent, type ViewMode } from '../../../../components/ui/view-mode-toggle/view-mode-toggle.component';
+import { ButtonComponent } from '../../../../components/ui/button/button.component';
+import { MicrophoneIconComponent } from '../../../../components/ui/icons/microphone-icon/microphone-icon.component';
 
 @Component({
   selector: 'app-note-list',
   standalone: true,
-  imports: [NoteCardComponent, ViewModeToggleComponent],
+  imports: [NoteCardComponent, ViewModeToggleComponent, ButtonComponent, MicrophoneIconComponent],
   templateUrl: './note-list.component.html',
   styleUrl: './note-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

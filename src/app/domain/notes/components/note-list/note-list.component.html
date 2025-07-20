@@ -9,26 +9,34 @@
 
       <div class="flex items-center gap-4">
         <app-view-mode-toggle [(viewMode)]="viewMode" />
-
-        <button class="hidden md:flex items-center gap-2 px-4 py-2 bg-[var(--tw-primary)] text-white rounded-xl hover:bg-[var(--tw-primary-dark)] transition-colors">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
-          New Note
-        </button>
       </div>
     </div>
 
     @if (filteredNotes().length === 0) {
     <div class="text-center py-12">
-      <div class="w-16 h-16 bg-[var(--tw-primary-accent-bg)] rounded-full mx-auto mb-4 flex items-center justify-center">
-        <svg class="w-8 h-8 text-[var(--tw-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+      <div
+        class="w-16 h-16 bg-[var(--tw-primary-accent-bg)] rounded-full mx-auto mb-4 flex items-center justify-center"
+      >
+        <svg
+          class="w-8 h-8 text-[var(--tw-primary)]"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
+          />
         </svg>
       </div>
       <h3 class="text-xl font-semibold text-gray-900 mb-2">No notes found</h3>
-      <p class="text-gray-600">Start by creating your first note</p>
+      <p class="text-gray-600 mb-6">Start by creating your first note</p>
+      <app-button [link]="'/notes/create'" [queryParams]="{ CTA: 'true' }">
+        <app-microphone-icon [size]="16" />
+        <span class="font-bold text-white">Record</span>
+      </app-button>
     </div>
     } @else {
     <div
