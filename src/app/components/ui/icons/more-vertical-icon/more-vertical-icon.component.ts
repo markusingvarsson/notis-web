@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-more-vertical-icon',
@@ -14,7 +14,7 @@ import { Component } from '@angular/core';
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
-      class="w-4 h-4"
+      [class]="'w-' + size() + ' h-' + size()"
     >
       <circle cx="12" cy="12" r="1" />
       <circle cx="12" cy="5" r="1" />
@@ -22,4 +22,6 @@ import { Component } from '@angular/core';
     </svg>
   `,
 })
-export class MoreVerticalIconComponent {}
+export class MoreVerticalIconComponent {
+  readonly size = input('4');
+}

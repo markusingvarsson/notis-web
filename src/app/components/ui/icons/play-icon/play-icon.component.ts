@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-play-icon',
@@ -14,10 +14,12 @@ import { Component } from '@angular/core';
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
-      class="w-4 h-4"
+      [class]="'w-' + size() + ' h-' + size()"
     >
       <polygon points="5,3 19,12 5,21" />
     </svg>
   `,
 })
-export class PlayIconComponent {}
+export class PlayIconComponent {
+  readonly size = input('4');
+}

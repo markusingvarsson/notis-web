@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-share-icon',
@@ -14,7 +14,7 @@ import { Component } from '@angular/core';
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
-      class="w-4 h-4"
+      [class]="'w-' + size() + ' h-' + size()"
     >
       <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
       <polyline points="16,6 12,2 8,6" />
@@ -22,4 +22,6 @@ import { Component } from '@angular/core';
     </svg>
   `,
 })
-export class ShareIconComponent {}
+export class ShareIconComponent {
+  readonly size = input('4');
+}

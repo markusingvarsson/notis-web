@@ -4,7 +4,7 @@
   (keydown.space)="onCardClick()"
   tabindex="0"
   role="button"
-  class="bg-gradient-to-br from-white/90 to-[var(--tw-bg-light)]/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-[var(--tw-border-light)] cursor-pointer group focus:outline-none focus:ring-2 focus:ring-[var(--tw-primary)]"
+  class="bg-gradient-to-br from-white/90 to-gray-50/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-gray-200 cursor-pointer group focus:outline-none focus:ring-2 focus:ring-[var(--tw-primary)] transition-all hover:shadow-md"
 >
   <div class="flex items-start justify-between mb-4">
     <h3 class="text-lg font-semibold text-gray-900 line-clamp-2">
@@ -51,11 +51,11 @@
 
   @if (hasAudio()) {
   <div
-    class="flex items-center gap-2 mb-4 p-2 bg-gradient-to-r from-[var(--tw-primary-accent-bg)] to-[var(--tw-primary-light)]/5 rounded-lg"
+    class="flex items-center gap-2 mb-4 p-2 bg-gradient-to-r from-[var(--tw-primary-accent-bg)] to-[var(--tw-primary-accent-bg)] rounded-lg"
   >
     <button
       (click)="onPlayAudio($event)"
-      class="p-1 bg-[var(--tw-primary-light)]/20 rounded-full hover:bg-[var(--tw-primary-light)]/30 transition-colors"
+      class="p-1 bg-[var(--tw-primary-accent-bg)] rounded-full hover:bg-[var(--tw-primary-light)]/30 transition-colors"
       aria-label="Play audio"
     >
       @if (isPlaying()) {

@@ -1,6 +1,4 @@
-<div
-  class="min-h-screen bg-gradient-to-br from-[var(--tw-bg-light)] via-[var(--tw-bg)] to-[var(--tw-primary-light)]/10"
->
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5">
   <div class="px-4 pt-6 pb-24 md:pb-6">
     <!-- Header -->
     <div class="flex items-center justify-between mb-6">
@@ -62,67 +60,25 @@
           </button>
         </div>
 
-        <button
-          class="hidden md:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[var(--tw-primary)] to-[var(--tw-primary-dark)] text-white rounded-xl hover:shadow-lg transition-all duration-200"
-        >
-          <svg
-            class="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 4v16m8-8H4"
-            ></path>
+        <button class="hidden md:flex items-center gap-2 px-4 py-2 bg-[var(--tw-primary)] text-white rounded-xl hover:bg-[var(--tw-primary-dark)] transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
           New Note
         </button>
       </div>
     </div>
 
-    <!-- Notes Grid/Single -->
     @if (filteredNotes().length === 0) {
     <div class="text-center py-12">
-      <div
-        class="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[var(--tw-primary)] to-[var(--tw-primary-dark)] rounded-full mx-auto mb-4"
-      >
-        <svg
-          class="w-8 h-8 text-white"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"
-          ></path>
+      <div class="w-16 h-16 bg-[var(--tw-primary-accent-bg)] rounded-full mx-auto mb-4 flex items-center justify-center">
+        <svg class="w-8 h-8 text-[var(--tw-primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
         </svg>
       </div>
       <h3 class="text-xl font-semibold text-gray-900 mb-2">No notes found</h3>
-      <p class="text-gray-600 mb-6">Start by creating your first voice note</p>
-      <button
-        class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[var(--tw-primary)] to-[var(--tw-primary-dark)] text-white rounded-xl hover:shadow-lg transition-all duration-200"
-      >
-        <svg
-          class="w-5 h-5"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 4v16m8-8H4"
-          ></path>
-        </svg>
-        Create Note
-      </button>
+      <p class="text-gray-600">Start by creating your first note</p>
     </div>
     } @else {
     <div

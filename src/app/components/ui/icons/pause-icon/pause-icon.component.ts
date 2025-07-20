@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-pause-icon',
@@ -14,11 +14,13 @@ import { Component } from '@angular/core';
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
-      class="w-4 h-4"
+      [class]="'w-' + size() + ' h-' + size()"
     >
       <rect x="6" y="4" width="4" height="16" />
       <rect x="14" y="4" width="4" height="16" />
     </svg>
   `,
 })
-export class PauseIconComponent {}
+export class PauseIconComponent {
+  readonly size = input('4');
+}

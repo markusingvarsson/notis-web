@@ -10,8 +10,10 @@ import {
   ChangeDetectionStrategy,
   signal,
   inject,
+  HostListener,
 } from '@angular/core';
 import { formatDistanceToNow, isAfter, subDays } from 'date-fns';
+import { truncateContent, formatDuration } from '../../utils/text.utils';
 import { Note } from '../..';
 import { NotesStorageService } from '../../services/notes-storage.service';
 import { MoreVerticalIconComponent } from '../../../../components/ui/icons/more-vertical-icon/more-vertical-icon.component';
@@ -56,7 +58,6 @@ export class NoteCardComponent implements OnDestroy {
   readonly audioElementRef = viewChild<ElementRef<HTMLAudioElement>>('audio');
   private audioUrl?: string;
   readonly isPlaying = signal(false);
-  readonly isPaused = signal(true);
 
   /** UI state */
   readonly showMenu = signal(false);
@@ -148,6 +149,13 @@ export class NoteCardComponent implements OnDestroy {
     this.showMenu.update((show) => !show);
   }
 
+  @HostListener('document:click')
+  onDocumentClick() {
+    if (this.showMenu()) {
+      this.showMenu.set(false);
+    }
+  }
+
   onPlayAudio(e: Event) {
     e.stopPropagation();
     const audioElement = this.audioElementRef()?.nativeElement;
@@ -159,7 +167,6 @@ export class NoteCardComponent implements OnDestroy {
         .play()
         .then(() => {
           this.isPlaying.set(true);
-          this.isPaused.set(false);
         })
         .catch((error: Error) => {
           console.error('Error playing audio:', error);
@@ -167,23 +174,19 @@ export class NoteCardComponent implements OnDestroy {
     } else {
       audioElement.pause();
       this.isPlaying.set(false);
-      this.isPaused.set(true);
     }
   }
 
   onAudioEnded() {
     this.isPlaying.set(false);
-    this.isPaused.set(true);
   }
 
   onAudioPlay() {
     this.isPlaying.set(true);
-    this.isPaused.set(false);
   }
 
   onAudioPause() {
     this.isPlaying.set(false);
-    this.isPaused.set(true);
   }
 
   ngOnDestroy() {
@@ -193,13 +196,3 @@ export class NoteCardComponent implements OnDestroy {
   }
 }
 
-const truncateContent = (content: string, maxLength = 150) => {
-  if (content.length <= maxLength) return content;
-  return content.substring(0, maxLength) + '...';
-};
-
-const formatDuration = (seconds: number): string => {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = Math.floor(seconds % 60);
-  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-};

@@ -10,6 +10,7 @@ import { NotesStorageService } from '../../services/notes-storage.service';
 import { NotesFilterService } from '../../services/notes-filter.service';
 import { Note } from '../..';
 import { ConfirmationModalService } from '../../../../components/ui/confirmation-modal/confirmation-modal.service';
+import { truncateContent } from '../../utils/text.utils';
 
 @Component({
   selector: 'app-note-list',
@@ -49,18 +50,23 @@ export class NoteListComponent {
     }
   }
 
-  onShare(note: Note) {
-    // TODO: Implement share logic
-    if (navigator.share) {
-      navigator.share({
-        title: note.title,
-        text: this.getNoteContent(note).substring(0, 200) + '...',
-      });
-    } else {
-      navigator.clipboard.writeText(
-        `${note.title}\n\n${this.getNoteContent(note)}`
-      );
-      // You could show a toast notification here
+  async onShare(note: Note) {
+    const noteContent = this.getNoteContent(note);
+    const shareData = {
+      title: note.title,
+      text: truncateContent(noteContent, 200),
+    };
+
+    try {
+      if (navigator.share && navigator.canShare?.(shareData)) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(
+          `${note.title}\n\n${noteContent}`
+        );
+      }
+    } catch (error) {
+      console.error('Failed to share note:', error);
     }
   }
 

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, input } from '@angular/core';
 
 @Component({
   selector: 'app-calendar-icon',
@@ -14,7 +14,7 @@ import { Component } from '@angular/core';
       stroke-width="2"
       stroke-linecap="round"
       stroke-linejoin="round"
-      class="w-3 h-3"
+      [class]="'w-' + size() + ' h-' + size()"
     >
       <rect width="18" height="18" x="3" y="4" rx="2" ry="2" />
       <line x1="16" y1="2" x2="16" y2="6" />
@@ -23,4 +23,6 @@ import { Component } from '@angular/core';
     </svg>
   `,
 })
-export class CalendarIconComponent {}
+export class CalendarIconComponent {
+  readonly size = input('3');
+}
