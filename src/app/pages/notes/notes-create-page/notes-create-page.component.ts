@@ -42,13 +42,14 @@ import { DesktopSidebarComponent } from '../../../components/layout/desktop-side
       [withNavbar]="false"
     >
       <app-desktop-sidebar></app-desktop-sidebar>
-      <div class="min-h-screen bg-[var(--tw-bg-light)]">
-        <div class="max-w-5xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-8">
+      <div class="h-full bg-[var(--tw-bg-light)] flex flex-col p-2 sm:p-6 lg:p-8">
+        <div class="flex-1 flex flex-col max-w-5xl mx-auto w-full">
           <!-- Main Content Area -->
-          <div class="grid lg:grid-cols-3 gap-8">
+          <div class="flex-1 grid lg:grid-cols-3 gap-8">
             <!-- Create Note Section -->
-            <div class="lg:col-span-2">
+            <div class="lg:col-span-2 flex flex-col min-h-0">
               <app-create-note
+                class="flex-1 min-h-0"
                 [CTA]="CTA()"
                 (noteCreated)="onCreateNote($event)"
                 [availableTags]="availableTags()"
