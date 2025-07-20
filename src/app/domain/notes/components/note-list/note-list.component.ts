@@ -10,15 +10,23 @@ import { NotesStorageService } from '../../services/notes-storage.service';
 import { NotesFilterService } from '../../services/notes-filter.service';
 import { Note } from '../..';
 import { ConfirmationModalService } from '../../../../components/ui/confirmation-modal/confirmation-modal.service';
-import { truncateContent } from '../../utils/text.utils';
-import { ViewModeToggleComponent, type ViewMode } from '../../../../components/ui/view-mode-toggle/view-mode-toggle.component';
+
+import {
+  ViewModeToggleComponent,
+  type ViewMode,
+} from '../../../../components/ui/view-mode-toggle/view-mode-toggle.component';
 import { ButtonComponent } from '../../../../components/ui/button/button.component';
 import { MicrophoneIconComponent } from '../../../../components/ui/icons/microphone-icon/microphone-icon.component';
 
 @Component({
   selector: 'app-note-list',
   standalone: true,
-  imports: [NoteCardComponent, ViewModeToggleComponent, ButtonComponent, MicrophoneIconComponent],
+  imports: [
+    NoteCardComponent,
+    ViewModeToggleComponent,
+    ButtonComponent,
+    MicrophoneIconComponent,
+  ],
   templateUrl: './note-list.component.html',
   styleUrl: './note-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -50,38 +58,6 @@ export class NoteListComponent {
         await this.notesStorage.deleteNote(note.id);
         this.nextDeletingNoteId.set(null);
       }, 300);
-    }
-  }
-
-  async onShare(note: Note) {
-    const noteContent = this.getNoteContent(note);
-    const shareData = {
-      title: note.title,
-      text: truncateContent(noteContent, 200),
-    };
-
-    try {
-      if (navigator.share && navigator.canShare?.(shareData)) {
-        await navigator.share(shareData);
-      } else {
-        await navigator.clipboard.writeText(
-          `${note.title}\n\n${noteContent}`
-        );
-      }
-    } catch (error) {
-      console.error('Failed to share note:', error);
-    }
-  }
-
-
-  private getNoteContent(note: Note): string {
-    switch (note.type) {
-      case 'text':
-        return note.content;
-      case 'audio':
-        return note.transcript || 'Audio recording';
-      default:
-        return '';
     }
   }
 }

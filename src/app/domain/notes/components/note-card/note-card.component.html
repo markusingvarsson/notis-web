@@ -12,36 +12,13 @@
     </h3>
 
     <div class="flex items-center gap-1">
-      <div class="relative group/menu">
-        <button
-          (click)="toggleMenu($event)"
-          class="p-1 rounded-lg hover:bg-gray-100 transition-colors text-gray-500 hover:text-gray-700"
-          aria-label="More options"
-        >
-          <app-more-vertical-icon />
-        </button>
-
-        @if (showMenu()) {
-        <div
-          class="absolute right-0 top-8 bg-white rounded-lg shadow-lg border border-gray-200 p-1 z-10"
-        >
-          <button
-            (click)="onShare($event)"
-            class="flex items-center gap-2 w-full px-3 py-2 text-left hover:bg-gray-50 rounded-md transition-colors text-sm"
-          >
-            <app-share-icon />
-            Share
-          </button>
-          <button
-            (click)="onDelete($event)"
-            class="flex items-center gap-2 w-full px-3 py-2 text-left hover:bg-red-50 text-red-600 rounded-md transition-colors text-sm"
-          >
-            <app-trash-icon />
-            Delete
-          </button>
-        </div>
-        }
-      </div>
+      <button
+        (click)="onDelete($event)"
+        class="p-1 rounded-lg hover:bg-red-50 transition-colors text-gray-500 hover:text-red-600"
+        aria-label="Delete note"
+      >
+        <app-trash-icon />
+      </button>
     </div>
   </div>
 
@@ -84,14 +61,14 @@
     (pause)="onAudioPause()"
     preload="metadata"
   ></audio>
-  }
-
-  @if (tags().length > 0) {
+  } @if (tags().length > 0) {
   <div class="flex items-center gap-1 mb-2">
     <app-tag-icon />
     <div class="flex gap-1 flex-wrap">
       @for (tag of tags().slice(0, 3); track tag) {
-      <span class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs whitespace-nowrap">
+      <span
+        class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs whitespace-nowrap"
+      >
         #{{ tag }}
       </span>
       } @if (tags().length > 3) {

@@ -10,16 +10,15 @@ import {
   ChangeDetectionStrategy,
   signal,
   inject,
-  HostListener,
 } from '@angular/core';
 import { formatDistanceToNow, isAfter, subDays } from 'date-fns';
 import { truncateContent, formatDuration } from '../../utils/text.utils';
 import { Note } from '../..';
 import { NotesStorageService } from '../../services/notes-storage.service';
-import { MoreVerticalIconComponent } from '../../../../components/ui/icons/more-vertical-icon/more-vertical-icon.component';
+
 import { PlayIconComponent } from '../../../../components/ui/icons/play-icon/play-icon.component';
 import { PauseIconComponent } from '../../../../components/ui/icons/pause-icon/pause-icon.component';
-import { ShareIconComponent } from '../../../../components/ui/icons/share-icon/share-icon.component';
+
 import { CalendarIconComponent } from '../../../../components/ui/icons/calendar-icon/calendar-icon.component';
 import { TagIconComponent } from '../../../../components/ui/icons/tag-icon/tag-icon.component';
 import { MicrophoneIconComponent } from '../../../../components/ui/icons/microphone-icon/microphone-icon.component';
@@ -29,10 +28,8 @@ import { TrashIconComponent } from '../../../../components/ui/icons/trash-icon/t
   selector: 'app-note-card',
   standalone: true,
   imports: [
-    MoreVerticalIconComponent,
     PlayIconComponent,
     PauseIconComponent,
-    ShareIconComponent,
     CalendarIconComponent,
     TagIconComponent,
     MicrophoneIconComponent,
@@ -52,15 +49,11 @@ export class NoteCardComponent implements OnDestroy {
   readonly note = input.required<Note>();
   readonly isDeleting = input(false);
   readonly delete = output<Note>();
-  readonly share = output<Note>();
 
   /** Audio playback state */
   readonly audioElementRef = viewChild<ElementRef<HTMLAudioElement>>('audio');
   private audioUrl?: string;
   readonly isPlaying = signal(false);
-
-  /** UI state */
-  readonly showMenu = signal(false);
 
   /** Computed values */
   readonly timeAgo = computed(() => {
@@ -140,26 +133,9 @@ export class NoteCardComponent implements OnDestroy {
     this.delete.emit(this.note());
   }
 
-  onShare(e: Event) {
-    e.stopPropagation();
-    this.share.emit(this.note());
-  }
-
   onCardClick() {
     // TODO: Navigate to edit page
     console.log('Navigate to edit note:', this.note().id);
-  }
-
-  toggleMenu(e: Event) {
-    e.stopPropagation();
-    this.showMenu.update((show) => !show);
-  }
-
-  @HostListener('document:click')
-  onDocumentClick() {
-    if (this.showMenu()) {
-      this.showMenu.set(false);
-    }
   }
 
   onPlayAudio(e: Event) {
@@ -201,4 +177,3 @@ export class NoteCardComponent implements OnDestroy {
     }
   }
 }
-
