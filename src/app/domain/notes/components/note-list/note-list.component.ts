@@ -11,11 +11,12 @@ import { NotesFilterService } from '../../services/notes-filter.service';
 import { Note } from '../..';
 import { ConfirmationModalService } from '../../../../components/ui/confirmation-modal/confirmation-modal.service';
 import { truncateContent } from '../../utils/text.utils';
+import { ViewModeToggleComponent, type ViewMode } from '../../../../components/ui/view-mode-toggle/view-mode-toggle.component';
 
 @Component({
   selector: 'app-note-list',
   standalone: true,
-  imports: [NoteCardComponent],
+  imports: [NoteCardComponent, ViewModeToggleComponent],
   templateUrl: './note-list.component.html',
   styleUrl: './note-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -26,7 +27,7 @@ export class NoteListComponent {
   private confirmationModalService = inject(ConfirmationModalService);
 
   readonly nextDeletingNoteId = signal<string | null>(null);
-  readonly viewMode = signal<'grid' | 'single'>('grid');
+  readonly viewMode = signal<ViewMode>('grid');
 
   readonly filteredNotes = this.filterService.filteredNotes;
 
@@ -70,9 +71,6 @@ export class NoteListComponent {
     }
   }
 
-  toggleViewMode() {
-    this.viewMode.update((mode) => (mode === 'grid' ? 'single' : 'grid'));
-  }
 
   private getNoteContent(note: Note): string {
     switch (note.type) {
