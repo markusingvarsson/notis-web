@@ -252,37 +252,25 @@ export class NotesStorageService {
   async addNote(noteCreated: NoteCreated): Promise<void> {
     if (!this.db) return;
 
-    let note: Note;
-
-    if (noteCreated.type === 'audio') {
-      if (!noteCreated.audioBlob) {
-        throw new Error('Audio blob is required for audio notes');
-      }
-
-      const duration = await this.getAudioDuration(noteCreated.audioBlob);
-      const noteTags = noteCreated.tags ?? {};
-      const tagIds = Object.keys(noteTags);
-
-      note = {
-        id: crypto.randomUUID(),
-        title: noteCreated.title,
-        type: 'audio',
-        audioBlob: noteCreated.audioBlob,
-        audioMimeType: noteCreated.audioMimeType,
-        duration,
-        transcript: noteCreated.transcript,
-        updatedAt: new Date().toISOString(),
-        tagIds: tagIds,
-      };
-    } else {
-      note = {
-        id: crypto.randomUUID(),
-        title: noteCreated.title,
-        type: 'text',
-        content: noteCreated.content,
-        updatedAt: new Date().toISOString(),
-      };
+    if (!noteCreated.audioBlob) {
+      throw new Error('Audio blob is required for audio notes');
     }
+
+    const duration = await this.getAudioDuration(noteCreated.audioBlob);
+    const noteTags = noteCreated.tags ?? {};
+    const tagIds = Object.keys(noteTags);
+
+    const note: Note = {
+      id: crypto.randomUUID(),
+      title: noteCreated.title,
+      type: 'audio',
+      audioBlob: noteCreated.audioBlob,
+      audioMimeType: noteCreated.audioMimeType,
+      duration,
+      transcript: noteCreated.transcript,
+      updatedAt: new Date().toISOString(),
+      tagIds: tagIds,
+    };
 
     try {
       const tx = this.db.transaction(['notes', 'tags'], 'readwrite');
