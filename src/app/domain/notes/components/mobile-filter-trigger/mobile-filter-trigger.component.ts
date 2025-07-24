@@ -12,21 +12,23 @@ import { ButtonComponent } from '../../../../components/ui/button/button.compone
   standalone: true,
   imports: [FilterIconComponent, ButtonComponent],
   template: `
-    <app-button
-      variant="outline"
-      size="sm"
-      (buttonClick)="openSheet.emit()"
-      className="relative md:hidden"
-    >
-      <app-filter-icon [size]="16" [color]="'currentColor'" class="mr-2" />
-      Filters @if (selectedTagsCount() > 0) {
+    <div class="relative md:hidden">
+      <app-button
+        variant="outline"
+        size="sm"
+        (buttonClick)="openSheet.emit()"
+      >
+        <app-filter-icon [size]="16" [color]="'currentColor'" class="mr-2" />
+        Filters
+      </app-button>
+      @if (selectedTagsCount() > 0) {
       <span
         class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
       >
         {{ selectedTagsCount() }}
       </span>
       }
-    </app-button>
+    </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
