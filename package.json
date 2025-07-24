@@ -10,6 +10,7 @@
     "serve:ssr:notis-web": "node dist/notis-web/server/server.mjs",
     "prepare": "husky",
     "lint": "ng lint",
+    "quality-check": "npm run lint && npx tsc --noEmit --skipLibCheck && npm run build",
     "ngsw": "ng build && npx http-server -p 8080 -c-1 dist/notis-web/browser"
   },
   "private": true,
