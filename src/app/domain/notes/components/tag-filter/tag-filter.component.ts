@@ -12,6 +12,7 @@ import { NotesFilterService } from '../../services/notes-filter.service';
 import { TagIconComponent } from '../../../../components/ui/icons/tag-icon/tag-icon.component';
 import { IconChevronComponent } from '../../../../components/ui/icons/icon-chevron/icon-chevron.component';
 import { XIconComponent } from '../../../../components/ui/icons/x-icon/x-icon.component';
+import { IS_INITIAL_LOADING } from '../../services/loading-tokens';
 
 @Component({
   selector: 'app-tag-filter',
@@ -33,6 +34,7 @@ export class TagFilterComponent {
   readonly selectedTags = this.filterService.selectedTags;
   readonly availableTags = this.filterService.availableTags;
   readonly hasTags = computed(() => this.availableTags().length > 0);
+  readonly isInitialLoading = inject(IS_INITIAL_LOADING);
 
   constructor() {
     // Load saved tags on mount (only in browser)

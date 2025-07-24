@@ -18,6 +18,7 @@ import { NotesFilterService } from '../../services/notes-filter.service';
 import { Note } from '../..';
 import { ConfirmationModalService } from '../../../../components/ui/confirmation-modal/confirmation-modal.service';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import { IS_INITIAL_LOADING } from '../../services/loading-tokens';
 
 import {
   ViewModeToggleComponent,
@@ -72,7 +73,7 @@ export class NoteListComponent {
 
   readonly filteredNotes = this.filterService.filteredNotes;
   readonly notesCount = computed(() => this.filteredNotes().length);
-  readonly isInitialLoading = this.notesStorage.getIsInitialLoading();
+  readonly isInitialLoading = inject(IS_INITIAL_LOADING);
 
   // Virtual scrolling: only show current page of notes
   readonly visibleNotes = computed(() => {
