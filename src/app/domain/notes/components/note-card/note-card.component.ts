@@ -10,6 +10,7 @@ import {
   ChangeDetectionStrategy,
   signal,
   inject,
+  effect,
 } from '@angular/core';
 import { formatDistanceToNow, isAfter, subDays } from 'date-fns';
 import { truncateContent, formatDuration } from '../../utils/text.utils';
@@ -55,6 +56,24 @@ export class NoteCardComponent implements OnDestroy {
   private audioUrl?: string;
   readonly isPlaying = signal(false);
 
+  constructor() {
+    // Create audio URL when note changes and clean up previous URL
+    effect(() => {
+      const note = this.note();
+      
+      // Clean up previous URL
+      if (this.audioUrl) {
+        URL.revokeObjectURL(this.audioUrl);
+        this.audioUrl = undefined;
+      }
+      
+      // Create new URL for audio notes
+      if (note.type === 'audio') {
+        this.audioUrl = URL.createObjectURL(note.audioBlob);
+      }
+    });
+  }
+
   /** Computed values */
   readonly timeAgo = computed(() => {
     const date = new Date(this.note().updatedAt);
@@ -76,20 +95,16 @@ export class NoteCardComponent implements OnDestroy {
 
   readonly preview = computed(() => {
     const note = this.note();
-    switch (note.type) {
-      case 'text':
-        return truncateContent(note.content, 150);
-      case 'audio':
-        if (note.transcript) {
-          return truncateContent(note.transcript, 150);
-        } else {
-          return note.duration > 0
-            ? `Audio recording (${formatDuration(note.duration)})`
-            : 'Audio recording';
-        }
-      default:
-        return 'Unknown note type';
+    if (note.type === 'audio') {
+      if (note.transcript) {
+        return truncateContent(note.transcript, 150);
+      } else {
+        return note.duration > 0
+          ? `Audio recording (${formatDuration(note.duration)})`
+          : 'Audio recording';
+      }
     }
+    return 'Unknown note type';
   });
 
   readonly hasAudio = computed(() => {
@@ -100,11 +115,7 @@ export class NoteCardComponent implements OnDestroy {
   readonly audioSrc = computed(() => {
     const note = this.note();
     if (note.type !== 'audio') return '';
-
-    if (!this.audioUrl) {
-      this.audioUrl = URL.createObjectURL(note.audioBlob);
-    }
-    return this.audioUrl;
+    return this.audioUrl || '';
   });
 
   readonly tags = computed(() => {
@@ -135,7 +146,6 @@ export class NoteCardComponent implements OnDestroy {
 
   onCardClick() {
     // TODO: Navigate to edit page
-    console.log('Navigate to edit note:', this.note().id);
   }
 
   onPlayAudio(e: Event) {

@@ -103,9 +103,6 @@ export class CreateAudioNoteComponent {
     } else if (this.recordingState() === RECORDER_STATE.RECORDING) {
       this.#recordAudioService.stopRecording();
       this.currentView.set('preview');
-    } else {
-      // Potentially STARTING, or a new state from service like COMPLETED_READY_TO_SAVE
-      console.log('Recording state:', this.recordingState());
     }
   }
 
