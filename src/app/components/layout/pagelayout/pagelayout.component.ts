@@ -54,8 +54,4 @@ export class PagelayoutComponent {
       }
     });
   }
-
-  onNewNote() {
-    this.router.navigate(['/notes/create']);
-  }
 }

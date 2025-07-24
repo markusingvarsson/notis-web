@@ -1,9 +1,4 @@
-import {
-  Component,
-  inject,
-  input,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { FileTextIconComponent } from '../../ui/icons/file-text-icon/file-text-icon.component';
 import { PlusIconComponent } from '../../ui/icons/plus-icon/plus-icon.component';
@@ -34,8 +29,6 @@ interface NavItem {
 export class MobileNavigationComponent {
   private router = inject(Router);
 
-  readonly onNewNote = input<() => void>();
-
   navItems: NavItem[] = [
     { icon: 'file-text', label: 'Notes', path: '/notes', id: 'notes' },
     { icon: 'plus', label: 'Add', action: true, id: 'add' },
@@ -44,7 +37,7 @@ export class MobileNavigationComponent {
 
   handleItemClick(item: NavItem) {
     if (item.action) {
-      this.router.navigate(['/notes/create']);
+      this.router.navigate(['/notes/create'], { queryParams: { CTA: 'true' } });
     } else if (item.path) {
       this.router.navigate([item.path]);
     }
