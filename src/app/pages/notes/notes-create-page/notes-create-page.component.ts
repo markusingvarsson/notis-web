@@ -42,7 +42,7 @@ import { DesktopSidebarComponent } from '../../../components/layout/desktop-side
       [withNavbar]="false"
     >
       <app-desktop-sidebar></app-desktop-sidebar>
-      <div class="h-full bg-[var(--tw-bg-light)] flex flex-col p-2 sm:p-6 lg:p-8">
+      <div class="h-full flex flex-col p-2 sm:p-6 lg:p-8 md:pb-0">
         <div class="flex-1 flex flex-col max-w-5xl mx-auto w-full">
           <!-- Main Content Area -->
           <div class="flex-1 grid lg:grid-cols-3 gap-8">
