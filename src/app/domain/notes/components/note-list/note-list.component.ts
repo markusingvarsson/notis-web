@@ -62,7 +62,7 @@ export class NoteListComponent {
   // Virtual scrolling state
   readonly isLoading = signal(false);
   readonly currentPage = signal(0);
-  readonly pageSize = 10; // Number of notes to load per "page"
+  readonly pageSize = 20; // Number of notes to load per "page"
   readonly scrollThreshold = computed(() => {
     if (!isPlatformBrowser(this.platformId)) return 200;
     return window.innerWidth < 768 ? 400 : 200;
