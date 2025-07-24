@@ -19,6 +19,7 @@ import { Note } from '../..';
 import { ConfirmationModalService } from '../../../../components/ui/confirmation-modal/confirmation-modal.service';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { IS_INITIAL_LOADING } from '../../services/loading-tokens';
+import { PAGINATION_CONSTANTS } from '../../constants/pagination.constants';
 
 import {
   ViewModeToggleComponent,
@@ -62,10 +63,12 @@ export class NoteListComponent {
   // Virtual scrolling state
   readonly isLoading = signal(false);
   readonly currentPage = signal(0);
-  readonly pageSize = 20; // Number of notes to load per "page"
+  readonly pageSize = PAGINATION_CONSTANTS.PAGE_SIZE;
   readonly scrollThreshold = computed(() => {
-    if (!isPlatformBrowser(this.platformId)) return 200;
-    return window.innerWidth < 768 ? 400 : 200;
+    if (!isPlatformBrowser(this.platformId)) return PAGINATION_CONSTANTS.DESKTOP_SCROLL_THRESHOLD;
+    return window.innerWidth < PAGINATION_CONSTANTS.MOBILE_BREAKPOINT 
+      ? PAGINATION_CONSTANTS.MOBILE_SCROLL_THRESHOLD 
+      : PAGINATION_CONSTANTS.DESKTOP_SCROLL_THRESHOLD;
   });
 
   readonly scrollContainerRef =
@@ -140,8 +143,10 @@ export class NoteListComponent {
     this.isLoading.set(true);
 
     // Responsive loading delay
-    const delay =
-      isPlatformBrowser(this.platformId) && window.innerWidth < 768 ? 150 : 300;
+    const delay = isPlatformBrowser(this.platformId) && 
+      window.innerWidth < PAGINATION_CONSTANTS.MOBILE_BREAKPOINT 
+        ? PAGINATION_CONSTANTS.MOBILE_LOADING_DELAY 
+        : PAGINATION_CONSTANTS.DESKTOP_LOADING_DELAY;
     setTimeout(() => {
       this.currentPage.update((page) => page + 1);
       this.isLoading.set(false);

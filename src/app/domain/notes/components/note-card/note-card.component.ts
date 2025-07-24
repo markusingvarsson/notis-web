@@ -16,6 +16,7 @@ import { formatDistanceToNow, isAfter, subDays } from 'date-fns';
 import { truncateContent, formatDuration } from '../../utils/text.utils';
 import { Note } from '../..';
 import { NotesStorageService } from '../../services/notes-storage.service';
+import { TEXT_CONSTANTS } from '../../constants/text.constants';
 
 import { PlayIconComponent } from '../../../../components/ui/icons/play-icon/play-icon.component';
 import { PauseIconComponent } from '../../../../components/ui/icons/pause-icon/pause-icon.component';
@@ -97,7 +98,7 @@ export class NoteCardComponent implements OnDestroy {
     const note = this.note();
     if (note.type === 'audio') {
       if (note.transcript) {
-        return truncateContent(note.transcript, 150);
+        return truncateContent(note.transcript, TEXT_CONSTANTS.PREVIEW_MAX_LENGTH);
       } else {
         return note.duration > 0
           ? `Audio recording (${formatDuration(note.duration)})`
