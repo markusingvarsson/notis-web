@@ -1,23 +1,25 @@
 /* Custom scrollbar for tags list */
-.max-h-60 {
+.tags-scroll-container {
+  max-height: calc(100vh - 500px); /* 100vh minus header + nav + settings + clear button space */
+  overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 #f1f5f9;
 }
 
-.max-h-60::-webkit-scrollbar {
+.tags-scroll-container::-webkit-scrollbar {
   width: 6px;
 }
 
-.max-h-60::-webkit-scrollbar-track {
+.tags-scroll-container::-webkit-scrollbar-track {
   background: #f1f5f9;
   border-radius: 10px;
 }
 
-.max-h-60::-webkit-scrollbar-thumb {
+.tags-scroll-container::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 10px;
 }
 
-.max-h-60::-webkit-scrollbar-thumb:hover {
+.tags-scroll-container::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
 }

@@ -26,7 +26,7 @@ import { IS_INITIAL_LOADING } from '../../services/loading-tokens';
 export class TagFilterComponent {
   private filterService = inject(NotesFilterService);
 
-  readonly isTagsExpanded = signal(false);
+  readonly isTagsExpanded = signal(true);
   readonly selectedTags = this.filterService.selectedTags;
   readonly availableTags = this.filterService.availableTags;
   readonly hasTags = computed(() => this.availableTags().length > 0);
