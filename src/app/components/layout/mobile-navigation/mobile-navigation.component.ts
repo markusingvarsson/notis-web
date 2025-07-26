@@ -7,8 +7,8 @@ import { SettingsIconComponent } from '../../ui/icons/settings-icon/settings-ico
 interface NavItem {
   icon: 'home' | 'file-text' | 'plus' | 'settings';
   label: string;
-  path?: string;
-  action?: boolean;
+  path: string;
+  queryParams?: Record<string, string>;
   id: string;
 }
 
@@ -31,15 +31,11 @@ export class MobileNavigationComponent {
 
   navItems: NavItem[] = [
     { icon: 'file-text', label: 'Notes', path: '/notes', id: 'notes' },
-    { icon: 'plus', label: 'Add', action: true, id: 'add' },
+    { icon: 'plus', label: 'Add', path: '/notes/create', queryParams: { CTA: 'true' }, id: 'add' },
     { icon: 'settings', label: 'Settings', path: '/settings', id: 'settings' },
   ];
 
   handleItemClick(item: NavItem) {
-    if (item.action) {
-      this.router.navigate(['/notes/create'], { queryParams: { CTA: 'true' } });
-    } else if (item.path) {
-      this.router.navigate([item.path]);
-    }
+    this.router.navigate([item.path], { queryParams: item.queryParams });
   }
 }

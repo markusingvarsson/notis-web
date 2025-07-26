@@ -71,12 +71,6 @@ export class CreateNoteComponent {
     return 'text-[var(--tw-primary-dark)]';
   });
 
-  readonly subtitleClasses = computed(() => {
-    if (this.isSaving()) {
-      return 'text-[var(--tw-success-dark)]';
-    }
-    return 'text-[var(--tw-text-muted)]';
-  });
 
   constructor() {
     effect(() => {

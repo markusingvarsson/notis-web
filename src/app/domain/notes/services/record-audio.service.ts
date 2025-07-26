@@ -34,9 +34,6 @@ export class RecordAudioService implements OnDestroy {
   // Audio visualization signals
   readonly voiceLevel = signal<number>(0);
 
-  readonly isRecordingDone = computed(() => {
-    return this.recordingState() === RECORDER_STATE.IDLE && this.audioBlob();
-  });
   readonly recordLabel = computed(() => {
     switch (this.recordingState()) {
       case RECORDER_STATE.STARTING:
@@ -121,7 +118,7 @@ export class RecordAudioService implements OnDestroy {
     this.selectedDeviceId.set(deviceId);
   }
 
-  private async checkInitialMicrophonePermission(): Promise<void> {
+private async checkInitialMicrophonePermission(): Promise<void> {
     if (!isPlatformBrowser(this.#platformId) || !navigator.permissions) {
       // If not in browser or Permissions API not supported, attempt fallback directly or set to blocked
       const fallbackStatus = await this.tryMicAccessFallback();
@@ -291,8 +288,8 @@ export class RecordAudioService implements OnDestroy {
             .join('');
           this.transcriptText.set(transcript);
         };
-        this.recognition.onerror = (eventRecognisionError: Event) => {
-          console.error('Speech recognition error:', eventRecognisionError);
+        this.recognition.onerror = (eventRecognitionError: Event) => {
+          console.error('Speech recognition error:', eventRecognitionError);
           this.cleanupSpeechRecognition(); // Clean up on error
         };
         this.recognition.onend = () => {

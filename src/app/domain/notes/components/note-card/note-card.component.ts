@@ -61,13 +61,13 @@ export class NoteCardComponent implements OnDestroy {
     // Create audio URL when note changes and clean up previous URL
     effect(() => {
       const note = this.note();
-      
+
       // Clean up previous URL
       if (this.audioUrl) {
         URL.revokeObjectURL(this.audioUrl);
         this.audioUrl = undefined;
       }
-      
+
       // Create new URL for audio notes
       if (note.type === 'audio') {
         this.audioUrl = URL.createObjectURL(note.audioBlob);
@@ -100,7 +100,7 @@ export class NoteCardComponent implements OnDestroy {
       if (note.transcript) {
         return truncateContent(note.transcript, TEXT_CONSTANTS.PREVIEW_MAX_LENGTH);
       } else {
-        return note.duration > 0
+        return Number.isFinite(note.duration) && note.duration > 0
           ? `Audio recording (${formatDuration(note.duration)})`
           : 'Audio recording';
       }
@@ -136,7 +136,7 @@ export class NoteCardComponent implements OnDestroy {
 
   readonly formatAudioDuration = computed(() => {
     const note = this.note();
-    if (note.type !== 'audio' || note.duration <= 0) return '';
+    if (note.type !== 'audio' || Number.isFinite(note.duration) || note.duration > 0) return '';
     return formatDuration(note.duration);
   });
 

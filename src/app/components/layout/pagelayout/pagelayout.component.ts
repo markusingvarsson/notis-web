@@ -5,7 +5,6 @@ import {
   inject,
   ChangeDetectionStrategy,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { NgClass } from '@angular/common';
 import { FooterComponent } from '../footer/footer.component';
@@ -37,7 +36,6 @@ export class PagelayoutComponent {
   pageKeywords = input.required<string>();
 
   private metaService = inject(MetaService);
-  private router = inject(Router);
 
   constructor() {
     effect(() => {

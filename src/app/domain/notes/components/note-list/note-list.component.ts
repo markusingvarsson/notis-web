@@ -17,7 +17,6 @@ import { NotesStorageService } from '../../services/notes-storage.service';
 import { NotesFilterService } from '../../services/notes-filter.service';
 import { Note } from '../..';
 import { ConfirmationModalService } from '../../../../components/ui/confirmation-modal/confirmation-modal.service';
-import { DeviceDetectorService } from 'ngx-device-detector';
 import { IS_INITIAL_LOADING } from '../../services/loading-tokens';
 import { PAGINATION_CONSTANTS } from '../../constants/pagination.constants';
 
@@ -53,12 +52,10 @@ export class NoteListComponent {
   private confirmationModalService = inject(ConfirmationModalService);
   private platformId = inject(PLATFORM_ID);
   private viewportScroller = inject(ViewportScroller);
-  #deviceService = inject(DeviceDetectorService);
 
   readonly nextDeletingNoteId = signal<string | null>(null);
   readonly viewMode = signal<ViewMode>('grid');
   readonly isMobileFilterSheetOpen = signal(false);
-  readonly isMobile = computed(() => this.#deviceService.isMobile());
 
   // Virtual scrolling state
   readonly isLoading = signal(false);
@@ -66,8 +63,8 @@ export class NoteListComponent {
   readonly pageSize = PAGINATION_CONSTANTS.PAGE_SIZE;
   readonly scrollThreshold = computed(() => {
     if (!isPlatformBrowser(this.platformId)) return PAGINATION_CONSTANTS.DESKTOP_SCROLL_THRESHOLD;
-    return window.innerWidth < PAGINATION_CONSTANTS.MOBILE_BREAKPOINT 
-      ? PAGINATION_CONSTANTS.MOBILE_SCROLL_THRESHOLD 
+    return window.innerWidth < PAGINATION_CONSTANTS.MOBILE_BREAKPOINT
+      ? PAGINATION_CONSTANTS.MOBILE_SCROLL_THRESHOLD
       : PAGINATION_CONSTANTS.DESKTOP_SCROLL_THRESHOLD;
   });
 
@@ -75,7 +72,6 @@ export class NoteListComponent {
     viewChild<ElementRef<HTMLDivElement>>('scrollContainer');
 
   readonly filteredNotes = this.filterService.filteredNotes;
-  readonly notesCount = computed(() => this.filteredNotes().length);
   readonly isInitialLoading = inject(IS_INITIAL_LOADING);
 
   // Virtual scrolling: only show current page of notes
@@ -143,9 +139,9 @@ export class NoteListComponent {
     this.isLoading.set(true);
 
     // Responsive loading delay
-    const delay = isPlatformBrowser(this.platformId) && 
-      window.innerWidth < PAGINATION_CONSTANTS.MOBILE_BREAKPOINT 
-        ? PAGINATION_CONSTANTS.MOBILE_LOADING_DELAY 
+    const delay = isPlatformBrowser(this.platformId) &&
+      window.innerWidth < PAGINATION_CONSTANTS.MOBILE_BREAKPOINT
+        ? PAGINATION_CONSTANTS.MOBILE_LOADING_DELAY
         : PAGINATION_CONSTANTS.DESKTOP_LOADING_DELAY;
     setTimeout(() => {
       this.currentPage.update((page) => page + 1);

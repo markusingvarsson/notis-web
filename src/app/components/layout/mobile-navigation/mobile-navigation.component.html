@@ -2,7 +2,8 @@
   class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-gray-200/50 z-50 md:hidden"
 >
   <div class="flex items-center justify-around py-2">
-    @for (item of navItems; track item.id) { @if (item.action) {
+    @for (item of navItems; track item.id) {
+    @if (item.id === 'add') {
     <!-- Action button (Add) -->
     <button
       (click)="handleItemClick(item)"

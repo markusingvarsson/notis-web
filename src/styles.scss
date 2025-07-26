@@ -79,13 +79,6 @@ html, body {
   overflow: hidden;
 }
 
-.line-clamp-6 {
-  display: -webkit-box;
-  -webkit-line-clamp: 6;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
 .nav-link-active {
   @apply font-semibold text-[var(--tw-primary)];
   text-decoration-line: underline;
