@@ -28,6 +28,6 @@ export class DesktopSidebarComponent {
   private router = inject(Router);
 
   onNewNote() {
-    this.router.navigate(['/notes/create'], { queryParams: { CTA: 'true' } });
+    this.router.navigate(['/notes/create']);
   }
 }
