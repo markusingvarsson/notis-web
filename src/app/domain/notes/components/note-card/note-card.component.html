@@ -22,9 +22,11 @@
     </div>
   </div>
 
+  @if (preview()) {
   <p class="text-gray-600 text-sm line-clamp-3 mb-4 leading-relaxed">
     {{ preview() }}
   </p>
+  }
 
   @if (hasAudio()) {
   <div

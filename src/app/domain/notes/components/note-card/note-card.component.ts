@@ -98,14 +98,13 @@ export class NoteCardComponent implements OnDestroy {
     const note = this.note();
     if (note.type === 'audio') {
       if (note.transcript) {
-        return truncateContent(note.transcript, TEXT_CONSTANTS.PREVIEW_MAX_LENGTH);
-      } else {
-        return Number.isFinite(note.duration) && note.duration > 0
-          ? `Audio recording (${formatDuration(note.duration)})`
-          : 'Audio recording';
+        return truncateContent(
+          note.transcript,
+          TEXT_CONSTANTS.PREVIEW_MAX_LENGTH,
+        );
       }
     }
-    return 'Unknown note type';
+    return '';
   });
 
   readonly hasAudio = computed(() => {
@@ -136,7 +135,12 @@ export class NoteCardComponent implements OnDestroy {
 
   readonly formatAudioDuration = computed(() => {
     const note = this.note();
-    if (note.type !== 'audio' || Number.isFinite(note.duration) || note.duration > 0) return '';
+    if (
+      note.type !== 'audio' ||
+      !Number.isFinite(note.duration) ||
+      note.duration < 0
+    )
+      return '';
     return formatDuration(note.duration);
   });
 
