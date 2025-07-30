@@ -31,7 +31,13 @@ export class MobileNavigationComponent {
 
   navItems: NavItem[] = [
     { icon: 'file-text', label: 'Notes', path: '/notes', id: 'notes' },
-    { icon: 'plus', label: 'Add', path: '/notes/create', id: 'add' },
+    {
+      icon: 'plus',
+      label: 'Add',
+      path: '/notes/create',
+      id: 'add',
+      queryParams: { CTA: 'true' },
+    },
     { icon: 'settings', label: 'Settings', path: '/settings', id: 'settings' },
   ];
 
