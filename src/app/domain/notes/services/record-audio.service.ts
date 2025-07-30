@@ -73,7 +73,7 @@ export class RecordAudioService implements OnDestroy {
       delayMs: 3500,
       onNoSoundDetected: () => {
         this.#toaster.warning(
-          'No sound detected. Please check your microphone settings.'
+          'No sound detected. Please check your microphone settings.',
         );
       },
       onSoundDetected: () => {
@@ -118,7 +118,7 @@ export class RecordAudioService implements OnDestroy {
     this.selectedDeviceId.set(deviceId);
   }
 
-private async checkInitialMicrophonePermission(): Promise<void> {
+  private async checkInitialMicrophonePermission(): Promise<void> {
     if (!isPlatformBrowser(this.#platformId) || !navigator.permissions) {
       // If not in browser or Permissions API not supported, attempt fallback directly or set to blocked
       const fallbackStatus = await this.tryMicAccessFallback();
@@ -142,7 +142,7 @@ private async checkInitialMicrophonePermission(): Promise<void> {
       permissionStatus.onchange = () => {
         if (this.permissionStatusSubscription) {
           this.permissionStatusChangeHandler(
-            this.permissionStatusSubscription.state
+            this.permissionStatusSubscription.state,
           );
         }
       };
@@ -154,7 +154,7 @@ private async checkInitialMicrophonePermission(): Promise<void> {
   }
 
   private permissionStatusChangeHandler(
-    permissionStatusState: PermissionState
+    permissionStatusState: PermissionState,
   ): void {
     switch (permissionStatusState) {
       case 'granted':
@@ -228,7 +228,7 @@ private async checkInitialMicrophonePermission(): Promise<void> {
   }
 
   async startRecording(
-    transcriptionLanguage: SupportedLanguageCode | null
+    transcriptionLanguage: SupportedLanguageCode | null,
   ): Promise<void> {
     if (!isPlatformBrowser(this.#platformId)) {
       this.recordingState.set(RECORDER_STATE.BLOCKED);
@@ -326,6 +326,12 @@ private async checkInitialMicrophonePermission(): Promise<void> {
     }
     this.audioAnalyzer.stop();
     this.voiceLevel.set(0);
+
+    if (this.mediaRecorder?.stream) {
+      this.mediaRecorder.stream.getTracks().forEach((track) => {
+        track.stop();
+      });
+    }
   }
 
   private clearPreviousRecordingArtifacts(): void {
