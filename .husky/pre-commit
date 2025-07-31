@@ -1,1 +1,7 @@
-npm run lint
+#!/bin/sh
+echo "🔍 Running pre-commit quality checks..."
+
+# Run comprehensive quality check
+npm run quality-check
+
+echo "✅ All pre-commit checks passed!"

@@ -1,4 +1,4 @@
-export type NoteType = 'text' | 'audio';
+export type NoteType = 'audio';
 
 export interface BaseNote {
   id: string;
@@ -6,11 +6,6 @@ export interface BaseNote {
   type: NoteType;
   updatedAt: string;
   tagIds?: string[];
-}
-
-export interface TextNote extends BaseNote {
-  type: 'text';
-  content: string;
 }
 
 export interface AudioNote extends BaseNote {
@@ -21,14 +16,7 @@ export interface AudioNote extends BaseNote {
   transcript?: string;
 }
 
-export type Note = TextNote | AudioNote;
-
-export interface TextNoteCreated {
-  type: 'text';
-  title: string;
-  content: string;
-  tags?: Record<string, Tag>;
-}
+export type Note = AudioNote;
 
 export interface AudioNoteCreated {
   type: 'audio';
@@ -39,7 +27,7 @@ export interface AudioNoteCreated {
   tags?: Record<string, Tag>;
 }
 
-export type NoteCreated = TextNoteCreated | AudioNoteCreated;
+export type NoteCreated = AudioNoteCreated;
 
 export interface Tag {
   name: string;
@@ -51,6 +39,7 @@ export const RECORDER_STATE = {
   IDLE: 'idle',
   STARTING: 'starting',
   RECORDING: 'recording',
+  SAVING: 'saving',
   BLOCKED: 'blocked',
 } as const;
 

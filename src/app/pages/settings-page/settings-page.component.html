@@ -1,0 +1,178 @@
+<app-desktop-sidebar></app-desktop-sidebar>
+<div class="md:ml-80">
+  <app-pagelayout
+    pageTitle="Settings"
+    pageDescription="Manage your account settings and preferences."
+    pageKeywords="settings, account, preferences"
+    [fullWidth]="false"
+    [withNavbar]="isMobile()"
+    [fixedNavbar]="!isMobile()"
+  >
+    <div class="mb-4 p-4 sm:px-0">
+      <h1 class="text-3xl font-bold tracking-tight">Settings</h1>
+      <p class="text-muted-foreground mt-2">Customize your app experience</p>
+    </div>
+
+    <div class="space-y-4">
+      <!-- Transcription Settings -->
+      @if (hasSpeechRecognition()) {
+      <app-card
+        [className]="
+          'border border-[var(--tw-border-light)] rounded-lg bg-card'
+        "
+      >
+        <!-- Desktop: Always expanded -->
+        <div class="hidden sm:block">
+          <app-card-header>
+            <app-card-title>Transcription</app-card-title>
+            <app-card-description
+              >Choose the language for audio
+              transcription.</app-card-description
+            >
+          </app-card-header>
+          <app-card-content>
+            <app-transcription-settings-picker
+              [(selectedTranscriptionSetting)]="selectedTranscriptionSetting"
+              [disabled]="false"
+            ></app-transcription-settings-picker>
+          </app-card-content>
+        </div>
+
+        <!-- Mobile: Accordion -->
+        <div class="sm:hidden">
+          <button
+            type="button"
+            (click)="toggleSection('transcription')"
+            class="w-full p-4 flex items-center justify-between text-left transition-colors"
+            [attr.aria-expanded]="expandedSections().has('transcription')"
+          >
+            <h2 class="text-lg font-semibold">Transcription</h2>
+            @if (expandedSections().has('transcription')) {
+            <app-icon-chevron [orientation]="'down'" />
+            } @else {
+            <app-icon-chevron [orientation]="'right'" />
+            }
+          </button>
+
+          @if (expandedSections().has('transcription')) {
+          <div class="p-4">
+            <app-transcription-settings-picker
+              [(selectedTranscriptionSetting)]="selectedTranscriptionSetting"
+              [disabled]="false"
+            ></app-transcription-settings-picker>
+          </div>
+          }
+        </div>
+      </app-card>
+      }
+
+      <!-- Microphone Settings -->
+      <app-card
+        [className]="
+          'border border-[var(--tw-border-light)] rounded-lg bg-card'
+        "
+      >
+        <!-- Desktop: Always expanded -->
+        <div class="hidden sm:block">
+          <app-card-header>
+            <app-card-title>Microphone</app-card-title>
+            <app-card-description
+              >Select your preferred microphone for audio
+              recording.</app-card-description
+            >
+          </app-card-header>
+          <app-card-content>
+            <app-mic-selector></app-mic-selector>
+          </app-card-content>
+        </div>
+
+        <!-- Mobile: Accordion -->
+        <div class="sm:hidden">
+          <button
+            type="button"
+            (click)="toggleSection('microphone')"
+            class="w-full p-4 flex items-center justify-between text-left transition-colors"
+            [attr.aria-expanded]="expandedSections().has('microphone')"
+          >
+            <h2 class="text-lg font-semibold">Microphone</h2>
+            @if (expandedSections().has('microphone')) {
+            <app-icon-chevron [orientation]="'down'" />
+            } @else {
+            <app-icon-chevron [orientation]="'right'" />
+            }
+          </button>
+
+          @if (expandedSections().has('microphone')) {
+          <div class="p-4">
+            <app-mic-selector></app-mic-selector>
+          </div>
+          }
+        </div>
+      </app-card>
+
+      <!-- Danger Zone -->
+      <app-card
+        [className]="
+          'border border-[var(--tw-border-light)] rounded-lg bg-card'
+        "
+      >
+        <!-- Desktop: Always expanded -->
+        <div class="hidden sm:block">
+          <app-card-header>
+            <app-card-title>Danger Zone</app-card-title>
+            <app-card-description>Manage your local data.</app-card-description>
+          </app-card-header>
+          <app-card-content class="p-4 flex justify-between items-center">
+            <div>
+              <h3 class="font-semibold">Clear Local Data</h3>
+              <p class="text-sm text-muted-foreground">
+                Permanently delete all your data from this browser.
+              </p>
+            </div>
+            <app-button
+              size="lg"
+              variant="destructive"
+              (buttonClick)="requestClearData()"
+            >
+              Clear All Data
+            </app-button>
+          </app-card-content>
+        </div>
+
+        <!-- Mobile: Accordion -->
+        <div class="sm:hidden">
+          <button
+            type="button"
+            (click)="toggleSection('danger')"
+            class="w-full p-4 flex items-center justify-between text-left transition-colors"
+            [attr.aria-expanded]="expandedSections().has('danger')"
+          >
+            <h2 class="text-lg font-semibold">Danger Zone</h2>
+            @if (expandedSections().has('danger')) {
+            <app-icon-chevron [orientation]="'down'" />
+            } @else {
+            <app-icon-chevron [orientation]="'right'" />
+            }
+          </button>
+
+          @if (expandedSections().has('danger')) {
+          <div class="p-4">
+            <p class="text-sm text-muted-foreground mb-4">
+              Permanently delete all your data from this browser. This action
+              cannot be undone.
+            </p>
+            <app-button
+              class="w-full"
+              size="lg"
+              variant="destructive"
+              (buttonClick)="requestClearData()"
+            >
+              Clear All Data
+            </app-button>
+          </div>
+          }
+        </div>
+      </app-card>
+    </div>
+  </app-pagelayout>
+</div>

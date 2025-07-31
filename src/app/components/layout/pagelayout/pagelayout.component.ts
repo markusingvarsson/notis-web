@@ -8,11 +8,17 @@ import {
 import { NavbarComponent } from '../navbar/navbar.component';
 import { NgClass } from '@angular/common';
 import { FooterComponent } from '../footer/footer.component';
+import { MobileNavigationComponent } from '../mobile-navigation/mobile-navigation.component';
 import { MetaService } from '../../../core/services/meta.service';
 
 @Component({
   selector: 'app-pagelayout',
-  imports: [NavbarComponent, NgClass, FooterComponent],
+  imports: [
+    NavbarComponent,
+    NgClass,
+    FooterComponent,
+    MobileNavigationComponent,
+  ],
   templateUrl: './pagelayout.component.html',
   styleUrl: './pagelayout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,6 +26,9 @@ import { MetaService } from '../../../core/services/meta.service';
 export class PagelayoutComponent {
   fullWidth = input(true);
   withFooter = input(false);
+  withNavbar = input(true);
+  fixedNavbar = input(true);
+  withMobileNav = input(true);
 
   // Meta tag inputs
   pageTitle = input.required<string>();

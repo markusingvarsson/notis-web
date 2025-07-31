@@ -1,5 +1,8 @@
 <nav
-  class="fixed top-0 w-full z-50 transition-all duration-300 bg-[var(--tw-bg)]/80 backdrop-blur-md shadow-sm"
+  class="w-full transition-all duration-300 bg-[var(--tw-bg)]/80 backdrop-blur-md shadow-sm"
+  [class.fixed]="fixed()"
+  [class.top-0]="fixed()"
+  [class.z-50]="fixed()"
 >
   <div class="container mx-auto px-8 h-16 flex items-center justify-between">
     <!-- Logo -->
@@ -17,14 +20,19 @@
         routerLink="/"
         routerLinkActive="nav-link-active"
         [routerLinkActiveOptions]="{ exact: true }"
-        class="px-3 py-2 rounded-md transition-all duration-200 ease-in-out text-[var(--tw-primary-dark)] hover:text-[var(--tw-primary)] hover:bg-[var(--tw-primary-accent-bg)]"
+        class="px-3 py-2 rounded-md transition-colors duration-200 text-[var(--tw-primary-dark)] hover:text-[var(--tw-primary)] hover:bg-[var(--tw-primary-accent-bg)]"
       >
         Home
       </a>
 
-      <app-button link="/notes">
-        <span class="font-bold text-white"> Notes </span>
-      </app-button>
+      <a
+        routerLink="/notes"
+        routerLinkActive="nav-link-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="px-3 py-2 rounded-md transition-colors duration-200 text-[var(--tw-primary-dark)] hover:text-[var(--tw-primary)] hover:bg-[var(--tw-primary-accent-bg)]"
+      >
+        Notes
+      </a>
     </div>
   </div>
 </nav>

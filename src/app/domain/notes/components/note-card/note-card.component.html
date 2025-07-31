@@ -1,46 +1,87 @@
-<app-card
-  [className]="
-    'hover:shadow-md transition-shadow duration-200 ' +
-    'cursor-pointer h-[220px] flex flex-col'
-  "
+<div
+  (click)="onCardClick()"
+  (keydown.enter)="onCardClick()"
+  (keydown.space)="onCardClick()"
+  tabindex="0"
+  role="button"
+  class="bg-gradient-to-br from-white/90 to-gray-50/80 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-gray-200 cursor-pointer group focus:outline-none focus:ring-2 focus:ring-[var(--tw-primary)] transition-shadow hover:shadow-md"
 >
-  <app-card-header [className]="'px-4 pt-4 pb-2'">
-    <div class="flex items-center w-full">
-      <!-- Title container with strict width control -->
-      <div class="min-w-0 flex-1 mr-2">
-        <app-card-title
-          [className]="'text-lg font-medium truncate leading-snug block'"
-        >
-          {{ note().title }}
-        </app-card-title>
-      </div>
+  <div class="flex items-start justify-between mb-4">
+    <h3 class="text-lg font-semibold text-gray-900 line-clamp-2">
+      {{ note().title }}
+    </h3>
 
-      <!-- Fixed width button container -->
-      <div class="flex items-center gap-1 flex-shrink-0">
-        <app-button
-          [className]="'h-7 w-7 p-1 text-destructive hover:text-destructive'"
-          variant="ghost"
-          size="icon"
-          (click)="onDelete($event)"
-          aria-label="Delete note"
-        >
-          <app-trash-icon />
-        </app-button>
-      </div>
+    <div class="flex items-center gap-1">
+      <button
+        (click)="onDelete($event)"
+        class="p-1 rounded-lg hover:bg-red-50 transition-colors text-gray-500 hover:text-red-600"
+        aria-label="Delete note"
+      >
+        <app-trash-icon />
+      </button>
     </div>
+  </div>
 
-    <!-- Moved time label outside the flex for better spacing -->
-    <p class="mt-2 text-xs text-muted-foreground">{{ timeAgo() }}</p>
-  </app-card-header>
-
-  <app-card-content [className]="'px-4 pt-2 pb-4 flex-1 overflow-hidden'">
-    <p class="text-sm text-muted-foreground line-clamp-6">
-      {{ preview() }}
-    </p>
-  </app-card-content>
-  @if (hasAudio()) {
-  <app-card-footer>
-    <audio #audioElement [src]="audioSrc()" controls preload="auto"></audio>
-  </app-card-footer>
+  @if (preview()) {
+  <p class="text-gray-600 text-sm line-clamp-3 mb-4 leading-relaxed">
+    {{ preview() }}
+  </p>
   }
-</app-card>
+
+  @if (hasAudio()) {
+  <div
+    class="flex items-center justify-between mb-4 p-3 bg-gray-50 rounded-lg border border-gray-100"
+  >
+    <button
+      (click)="onPlayAudio($event)"
+      class="flex items-center justify-center w-8 h-8 bg-[var(--tw-primary)] text-white rounded-full hover:bg-[var(--tw-primary-dark)] transition-colors shadow-sm"
+      aria-label="Play audio"
+    >
+      @if (isPlaying()) {
+      <app-pause-icon [size]="'3'" />
+      } @else {
+      <app-play-icon [size]="'3'" />
+      }
+    </button>
+    <div class="flex items-center gap-2">
+      <div class="flex items-center gap-1 text-gray-600">
+        <app-microphone-icon color="black" [size]="16" />
+        <span class="text-xs font-medium">Audio</span>
+      </div>
+      @if (formatAudioDuration()) {
+      <span class="text-xs text-gray-500">{{ formatAudioDuration() }}</span>
+      }
+    </div>
+  </div>
+
+  <!-- Hidden audio element for playback -->
+  <audio
+    #audio
+    [src]="audioSrc()"
+    (ended)="onAudioEnded()"
+    (play)="onAudioPlay()"
+    (pause)="onAudioPause()"
+    preload="metadata"
+  ></audio>
+  } @if (tags().length > 0) {
+  <div class="flex items-center gap-1 mb-2">
+    <app-tag-icon />
+    <div class="flex gap-1 flex-wrap">
+      @for (tag of tags().slice(0, 3); track tag) {
+      <span
+        class="px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full text-xs whitespace-nowrap"
+      >
+        #{{ tag }}
+      </span>
+      } @if (tags().length > 3) {
+      <span class="text-xs text-gray-500">+{{ tags().length - 3 }}</span>
+      }
+    </div>
+  </div>
+  }
+
+  <div class="flex items-center gap-2 text-xs text-gray-500">
+    <app-calendar-icon />
+    <span>{{ timeAgo() }}</span>
+  </div>
+</div>

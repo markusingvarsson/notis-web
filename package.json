@@ -10,6 +10,7 @@
     "serve:ssr:notis-web": "node dist/notis-web/server/server.mjs",
     "prepare": "husky",
     "lint": "ng lint",
+    "quality-check": "npm run lint && npx tsc --noEmit --skipLibCheck && npm run build",
     "ngsw": "ng build && npx http-server -p 8080 -c-1 dist/notis-web/browser"
   },
   "private": true,
@@ -52,6 +53,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "postcss": "^8.5.4",
+    "prettier": "^3.6.2",
     "tailwindcss": "^4.1.8",
     "typescript": "~5.7.2",
     "typescript-eslint": "8.32.0"

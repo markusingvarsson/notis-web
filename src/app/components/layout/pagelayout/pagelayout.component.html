@@ -1,13 +1,26 @@
 <div class="min-h-screen flex flex-col">
-  <app-navbar></app-navbar>
+  @if(withNavbar()) {
+  <app-navbar [fixed]="fixedNavbar()"></app-navbar>
+  }
   <main
-    class="flex-1 pt-16"
-    [ngClass]="{ 'container mx-auto px-4': !fullWidth() }"
+    class="flex-1 flex flex-col"
+    [ngClass]="{
+      'pt-16': withNavbar() && fixedNavbar(),
+      'pb-18 md:pb-0': true,
+      'container mx-auto px-4': !fullWidth()
+    }"
   >
-    <ng-content></ng-content>
+    <div class="flex-1">
+      <ng-content></ng-content>
+    </div>
+
+    @if(withFooter()) {
+    <app-footer class="mt-auto" />
+    }
   </main>
 
-  @if(withFooter()) {
-  <app-footer />
+  <!-- Mobile Navigation - only show on mobile devices and when enabled -->
+  @if(withMobileNav()) {
+  <app-mobile-navigation />
   }
 </div>

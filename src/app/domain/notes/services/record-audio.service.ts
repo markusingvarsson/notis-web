@@ -34,15 +34,14 @@ export class RecordAudioService implements OnDestroy {
   // Audio visualization signals
   readonly voiceLevel = signal<number>(0);
 
-  readonly isRecordingDone = computed(() => {
-    return this.recordingState() === RECORDER_STATE.IDLE && this.audioBlob();
-  });
   readonly recordLabel = computed(() => {
     switch (this.recordingState()) {
       case RECORDER_STATE.STARTING:
         return 'Starting...';
       case RECORDER_STATE.RECORDING:
         return 'Recording...';
+      case RECORDER_STATE.SAVING:
+        return 'Saving...';
       case RECORDER_STATE.BLOCKED:
         return 'Please enable microphone access';
       default:
@@ -74,7 +73,7 @@ export class RecordAudioService implements OnDestroy {
       delayMs: 3500,
       onNoSoundDetected: () => {
         this.#toaster.warning(
-          'No sound detected. Please check your microphone settings.'
+          'No sound detected. Please check your microphone settings.',
         );
       },
       onSoundDetected: () => {
@@ -143,7 +142,7 @@ export class RecordAudioService implements OnDestroy {
       permissionStatus.onchange = () => {
         if (this.permissionStatusSubscription) {
           this.permissionStatusChangeHandler(
-            this.permissionStatusSubscription.state
+            this.permissionStatusSubscription.state,
           );
         }
       };
@@ -155,7 +154,7 @@ export class RecordAudioService implements OnDestroy {
   }
 
   private permissionStatusChangeHandler(
-    permissionStatusState: PermissionState
+    permissionStatusState: PermissionState,
   ): void {
     switch (permissionStatusState) {
       case 'granted':
@@ -229,7 +228,7 @@ export class RecordAudioService implements OnDestroy {
   }
 
   async startRecording(
-    transcriptionLanguage: SupportedLanguageCode | null
+    transcriptionLanguage: SupportedLanguageCode | null,
   ): Promise<void> {
     if (!isPlatformBrowser(this.#platformId)) {
       this.recordingState.set(RECORDER_STATE.BLOCKED);
@@ -266,6 +265,7 @@ export class RecordAudioService implements OnDestroy {
         stream.getTracks().forEach((t) => t.stop()); // Stop all tracks from the stream
         this.recordingState.set(RECORDER_STATE.IDLE);
         this.audioAnalyzer.stop();
+        this.recordingState.set(RECORDER_STATE.SAVING);
         // If speech recognition was active, it should already be stopped by stopRecordingInternal or handled in its own error/end events.
       };
       this.mediaRecorder.onerror = (event) => {
@@ -288,8 +288,8 @@ export class RecordAudioService implements OnDestroy {
             .join('');
           this.transcriptText.set(transcript);
         };
-        this.recognition.onerror = (eventRecognisionError: Event) => {
-          console.error('Speech recognition error:', eventRecognisionError);
+        this.recognition.onerror = (eventRecognitionError: Event) => {
+          console.error('Speech recognition error:', eventRecognitionError);
           this.cleanupSpeechRecognition(); // Clean up on error
         };
         this.recognition.onend = () => {
@@ -326,6 +326,12 @@ export class RecordAudioService implements OnDestroy {
     }
     this.audioAnalyzer.stop();
     this.voiceLevel.set(0);
+
+    if (this.mediaRecorder?.stream) {
+      this.mediaRecorder.stream.getTracks().forEach((track) => {
+        track.stop();
+      });
+    }
   }
 
   private clearPreviousRecordingArtifacts(): void {

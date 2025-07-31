@@ -1,14 +1,68 @@
-<!-- File: src/app/domain/notes/components/create-note/create-note.component.html -->
-<div class="max-w-2xl mx-auto">
+<div
+  class="h-full flex flex-col bg-[var(--tw-bg-light)] border border-[var(--tw-border-light)] rounded-2xl shadow-lg overflow-hidden"
+>
   <div
-    class="bg-gradient-to-br from-[var(--tw-bg-light)] to-[var(--tw-bg)] rounded-2xl shadow-lg border border-[var(--tw-border-light)] overflow-hidden"
+    class="sticky top-0 z-10 border-b border-[var(--tw-border-light)] px-2 sm:px-8 py-4 sm:py-6"
+    [class]="headerClasses()"
   >
-    <app-page-header
-      [title]="!isRecordingDone() ? 'Create a new note' : 'Save your note'"
-      [subtitle]="!isRecordingDone() ? 'Record your thoughts with voice' : ''"
-    ></app-page-header>
+    <div class="flex items-center gap-4">
+      @if (showBackButton()) {
+      <button
+        type="button"
+        class="
+          flex items-center justify-center
+          w-10 h-10 text-sm font-medium
+          text-[var(--tw-primary-dark)] bg-white/90
+          border border-[var(--tw-border-light)] rounded-full
+          hover:bg-white hover:shadow-sm hover:border-[var(--tw-border)]
+          focus:outline-none focus:ring-2 focus:ring-[var(--tw-primary)]/20
+          transition-colors duration-200 active:scale-95
+        "
+        (click)="backClick.emit()"
+      >
+        <app-icon-chevron
+          [size]="18"
+          [color]="'var(--tw-primary-dark)'"
+          [orientation]="'left'"
+        />
+      </button>
+      }
+      <div class="flex-1">
+        <h1
+          class="text-2xl font-bold"
+          [class]="titleClasses()"
+        >
+          {{ headerTitle() }}
+        </h1>
+      </div>
 
+      <!-- Action Icons -->
+      @if (isSaving()) {
+      <div class="flex gap-2">
+        <button
+          (click)="handleSave()"
+          class="flex items-center justify-center px-4 py-2 rounded-full bg-[var(--tw-primary)] text-white hover:bg-[var(--tw-primary-light)] transition-colors duration-150 ease-in-out font-medium text-sm"
+          title="Save note"
+        >
+          Save
+        </button>
+      </div>
+      }
+    </div>
+    @if (isSaving()) {
+    <div class="mt-4">
+      <div class="h-1 bg-[var(--tw-border-light)] rounded-full overflow-hidden">
+        <div
+          class="h-full bg-gradient-to-r from-[var(--tw-primary)] to-[var(--tw-success)] rounded-full animate-pulse"
+          style="width: 100%; animation: progress 2s ease-in-out infinite"
+        ></div>
+      </div>
+    </div>
+    }
+  </div>
+  <div class="flex-1 overflow-y-auto p-2 sm:p-8">
     <app-create-audio-note
+      #audioNoteComponent
       (noteCreated)="noteCreated.emit($event)"
       [availableTags]="availableTags()"
     ></app-create-audio-note>

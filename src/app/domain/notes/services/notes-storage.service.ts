@@ -37,6 +37,7 @@ export class NotesStorageService {
   private db: IDBPDatabase<NotisDB> | null = null;
   private notes = signal<Note[]>([]);
   private tags = signal<Record<string, Tag>>({});
+  private isInitialLoading = signal(true);
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
@@ -73,7 +74,9 @@ export class NotesStorageService {
 
       await this.loadNotes();
       await this.loadTags();
+      this.isInitialLoading.set(false);
     } catch (error) {
+      this.isInitialLoading.set(false);
       console.error('Error opening IndexedDB:', error);
       this.#toastService.error(
         'Error opening IndexedDB. Please contact support.'
@@ -116,6 +119,10 @@ export class NotesStorageService {
 
   getTags() {
     return this.tags;
+  }
+
+  getIsInitialLoading() {
+    return this.isInitialLoading;
   }
 
   private async updateTag(
@@ -245,37 +252,25 @@ export class NotesStorageService {
   async addNote(noteCreated: NoteCreated): Promise<void> {
     if (!this.db) return;
 
-    let note: Note;
-
-    if (noteCreated.type === 'audio') {
-      if (!noteCreated.audioBlob) {
-        throw new Error('Audio blob is required for audio notes');
-      }
-
-      const duration = await this.getAudioDuration(noteCreated.audioBlob);
-      const noteTags = noteCreated.tags ?? {};
-      const tagIds = Object.keys(noteTags);
-
-      note = {
-        id: crypto.randomUUID(),
-        title: noteCreated.title,
-        type: 'audio',
-        audioBlob: noteCreated.audioBlob,
-        audioMimeType: noteCreated.audioMimeType,
-        duration,
-        transcript: noteCreated.transcript,
-        updatedAt: new Date().toISOString(),
-        tagIds: tagIds,
-      };
-    } else {
-      note = {
-        id: crypto.randomUUID(),
-        title: noteCreated.title,
-        type: 'text',
-        content: noteCreated.content,
-        updatedAt: new Date().toISOString(),
-      };
+    if (!noteCreated.audioBlob) {
+      throw new Error('Audio blob is required for audio notes');
     }
+
+    const duration = await this.getAudioDuration(noteCreated.audioBlob);
+    const noteTags = noteCreated.tags ?? {};
+    const tagIds = Object.keys(noteTags);
+
+    const note: Note = {
+      id: crypto.randomUUID(),
+      title: noteCreated.title,
+      type: 'audio',
+      audioBlob: noteCreated.audioBlob,
+      audioMimeType: noteCreated.audioMimeType,
+      duration,
+      transcript: noteCreated.transcript,
+      updatedAt: new Date().toISOString(),
+      tagIds: tagIds,
+    };
 
     try {
       const tx = this.db.transaction(['notes', 'tags'], 'readwrite');

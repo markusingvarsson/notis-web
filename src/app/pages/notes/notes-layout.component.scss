@@ -1,0 +1,10 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+// Ensure the main content area takes full height
+.md\:ml-80 {
+  min-height: 100vh;
+  background: #f9fafb;
+}
