@@ -11,6 +11,7 @@ import {
   RECORDER_STATE,
   RecorderState,
   SpeechRecognitionEvent,
+  SpeechRecognitionErrorEvent,
   WebkitSpeechRecognition,
 } from '../'; // Adjust path as needed
 import { AUDIO_MIME_TYPE } from './mime-type'; // Adjust path as needed
@@ -288,9 +289,17 @@ export class RecordAudioService implements OnDestroy {
             .join('');
           this.transcriptText.set(transcript);
         };
-        this.recognition.onerror = (eventRecognitionError: Event) => {
+        this.recognition.onerror = (eventRecognitionError: SpeechRecognitionErrorEvent) => {
           console.error('Speech recognition error:', eventRecognitionError);
-          this.cleanupSpeechRecognition(); // Clean up on error
+          
+          // Try to handle known errors with appropriate recovery strategies
+          const wasHandled = this.handleTranscriptionError(eventRecognitionError);
+          
+          // If the error wasn't handled by our known error strategies, clean up
+          if (!wasHandled) {
+            console.warn(`Unhandled speech recognition error: ${eventRecognitionError.error}`);
+            this.cleanupSpeechRecognition();
+          }
         };
         this.recognition.onend = () => {
           // console.log('Speech recognition ended.');
@@ -347,6 +356,55 @@ export class RecordAudioService implements OnDestroy {
     // Speech recognition artifacts (like the recognition object itself) are typically reset
     // when starting a new recognition or when explicitly clearing.
     this.cleanupSpeechRecognition();
+  }
+
+  // Handle known transcription errors with appropriate recovery strategies
+  private handleTranscriptionError(error: SpeechRecognitionErrorEvent): boolean {
+    switch (error.error) {
+      case 'no-speech':
+        console.log('No speech detected, restarting recognition...');
+        this.restartSpeechRecognition();
+        return true; // Error was handled
+
+      case 'audio-capture':
+        console.warn('Audio capture error, stopping transcription');
+        this.#toaster.warning('Audio capture issue detected. Transcription stopped.');
+        this.cleanupSpeechRecognition();
+        return true;
+
+      case 'not-allowed':
+        console.warn('Speech recognition not allowed');
+        this.#toaster.error('Speech recognition permission denied');
+        this.cleanupSpeechRecognition();
+        return true;
+
+      case 'network':
+        console.warn('Network error during speech recognition');
+        this.#toaster.warning('Network error. Transcription may be affected.');
+        this.restartSpeechRecognition();
+        return true;
+
+      case 'aborted':
+        console.log('Speech recognition was aborted');
+        return true; // No action needed, likely intentional
+
+      default:
+        return false; // Unknown error, let caller handle
+    }
+  }
+
+  // Helper to restart speech recognition with error handling
+  private restartSpeechRecognition(): void {
+    setTimeout(() => {
+      if (this.recognition && this.recordingState() === RECORDER_STATE.RECORDING) {
+        try {
+          this.recognition.start();
+        } catch (e) {
+          console.warn('Failed to restart speech recognition:', e);
+          // If restart fails multiple times, we could implement exponential backoff here
+        }
+      }
+    }, 100);
   }
 
   // Helper to clean up speech recognition resources

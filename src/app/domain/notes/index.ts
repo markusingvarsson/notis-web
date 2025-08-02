@@ -51,6 +51,11 @@ export interface SpeechRecognitionEvent extends Event {
   results: SpeechRecognitionResultList;
 }
 
+export interface SpeechRecognitionErrorEvent extends Event {
+  error: string;
+  message: string;
+}
+
 export interface SpeechRecognitionResultList {
   [index: number]: SpeechRecognitionResult;
   length: number;
@@ -73,7 +78,7 @@ export interface WebkitSpeechRecognition extends EventTarget {
   interimResults: boolean;
   lang: string;
   onresult: (event: SpeechRecognitionEvent) => void;
-  onerror: (event: Event) => void;
+  onerror: (event: SpeechRecognitionErrorEvent) => void;
   onend?: () => void;
   start: () => void;
   stop: () => void;
