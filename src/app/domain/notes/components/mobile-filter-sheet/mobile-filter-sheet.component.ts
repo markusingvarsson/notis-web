@@ -60,7 +60,7 @@ import { ButtonComponent } from '../../../../components/ui/button/button.compone
             <div class="flex items-center gap-2">
               @if (selectedTags().length > 0) {
                 <span
-                  class="text-xs bg-[var(--tw-primary-accent-bg)] text-[var(--tw-primary)] px-2 py-1 rounded-full"
+                  class="text-xs bg-[var(--tw-highlight-light)] text-[var(--tw-primary-dark)] px-2 py-1 rounded-full"
                 >
                   {{ selectedTags().length }} selected
                 </span>
