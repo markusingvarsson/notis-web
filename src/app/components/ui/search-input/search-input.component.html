@@ -1,0 +1,27 @@
+<div class="relative">
+  <app-search-icon
+    [size]="20"
+    className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"
+  />
+  
+  <input
+    type="text"
+    [value]="value()"
+    [placeholder]="placeholder()"
+    [disabled]="disabled()"
+    (input)="onInput($event)"
+    (keydown)="onKeyDown($event)"
+    class="w-full py-3 px-4 pl-10 text-base bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--tw-primary)] focus:border-transparent transition-all duration-200 outline-none"
+  />
+  
+  @if (value()) {
+    <button
+      type="button"
+      (click)="clearSearch()"
+      class="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 transition-colors"
+      aria-label="Clear search"
+    >
+      <app-x-icon [size]="16" />
+    </button>
+  }
+</div>

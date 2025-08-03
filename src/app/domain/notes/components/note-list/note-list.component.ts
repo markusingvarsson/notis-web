@@ -29,6 +29,8 @@ import { MicrophoneIconComponent } from '../../../../components/ui/icons/microph
 import { NotesHeaderComponent } from '../notes-header/notes-header.component';
 import { MobileFilterSheetComponent } from '../mobile-filter-sheet/mobile-filter-sheet.component';
 import { MobileFilterTriggerComponent } from '../mobile-filter-trigger/mobile-filter-trigger.component';
+import { SearchInputComponent } from '../../../../components/ui/search-input/search-input.component';
+import { XIconComponent } from '../../../../components/ui/icons/x-icon/x-icon.component';
 
 @Component({
   selector: 'app-note-list',
@@ -41,6 +43,8 @@ import { MobileFilterTriggerComponent } from '../mobile-filter-trigger/mobile-fi
     NotesHeaderComponent,
     MobileFilterSheetComponent,
     MobileFilterTriggerComponent,
+    SearchInputComponent,
+    XIconComponent,
   ],
   templateUrl: './note-list.component.html',
   styleUrl: './note-list.component.scss',
@@ -110,7 +114,21 @@ export class NoteListComponent {
   }
 
   onClearFilters() {
+    this.filterService.clearTags();
+  }
+
+  onClearSearch() {
+    this.filterService.setSearchQuery('');
+  }
+
+  onClearAllFilters() {
     this.filterService.clearFilters();
+  }
+
+  onRemoveTag(tag: string) {
+    const currentTags = this.filterService.selectedTags();
+    const newTags = currentTags.filter(t => t !== tag);
+    this.filterService.setSelectedTags(newTags);
   }
 
   @HostListener('window:scroll', ['$event'])

@@ -42,7 +42,7 @@ export class TagFilterComponent {
   }
 
   onClearFilters() {
-    this.filterService.clearFilters();
+    this.filterService.clearTags();
   }
 
   onTagsToggle() {

@@ -9,6 +9,7 @@ export class NotesFilterService {
   private notesStorage = inject(NotesStorageService);
 
   readonly selectedTags = signal<string[]>([]);
+  readonly searchQuery = signal<string>('');
   readonly notes = this.notesStorage.getNotes();
   readonly allTags = this.notesStorage.getTags();
 
@@ -23,23 +24,47 @@ export class NotesFilterService {
   });
 
   readonly filteredNotes = computed(() => {
+    let filtered = this.notes();
     const selected = this.selectedTags();
-    if (selected.length === 0) {
-      return this.notes();
-    }
-    return this.notes().filter((note: Note) => {
-      if (!note.tagIds) return false;
-      return selected.some((selectedTag) => {
-        const tagId = Object.keys(this.allTags()).find(
-          (id) => this.allTags()[id].name === selectedTag
-        );
-        return tagId && note.tagIds!.includes(tagId);
+    const search = this.searchQuery().toLowerCase().trim();
+
+    // Apply search filter first
+    if (search) {
+      filtered = filtered.filter((note: Note) => {
+        // Search in title, transcript, and tag names
+        const titleMatch = note.title.toLowerCase().includes(search);
+        const transcriptMatch = note.transcript?.toLowerCase().includes(search) || false;
+        
+        // Search in tag names
+        const tagNames = note.tagIds?.map(tagId => this.allTags()[tagId]?.name?.toLowerCase()).filter(Boolean) || [];
+        const tagMatch = tagNames.some(tagName => tagName.includes(search));
+        
+        return titleMatch || transcriptMatch || tagMatch;
       });
-    });
+    }
+
+    // Apply tag filter
+    if (selected.length > 0) {
+      filtered = filtered.filter((note: Note) => {
+        if (!note.tagIds) return false;
+        return selected.some((selectedTag) => {
+          const tagId = Object.keys(this.allTags()).find(
+            (id) => this.allTags()[id].name === selectedTag
+          );
+          return tagId && note.tagIds!.includes(tagId);
+        });
+      });
+    }
+
+    return filtered;
   });
 
   setSelectedTags(tags: string[]) {
     this.selectedTags.set(tags);
+  }
+
+  setSearchQuery(query: string) {
+    this.searchQuery.set(query);
   }
 
   constructor() {
@@ -59,6 +84,11 @@ export class NotesFilterService {
   }
 
   clearFilters() {
+    this.selectedTags.set([]);
+    this.searchQuery.set('');
+  }
+
+  clearTags() {
     this.selectedTags.set([]);
   }
 }

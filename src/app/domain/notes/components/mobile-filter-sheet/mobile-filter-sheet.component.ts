@@ -10,10 +10,7 @@ import { ButtonComponent } from '../../../../components/ui/button/button.compone
 @Component({
   selector: 'app-mobile-filter-sheet',
   standalone: true,
-  imports: [
-    XIconComponent,
-    ButtonComponent,
-  ],
+  imports: [XIconComponent, ButtonComponent],
   template: `
     <!-- Backdrop -->
     <div
@@ -40,8 +37,12 @@ import { ButtonComponent } from '../../../../components/ui/button/button.compone
       style="height: 70vh; max-height: 70vh;"
     >
       <!-- Header -->
-      <div class="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0">
-        <h2 id="filter-sheet-title" class="text-lg font-semibold">Filter by Tags</h2>
+      <div
+        class="flex items-center justify-between p-4 border-b border-gray-200 flex-shrink-0"
+      >
+        <h2 id="filter-sheet-title" class="text-lg font-semibold">
+          Filter by Tags
+        </h2>
         <button
           (click)="onClose()"
           class="p-2 rounded-lg hover:bg-gray-100 transition-colors"
@@ -58,22 +59,22 @@ import { ButtonComponent } from '../../../../components/ui/button/button.compone
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               @if (selectedTags().length > 0) {
-              <span
-                class="text-xs bg-[var(--tw-primary-accent-bg)] text-[var(--tw-primary)] px-2 py-1 rounded-full"
-              >
-                {{ selectedTags().length }} selected
-              </span>
+                <span
+                  class="text-xs bg-[var(--tw-primary-accent-bg)] text-[var(--tw-primary)] px-2 py-1 rounded-full"
+                >
+                  {{ selectedTags().length }} selected
+                </span>
               }
             </div>
             @if (selectedTags().length > 0) {
-            <app-button
-              variant="outline"
-              size="sm"
-              (buttonClick)="onClearFilters()"
-              class="text-red-600 hover:text-red-700"
-            >
-              Clear all
-            </app-button>
+              <app-button
+                variant="outline"
+                size="sm"
+                (buttonClick)="onClearFilters()"
+                class="text-red-600 hover:text-red-700"
+              >
+                Clear tags
+              </app-button>
             }
           </div>
 
@@ -84,36 +85,38 @@ import { ButtonComponent } from '../../../../components/ui/button/button.compone
 
           <!-- Tags List -->
           @if (availableTags().length === 0) {
-          <div class="text-center py-8 text-gray-500">
-            <p>No tags available</p>
-            <p class="text-sm mt-1">Create notes with tags to filter them here</p>
-          </div>
+            <div class="text-center py-8 text-gray-500">
+              <p>No tags available</p>
+              <p class="text-sm mt-1">
+                Create notes with tags to filter them here
+              </p>
+            </div>
           } @else {
-          <div class="space-y-2">
-            @for (tag of availableTags(); track tag) {
-            <label
-              class="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors duration-150 border border-gray-100"
-            >
-              <input
-                type="checkbox"
-                [checked]="isTagSelected(tag)"
-                (change)="onTagToggle(tag)"
-                class="w-4 h-4 text-[var(--tw-primary)] border-gray-300 rounded focus:ring-[var(--tw-primary)] focus:ring-2"
-                [attr.aria-label]="'Filter by ' + tag + ' tag'"
-              />
-              <span
-                class="flex-1 px-3 py-1 rounded-full text-sm transition-all duration-200"
-                [class]="
-                  isTagSelected(tag)
-                    ? 'bg-slate-200 text-slate-800 font-medium'
-                    : 'bg-gray-100 text-gray-700'
-                "
-              >
-                #{{ tag }}
-              </span>
-            </label>
-            }
-          </div>
+            <div class="space-y-2">
+              @for (tag of availableTags(); track tag) {
+                <label
+                  class="flex items-center space-x-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors duration-150 border border-gray-100"
+                >
+                  <input
+                    type="checkbox"
+                    [checked]="isTagSelected(tag)"
+                    (change)="onTagToggle(tag)"
+                    class="w-4 h-4 text-[var(--tw-primary)] border-gray-300 rounded focus:ring-[var(--tw-primary)] focus:ring-2"
+                    [attr.aria-label]="'Filter by ' + tag + ' tag'"
+                  />
+                  <span
+                    class="flex-1 px-3 py-1 rounded-full text-sm transition-all duration-200"
+                    [class]="
+                      isTagSelected(tag)
+                        ? 'bg-slate-200 text-slate-800 font-medium'
+                        : 'bg-gray-100 text-gray-700'
+                    "
+                  >
+                    #{{ tag }}
+                  </span>
+                </label>
+              }
+            </div>
           }
         </div>
       </div>
