@@ -30,6 +30,7 @@ import { NotesHeaderComponent } from '../notes-header/notes-header.component';
 import { MobileFilterSheetComponent } from '../mobile-filter-sheet/mobile-filter-sheet.component';
 import { MobileFilterTriggerComponent } from '../mobile-filter-trigger/mobile-filter-trigger.component';
 import { SearchInputComponent } from '../../../../components/ui/search-input/search-input.component';
+import { SearchIconComponent } from '../../../../components/ui/icons/search-icon/search-icon.component';
 import { XIconComponent } from '../../../../components/ui/icons/x-icon/x-icon.component';
 
 @Component({
@@ -44,6 +45,7 @@ import { XIconComponent } from '../../../../components/ui/icons/x-icon/x-icon.co
     MobileFilterSheetComponent,
     MobileFilterTriggerComponent,
     SearchInputComponent,
+    SearchIconComponent,
     XIconComponent,
   ],
   templateUrl: './note-list.component.html',
@@ -60,6 +62,7 @@ export class NoteListComponent {
   readonly nextDeletingNoteId = signal<string | null>(null);
   readonly viewMode = signal<ViewMode>('grid');
   readonly isMobileFilterSheetOpen = signal(false);
+  readonly isMobileSearchExpanded = signal(false);
 
   // Virtual scrolling state
   readonly isLoading = signal(false);
@@ -129,6 +132,14 @@ export class NoteListComponent {
     const currentTags = this.filterService.selectedTags();
     const newTags = currentTags.filter(t => t !== tag);
     this.filterService.setSelectedTags(newTags);
+  }
+
+  toggleMobileSearch() {
+    this.isMobileSearchExpanded.set(!this.isMobileSearchExpanded());
+  }
+
+  closeMobileSearch() {
+    this.isMobileSearchExpanded.set(false);
   }
 
   @HostListener('window:scroll', ['$event'])
