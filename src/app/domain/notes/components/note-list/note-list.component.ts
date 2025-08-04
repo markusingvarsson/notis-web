@@ -102,6 +102,22 @@ export class NoteListComponent {
       this.filteredNotes();
       this.currentPage.set(0);
     });
+
+    // Auto-scroll to top when search query changes
+    effect(() => {
+      const searchQuery = this.filterService.searchQuery();
+      if (searchQuery && isPlatformBrowser(this.platformId)) {
+        this.scrollToTop();
+      }
+    });
+
+    // Auto-scroll to top when tag filters change
+    effect(() => {
+      const selectedTags = this.filterService.selectedTags();
+      if (selectedTags.length > 0 && isPlatformBrowser(this.platformId)) {
+        this.scrollToTop();
+      }
+    });
   }
 
   openMobileFilterSheet() {
@@ -140,6 +156,10 @@ export class NoteListComponent {
 
   closeMobileSearch() {
     this.isMobileSearchExpanded.set(false);
+  }
+
+  private scrollToTop() {
+    this.viewportScroller.scrollToPosition([0, 0]);
   }
 
   @HostListener('window:scroll', ['$event'])
