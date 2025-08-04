@@ -77,6 +77,10 @@ export class NoteListComponent {
 
   readonly scrollContainerRef =
     viewChild<ElementRef<HTMLDivElement>>('scrollContainer');
+  readonly mobileSearchInputRef =
+    viewChild<SearchInputComponent>('mobileSearchInput');
+  readonly mobileSearchBarRef =
+    viewChild<ElementRef<HTMLDivElement>>('mobileSearchBar');
 
   readonly filteredNotes = this.filterService.filteredNotes;
   readonly isInitialLoading = inject(IS_INITIAL_LOADING);
@@ -152,10 +156,34 @@ export class NoteListComponent {
 
   toggleMobileSearch() {
     this.isMobileSearchExpanded.set(!this.isMobileSearchExpanded());
+    // Auto-focus the search input when opened
+    if (this.isMobileSearchExpanded() && isPlatformBrowser(this.platformId)) {
+      // Use setTimeout for proper timing after DOM updates
+      setTimeout(() => {
+        this.mobileSearchInputRef()?.focus();
+      }, 0);
+    }
   }
 
   closeMobileSearch() {
     this.isMobileSearchExpanded.set(false);
+  }
+
+  onSearchOverlayClick(event: Event) {
+    const target = event.target as HTMLElement;
+    const searchBarElement = this.mobileSearchBarRef()?.nativeElement;
+
+    // If click is not on the search bar (i.e., on backdrop), close the overlay
+    if (searchBarElement && !searchBarElement.contains(target)) {
+      this.closeMobileSearch();
+    }
+  }
+
+  onSearchOverlayKeydown(event: KeyboardEvent) {
+    // Close overlay on Escape key
+    if (event.key === 'Escape') {
+      this.closeMobileSearch();
+    }
   }
 
   private scrollToTop() {

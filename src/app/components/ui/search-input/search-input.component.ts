@@ -3,6 +3,8 @@ import {
   input,
   model,
   ChangeDetectionStrategy,
+  viewChild,
+  ElementRef,
 } from '@angular/core';
 import { SearchIconComponent } from '../icons/search-icon/search-icon.component';
 import { XIconComponent } from '../icons/x-icon/x-icon.component';
@@ -20,6 +22,7 @@ export class SearchInputComponent {
   readonly disabled = input<boolean>(false);
   
   readonly value = model<string>('');
+  readonly inputElementRef = viewChild<ElementRef<HTMLInputElement>>('searchInput');
 
   onInput(event: Event) {
     const target = event.target as HTMLInputElement;
@@ -34,5 +37,9 @@ export class SearchInputComponent {
 
   clearSearch() {
     this.value.set('');
+  }
+
+  focus() {
+    this.inputElementRef()?.nativeElement.focus();
   }
 }
