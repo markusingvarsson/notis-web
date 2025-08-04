@@ -32,6 +32,7 @@ import { MobileFilterTriggerComponent } from '../mobile-filter-trigger/mobile-fi
 import { SearchInputComponent } from '../../../../components/ui/search-input/search-input.component';
 import { SearchIconComponent } from '../../../../components/ui/icons/search-icon/search-icon.component';
 import { XIconComponent } from '../../../../components/ui/icons/x-icon/x-icon.component';
+import { IconChevronComponent } from '../../../../components/ui/icons/icon-chevron/icon-chevron.component';
 
 @Component({
   selector: 'app-note-list',
@@ -47,6 +48,7 @@ import { XIconComponent } from '../../../../components/ui/icons/x-icon/x-icon.co
     SearchInputComponent,
     SearchIconComponent,
     XIconComponent,
+    IconChevronComponent,
   ],
   templateUrl: './note-list.component.html',
   styleUrl: './note-list.component.scss',
