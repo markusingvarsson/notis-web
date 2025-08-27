@@ -1,5 +1,5 @@
 <div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5">
-  <div class="px-2 md:px-4 pt-6 pb-24 md:pb-6" #scrollContainer>
+  <div class="px-2 md:px-4 pb-24 md:pb-6" #scrollContainer>
     <!-- Compact Header with Integrated Search -->
     <div class="sticky top-0 z-10 bg-white border-b border-gray-200/50 mb-6">
       <div class="px-2 md:px-4 py-3">
@@ -8,7 +8,7 @@
           <div class="flex items-center flex-shrink-0">
             <app-notes-header></app-notes-header>
           </div>
-          
+
           <!-- Center: Desktop Search (hidden on mobile) -->
           <div class="header-center flex-1 max-w-md mx-5 hidden lg:block">
             <app-search-input
@@ -17,7 +17,7 @@
               class="w-full"
             />
           </div>
-          
+
           <!-- Right: Actions -->
           <div class="flex items-center gap-2 flex-shrink-0">
             <!-- Mobile Search Button (visible on mobile only) -->
@@ -29,7 +29,7 @@
             >
               <app-search-icon [size]="18" className="text-current" />
             </button>
-            
+
             <app-view-mode-toggle [(viewMode)]="viewMode" />
             <app-mobile-filter-trigger
               [selectedTagsCount]="filterService.selectedTags().length"
@@ -38,7 +38,7 @@
           </div>
         </div>
       </div>
-      
+
     </div>
 
     <!-- Active Filters Display -->
@@ -178,7 +178,7 @@
 
   <!-- Mobile Search Overlay -->
   @if (isMobileSearchExpanded()) {
-    <div 
+    <div
       class="fixed inset-0 z-50 lg:hidden"
       role="dialog"
       aria-modal="true"
@@ -189,7 +189,7 @@
     >
       <!-- Backdrop -->
       <div class="absolute inset-0 bg-black/20"></div>
-      
+
       <!-- Search Bar -->
       <div class="absolute top-0 left-0 right-0 bg-white border-b border-gray-200 shadow-lg" #mobileSearchBar>
         <div class="px-2 md:px-4 py-3">
