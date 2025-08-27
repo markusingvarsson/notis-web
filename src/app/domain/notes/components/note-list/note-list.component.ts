@@ -9,6 +9,7 @@ import {
   viewChild,
   HostListener,
   PLATFORM_ID,
+  untracked,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { ViewportScroller } from '@angular/common';
@@ -71,7 +72,8 @@ export class NoteListComponent {
   readonly currentPage = signal(0);
   readonly pageSize = PAGINATION_CONSTANTS.PAGE_SIZE;
   readonly scrollThreshold = computed(() => {
-    if (!isPlatformBrowser(this.platformId)) return PAGINATION_CONSTANTS.DESKTOP_SCROLL_THRESHOLD;
+    if (!isPlatformBrowser(this.platformId))
+      return PAGINATION_CONSTANTS.DESKTOP_SCROLL_THRESHOLD;
     return window.innerWidth < PAGINATION_CONSTANTS.MOBILE_BREAKPOINT
       ? PAGINATION_CONSTANTS.MOBILE_SCROLL_THRESHOLD
       : PAGINATION_CONSTANTS.DESKTOP_SCROLL_THRESHOLD;
@@ -124,6 +126,19 @@ export class NoteListComponent {
         this.scrollToTop();
       }
     });
+
+    // Auto-focus mobile search input when it becomes available and search is expanded
+    effect(() => {
+      const searchInput = this.mobileSearchInputRef();
+      const isExpanded = this.isMobileSearchExpanded();
+      
+      if (searchInput && isExpanded && isPlatformBrowser(this.platformId)) {
+        // Use untracked to avoid triggering effect when calling focus
+        untracked(() => {
+          searchInput.focus();
+        });
+      }
+    });
   }
 
   openMobileFilterSheet() {
@@ -152,19 +167,12 @@ export class NoteListComponent {
 
   onRemoveTag(tag: string) {
     const currentTags = this.filterService.selectedTags();
-    const newTags = currentTags.filter(t => t !== tag);
+    const newTags = currentTags.filter((t) => t !== tag);
     this.filterService.setSelectedTags(newTags);
   }
 
   toggleMobileSearch() {
     this.isMobileSearchExpanded.set(!this.isMobileSearchExpanded());
-    // Auto-focus the search input when opened
-    if (this.isMobileSearchExpanded() && isPlatformBrowser(this.platformId)) {
-      // Use setTimeout for proper timing after DOM updates
-      setTimeout(() => {
-        this.mobileSearchInputRef()?.focus();
-      }, 0);
-    }
   }
 
   closeMobileSearch() {
@@ -218,7 +226,8 @@ export class NoteListComponent {
     this.isLoading.set(true);
 
     // Responsive loading delay
-    const delay = isPlatformBrowser(this.platformId) &&
+    const delay =
+      isPlatformBrowser(this.platformId) &&
       window.innerWidth < PAGINATION_CONSTANTS.MOBILE_BREAKPOINT
         ? PAGINATION_CONSTANTS.MOBILE_LOADING_DELAY
         : PAGINATION_CONSTANTS.DESKTOP_LOADING_DELAY;
