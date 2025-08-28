@@ -80,8 +80,9 @@ export class NoteListComponent {
 
   readonly scrollContainerRef =
     viewChild<ElementRef<HTMLDivElement>>('scrollContainer');
-  readonly mobileSearchOverlayRef =
-    viewChild<MobileSearchOverlayComponent>('mobileSearchOverlay');
+  readonly mobileSearchOverlayRef = viewChild<MobileSearchOverlayComponent>(
+    'mobileSearchOverlay',
+  );
 
   readonly filteredNotes = this.filterService.filteredNotes;
   readonly isInitialLoading = inject(IS_INITIAL_LOADING);
@@ -166,6 +167,7 @@ export class NoteListComponent {
 
   closeMobileSearch() {
     this.isMobileSearchExpanded.set(false);
+    this.mobileSearchOverlayRef()?.hideOverlay();
   }
 
   onSearchQueryChange(query: string) {

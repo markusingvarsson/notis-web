@@ -32,6 +32,7 @@ export class MobileSearchOverlayComponent {
 
   readonly mobileSearchInputRef = viewChild<SearchInputComponent>('mobileSearchInput');
   readonly mobileSearchBarRef = viewChild<ElementRef<HTMLDivElement>>('mobileSearchBar');
+  readonly overlayRef = viewChild<ElementRef<HTMLDivElement>>('overlay');
 
   onSearchOverlayClick(event: Event) {
     const target = event.target as HTMLElement;
@@ -60,12 +61,26 @@ export class MobileSearchOverlayComponent {
 
   focusInput() {
     if (isPlatformBrowser(this.platformId)) {
-      setTimeout(() => {
-        const inputElement = this.mobileSearchInputRef()?.inputElementRef()?.nativeElement;
-        if (inputElement) {
-          inputElement.focus();
-        }
-      }, 0);
+      // First, programmatically show the overlay
+      const overlayElement = this.overlayRef()?.nativeElement;
+      if (overlayElement) {
+        overlayElement.hidden = false;
+      }
+      
+      // Then focus the input in the same execution context
+      const searchInputComponent = this.mobileSearchInputRef();
+      if (searchInputComponent) {
+        searchInputComponent.focus();
+      }
+    }
+  }
+
+  hideOverlay() {
+    if (isPlatformBrowser(this.platformId)) {
+      const overlayElement = this.overlayRef()?.nativeElement;
+      if (overlayElement) {
+        overlayElement.hidden = true;
+      }
     }
   }
 }
