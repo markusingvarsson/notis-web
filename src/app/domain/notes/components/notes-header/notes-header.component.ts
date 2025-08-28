@@ -36,7 +36,7 @@ export class NotesHeaderComponent {
   );
   readonly totalCount = computed(() => this.filterService.notes().length);
   readonly isFiltered = computed(
-    () => this.filterService.selectedTags().length > 0
+    () => this.filterService.selectedTags().length > 0 || this.filterService.searchQuery().length > 0
   );
   readonly isInitialLoading = inject(IS_INITIAL_LOADING);
 }
