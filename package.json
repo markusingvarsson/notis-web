@@ -11,7 +11,8 @@
     "prepare": "husky",
     "lint": "ng lint",
     "quality-check": "npm run lint && npx tsc --noEmit --skipLibCheck && npm run build",
-    "ngsw": "ng build && npx http-server -p 8080 -c-1 dist/notis-web/browser"
+    "ngsw": "ng build && npx http-server -p 8080 -c-1 dist/notis-web/browser",
+    "ngrok": "ng serve --host 0.0.0.0 --disable-host-check"
   },
   "private": true,
   "dependencies": {

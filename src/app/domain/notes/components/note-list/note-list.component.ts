@@ -29,6 +29,10 @@ import { MicrophoneIconComponent } from '../../../../components/ui/icons/microph
 import { NotesHeaderComponent } from '../notes-header/notes-header.component';
 import { MobileFilterSheetComponent } from '../mobile-filter-sheet/mobile-filter-sheet.component';
 import { MobileFilterTriggerComponent } from '../mobile-filter-trigger/mobile-filter-trigger.component';
+import { SearchInputComponent } from '../../../../components/ui/search-input/search-input.component';
+import { SearchIconComponent } from '../../../../components/ui/icons/search-icon/search-icon.component';
+import { XIconComponent } from '../../../../components/ui/icons/x-icon/x-icon.component';
+import { MobileSearchOverlayComponent } from '../mobile-search-overlay/mobile-search-overlay.component';
 
 @Component({
   selector: 'app-note-list',
@@ -41,6 +45,10 @@ import { MobileFilterTriggerComponent } from '../mobile-filter-trigger/mobile-fi
     NotesHeaderComponent,
     MobileFilterSheetComponent,
     MobileFilterTriggerComponent,
+    SearchInputComponent,
+    SearchIconComponent,
+    XIconComponent,
+    MobileSearchOverlayComponent,
   ],
   templateUrl: './note-list.component.html',
   styleUrl: './note-list.component.scss',
@@ -56,13 +64,15 @@ export class NoteListComponent {
   readonly nextDeletingNoteId = signal<string | null>(null);
   readonly viewMode = signal<ViewMode>('grid');
   readonly isMobileFilterSheetOpen = signal(false);
+  readonly isMobileSearchExpanded = signal(false);
 
   // Virtual scrolling state
   readonly isLoading = signal(false);
   readonly currentPage = signal(0);
   readonly pageSize = PAGINATION_CONSTANTS.PAGE_SIZE;
   readonly scrollThreshold = computed(() => {
-    if (!isPlatformBrowser(this.platformId)) return PAGINATION_CONSTANTS.DESKTOP_SCROLL_THRESHOLD;
+    if (!isPlatformBrowser(this.platformId))
+      return PAGINATION_CONSTANTS.DESKTOP_SCROLL_THRESHOLD;
     return window.innerWidth < PAGINATION_CONSTANTS.MOBILE_BREAKPOINT
       ? PAGINATION_CONSTANTS.MOBILE_SCROLL_THRESHOLD
       : PAGINATION_CONSTANTS.DESKTOP_SCROLL_THRESHOLD;
@@ -70,6 +80,9 @@ export class NoteListComponent {
 
   readonly scrollContainerRef =
     viewChild<ElementRef<HTMLDivElement>>('scrollContainer');
+  readonly mobileSearchOverlayRef = viewChild<MobileSearchOverlayComponent>(
+    'mobileSearchOverlay',
+  );
 
   readonly filteredNotes = this.filterService.filteredNotes;
   readonly isInitialLoading = inject(IS_INITIAL_LOADING);
@@ -95,6 +108,22 @@ export class NoteListComponent {
       this.filteredNotes();
       this.currentPage.set(0);
     });
+
+    // Auto-scroll to top when search query changes
+    effect(() => {
+      const searchQuery = this.filterService.searchQuery();
+      if (searchQuery && isPlatformBrowser(this.platformId)) {
+        this.scrollToTop();
+      }
+    });
+
+    // Auto-scroll to top when tag filters change
+    effect(() => {
+      const selectedTags = this.filterService.selectedTags();
+      if (selectedTags.length > 0 && isPlatformBrowser(this.platformId)) {
+        this.scrollToTop();
+      }
+    });
   }
 
   openMobileFilterSheet() {
@@ -110,7 +139,43 @@ export class NoteListComponent {
   }
 
   onClearFilters() {
+    this.filterService.clearTags();
+  }
+
+  onClearSearch() {
+    this.filterService.setSearchQuery('');
+  }
+
+  onClearAllFilters() {
     this.filterService.clearFilters();
+  }
+
+  onRemoveTag(tag: string) {
+    const currentTags = this.filterService.selectedTags();
+    const newTags = currentTags.filter((t) => t !== tag);
+    this.filterService.setSelectedTags(newTags);
+  }
+
+  toggleMobileSearch() {
+    this.isMobileSearchExpanded.set(!this.isMobileSearchExpanded());
+
+    // Focus immediately within the user gesture context
+    if (this.isMobileSearchExpanded()) {
+      this.mobileSearchOverlayRef()?.focusInput();
+    }
+  }
+
+  closeMobileSearch() {
+    this.isMobileSearchExpanded.set(false);
+    this.mobileSearchOverlayRef()?.hideOverlay();
+  }
+
+  onSearchQueryChange(query: string) {
+    this.filterService.setSearchQuery(query);
+  }
+
+  private scrollToTop() {
+    this.viewportScroller.scrollToPosition([0, 0]);
   }
 
   @HostListener('window:scroll', ['$event'])
@@ -139,7 +204,8 @@ export class NoteListComponent {
     this.isLoading.set(true);
 
     // Responsive loading delay
-    const delay = isPlatformBrowser(this.platformId) &&
+    const delay =
+      isPlatformBrowser(this.platformId) &&
       window.innerWidth < PAGINATION_CONSTANTS.MOBILE_BREAKPOINT
         ? PAGINATION_CONSTANTS.MOBILE_LOADING_DELAY
         : PAGINATION_CONSTANTS.DESKTOP_LOADING_DELAY;

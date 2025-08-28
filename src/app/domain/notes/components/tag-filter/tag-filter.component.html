@@ -21,7 +21,7 @@
       <span class="font-medium">Tags</span>
       @if (selectedTags().length > 0) {
       <span
-        class="text-xs bg-[var(--tw-primary-accent-bg)] text-[var(--tw-primary)] px-2 py-1 rounded-full"
+        class="text-xs bg-[var(--tw-highlight-light)] text-[var(--tw-primary-dark)] px-2 py-1 rounded-full"
       >
         {{ selectedTags().length }} selected
       </span>
@@ -63,7 +63,8 @@
             type="checkbox"
             [checked]="isTagSelected(tag)"
             (change)="onTagToggle(tag)"
-            class="w-4 h-4 text-[var(--tw-primary)] border-gray-300 rounded focus:ring-[var(--tw-primary)] focus:ring-2"
+            class="w-4 h-4 border-gray-300 rounded focus:ring-2"
+            style="accent-color: var(--tw-highlight-dark); --tw-ring-color: var(--tw-highlight);"
             [attr.aria-label]="'Filter by ' + tag + ' tag'"
           />
           <span
@@ -87,7 +88,7 @@
         aria-label="Clear all tag filters"
       >
         <app-x-icon [size]="16" [color]="'currentColor'" />
-        Clear Filters
+        Clear Tags
       </button>
       }
       }

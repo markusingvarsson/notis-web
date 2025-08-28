@@ -1,16 +1,87 @@
 <div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-primary/5">
-  <div class="px-4 pt-6 pb-24 md:pb-6" #scrollContainer>
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-6">
-      <app-notes-header></app-notes-header>
-      <div class="flex items-center gap-4">
-        <app-view-mode-toggle [(viewMode)]="viewMode" />
-        <app-mobile-filter-trigger
-          [selectedTagsCount]="filterService.selectedTags().length"
-          (openSheet)="openMobileFilterSheet()"
-        ></app-mobile-filter-trigger>
+  <div class="px-2 md:px-4 pb-24 md:pb-6" #scrollContainer>
+    <!-- Compact Header with Integrated Search -->
+    <div class="sticky top-0 z-10 bg-white border-b border-gray-200/50 mb-6">
+      <div class="px-2 md:px-4 py-3">
+        <div class="flex items-center justify-between gap-4">
+          <!-- Left: Title -->
+          <div class="flex items-center flex-shrink-0">
+            <app-notes-header></app-notes-header>
+          </div>
+
+          <!-- Center: Desktop Search (hidden on mobile) -->
+          <div class="header-center flex-1 max-w-md mx-5 hidden lg:block">
+            <app-search-input
+              placeholder="Search notes..."
+              [(value)]="filterService.searchQuery"
+              class="w-full"
+            />
+          </div>
+
+          <!-- Right: Actions -->
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <!-- Mobile Search Button (visible on mobile only) -->
+            <button
+              type="button"
+              (click)="toggleMobileSearch()"
+              class="lg:hidden p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors flex items-center justify-center min-h-[44px] min-w-[44px]"
+              aria-label="Search notes"
+            >
+              <app-search-icon [size]="18" className="text-current" />
+            </button>
+
+            <app-view-mode-toggle [(viewMode)]="viewMode" />
+            <app-mobile-filter-trigger
+              [selectedTagsCount]="filterService.selectedTags().length"
+              (openSheet)="openMobileFilterSheet()"
+            ></app-mobile-filter-trigger>
+          </div>
+        </div>
       </div>
+
     </div>
+
+    <!-- Active Filters Display -->
+    @if (filterService.searchQuery() || filterService.selectedTags().length > 0) {
+      <div class="bg-white/80 backdrop-blur-lg rounded-2xl p-3 md:p-4 mb-6 shadow-sm border border-gray-200/50">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-sm font-medium text-gray-700">Active filters:</span>
+          <button
+            (click)="onClearAllFilters()"
+            class="text-sm text-red-600 hover:text-red-700 transition-colors"
+          >
+            Clear All
+          </button>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          @if (filterService.searchQuery()) {
+            <span class="inline-flex items-center gap-1 px-3 py-1 bg-[var(--tw-primary-accent-bg)] text-[var(--tw-primary)] rounded-full text-sm">
+              Search: "{{ filterService.searchQuery() }}"
+              <button
+                (click)="onClearSearch()"
+                class="hover:text-[var(--tw-primary-dark)] ml-1"
+                aria-label="Clear search"
+              >
+                <app-x-icon [size]="12" />
+              </button>
+            </span>
+          }
+          @for (tag of filterService.selectedTags(); track tag) {
+            <span class="inline-flex items-center gap-1 px-3 py-1 bg-[var(--tw-highlight-light)] text-[var(--tw-primary-dark)] rounded-full text-sm">
+              #{{ tag }}
+              <button
+                (click)="onRemoveTag(tag)"
+                class="hover:text-[var(--tw-primary-dark)] ml-1"
+                [attr.aria-label]="'Remove ' + tag + ' filter'"
+              >
+                <app-x-icon [size]="12" />
+              </button>
+            </span>
+          }
+        </div>
+      </div>
+    }
+
 
     @if (isInitialLoading()) {
     <div class="text-center py-12">
@@ -41,7 +112,13 @@
         </svg>
       </div>
       <h3 class="text-xl font-semibold text-gray-900 mb-2">No notes found</h3>
-      <p class="text-gray-600 mb-6">Start by creating your first note</p>
+      <p class="text-gray-600 mb-6">
+        @if (filterService.searchQuery() || filterService.selectedTags().length > 0) {
+          Try adjusting your search or filters
+        } @else {
+          Start by creating your first note
+        }
+      </p>
       <app-button [link]="'/notes/create'" [queryParams]="{ CTA: 'true' }">
         <app-microphone-icon [size]="16" />
         <span class="font-bold text-white">Record</span>
@@ -98,4 +175,14 @@
     (clearFilters)="onClearFilters()"
     (closeSheet)="closeMobileFilterSheet()"
   ></app-mobile-filter-sheet>
+
+  <!-- Mobile Search Overlay -->
+  <app-mobile-search-overlay
+    #mobileSearchOverlay
+    [isOpen]="isMobileSearchExpanded()"
+    [searchQuery]="filterService.searchQuery()"
+    [placeholder]="'Search notes...'"
+    (searchQueryChange)="onSearchQueryChange($event)"
+    (closeOverlay)="closeMobileSearch()"
+  />
 </div>

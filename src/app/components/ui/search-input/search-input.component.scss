@@ -1,0 +1,11 @@
+// Search input component styles
+// Following design system conventions for focus states and transitions
+
+// Hide the native browser search cancel button
+.search-input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.search-input::-webkit-search-decoration {
+  display: none;
+}
