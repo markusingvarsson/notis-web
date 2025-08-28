@@ -9,7 +9,6 @@ import {
   viewChild,
   HostListener,
   PLATFORM_ID,
-  untracked,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { ViewportScroller } from '@angular/common';
@@ -33,7 +32,7 @@ import { MobileFilterTriggerComponent } from '../mobile-filter-trigger/mobile-fi
 import { SearchInputComponent } from '../../../../components/ui/search-input/search-input.component';
 import { SearchIconComponent } from '../../../../components/ui/icons/search-icon/search-icon.component';
 import { XIconComponent } from '../../../../components/ui/icons/x-icon/x-icon.component';
-import { IconChevronComponent } from '../../../../components/ui/icons/icon-chevron/icon-chevron.component';
+import { MobileSearchOverlayComponent } from '../mobile-search-overlay/mobile-search-overlay.component';
 
 @Component({
   selector: 'app-note-list',
@@ -49,7 +48,7 @@ import { IconChevronComponent } from '../../../../components/ui/icons/icon-chevr
     SearchInputComponent,
     SearchIconComponent,
     XIconComponent,
-    IconChevronComponent,
+    MobileSearchOverlayComponent,
   ],
   templateUrl: './note-list.component.html',
   styleUrl: './note-list.component.scss',
@@ -81,10 +80,8 @@ export class NoteListComponent {
 
   readonly scrollContainerRef =
     viewChild<ElementRef<HTMLDivElement>>('scrollContainer');
-  readonly mobileSearchInputRef =
-    viewChild<SearchInputComponent>('mobileSearchInput');
-  readonly mobileSearchBarRef =
-    viewChild<ElementRef<HTMLDivElement>>('mobileSearchBar');
+  readonly mobileSearchOverlayRef =
+    viewChild<MobileSearchOverlayComponent>('mobileSearchOverlay');
 
   readonly filteredNotes = this.filterService.filteredNotes;
   readonly isInitialLoading = inject(IS_INITIAL_LOADING);
@@ -126,19 +123,6 @@ export class NoteListComponent {
         this.scrollToTop();
       }
     });
-
-    // Auto-focus mobile search input when it becomes available and search is expanded
-    effect(() => {
-      const searchInput = this.mobileSearchInputRef();
-      const isExpanded = this.isMobileSearchExpanded();
-      
-      if (searchInput && isExpanded && isPlatformBrowser(this.platformId)) {
-        // Use untracked to avoid triggering effect when calling focus
-        untracked(() => {
-          searchInput.focus();
-        });
-      }
-    });
   }
 
   openMobileFilterSheet() {
@@ -173,27 +157,19 @@ export class NoteListComponent {
 
   toggleMobileSearch() {
     this.isMobileSearchExpanded.set(!this.isMobileSearchExpanded());
+
+    // Focus immediately within the user gesture context
+    if (this.isMobileSearchExpanded()) {
+      this.mobileSearchOverlayRef()?.focusInput();
+    }
   }
 
   closeMobileSearch() {
     this.isMobileSearchExpanded.set(false);
   }
 
-  onSearchOverlayClick(event: Event) {
-    const target = event.target as HTMLElement;
-    const searchBarElement = this.mobileSearchBarRef()?.nativeElement;
-
-    // If click is not on the search bar (i.e., on backdrop), close the overlay
-    if (searchBarElement && !searchBarElement.contains(target)) {
-      this.closeMobileSearch();
-    }
-  }
-
-  onSearchOverlayKeydown(event: KeyboardEvent) {
-    // Close overlay on Escape key
-    if (event.key === 'Escape') {
-      this.closeMobileSearch();
-    }
+  onSearchQueryChange(query: string) {
+    this.filterService.setSearchQuery(query);
   }
 
   private scrollToTop() {
