@@ -16,7 +16,7 @@ import {
 } from '../'; // Adjust path as needed
 import { AUDIO_MIME_TYPE } from './mime-type'; // Adjust path as needed
 import { ToasterService } from '../../../components/ui/toaster/toaster.service';
-import { NoSoundDetector } from './no-sound-detector.util';
+import { NoSoundDetector } from '../utils/no-sound-detector.util';
 import { AudioAnalyzer } from './audio-analyzer.util';
 import { SupportedLanguageCode } from '../../../core/services/language-picker.service';
 
@@ -289,15 +289,21 @@ export class RecordAudioService implements OnDestroy {
             .join('');
           this.transcriptText.set(transcript);
         };
-        this.recognition.onerror = (eventRecognitionError: SpeechRecognitionErrorEvent) => {
+        this.recognition.onerror = (
+          eventRecognitionError: SpeechRecognitionErrorEvent,
+        ) => {
           console.error('Speech recognition error:', eventRecognitionError);
-          
+
           // Try to handle known errors with appropriate recovery strategies
-          const wasHandled = this.handleTranscriptionError(eventRecognitionError);
-          
+          const wasHandled = this.handleTranscriptionError(
+            eventRecognitionError,
+          );
+
           // If the error wasn't handled by our known error strategies, clean up
           if (!wasHandled) {
-            console.warn(`Unhandled speech recognition error: ${eventRecognitionError.error}`);
+            console.warn(
+              `Unhandled speech recognition error: ${eventRecognitionError.error}`,
+            );
             this.cleanupSpeechRecognition();
           }
         };
@@ -359,7 +365,9 @@ export class RecordAudioService implements OnDestroy {
   }
 
   // Handle known transcription errors with appropriate recovery strategies
-  private handleTranscriptionError(error: SpeechRecognitionErrorEvent): boolean {
+  private handleTranscriptionError(
+    error: SpeechRecognitionErrorEvent,
+  ): boolean {
     switch (error.error) {
       case 'no-speech':
         console.log('No speech detected, restarting recognition...');
@@ -368,7 +376,9 @@ export class RecordAudioService implements OnDestroy {
 
       case 'audio-capture':
         console.warn('Audio capture error, stopping transcription');
-        this.#toaster.warning('Audio capture issue detected. Transcription stopped.');
+        this.#toaster.warning(
+          'Audio capture issue detected. Transcription stopped.',
+        );
         this.cleanupSpeechRecognition();
         return true;
 
@@ -396,7 +406,10 @@ export class RecordAudioService implements OnDestroy {
   // Helper to restart speech recognition with error handling
   private restartSpeechRecognition(): void {
     setTimeout(() => {
-      if (this.recognition && this.recordingState() === RECORDER_STATE.RECORDING) {
+      if (
+        this.recognition &&
+        this.recordingState() === RECORDER_STATE.RECORDING
+      ) {
         try {
           this.recognition.start();
         } catch (e) {

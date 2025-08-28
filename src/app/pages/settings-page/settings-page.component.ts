@@ -2,7 +2,6 @@ import {
   Component,
   computed,
   inject,
-  PLATFORM_ID,
   signal,
   ChangeDetectionStrategy,
 } from '@angular/core';
@@ -20,10 +19,10 @@ import { SupportedLanguageCode } from '../../core/services/language-picker.servi
 import { IconChevronComponent } from '../../components/ui/icons/icon-chevron/icon-chevron.component';
 import { NotesStorageService } from '../../domain/notes/services/notes-storage.service';
 import { ConfirmationModalService } from '../../components/ui/confirmation-modal/confirmation-modal.service';
-import { isPlatformBrowser } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
 import { TranscriptionSettingsPickerService } from '../../domain/notes/components/create-note/components/transcription-settings-picker/transcription-settings-picker.service';
 import { MicSelectorComponent } from '../../domain/notes/components/create-note/components/mic-selector/mic-selector.component';
+import { SpeechRecognitionService } from '../../domain/notes/services/speech-recognition.service';
 
 @Component({
   selector: 'app-settings-page',
@@ -48,25 +47,20 @@ import { MicSelectorComponent } from '../../domain/notes/components/create-note/
 export class SettingsPageComponent {
   private toasterService = inject(ToasterService);
   #transcriptionSettingsPickerService = inject(
-    TranscriptionSettingsPickerService
+    TranscriptionSettingsPickerService,
   );
   #notesStorageService = inject(NotesStorageService);
   #confirmationModalService = inject(ConfirmationModalService);
-  #platformId = inject(PLATFORM_ID);
   #deviceService = inject(DeviceDetectorService);
+  #speechRecognitionService = inject(SpeechRecognitionService);
 
   readonly selectedTranscriptionSetting = signal<
     SupportedLanguageCode | 'no-transcription'
   >(this.#transcriptionSettingsPickerService.getTranscriptionSettings());
   readonly expandedSections = signal<Set<string>>(new Set(['account']));
-  readonly hasSpeechRecognition = computed(() => {
-    const isSpeechRecognitionSupported =
-      isPlatformBrowser(this.#platformId) &&
-      'webkitSpeechRecognition' in window;
-
-    return isSpeechRecognitionSupported && this.#deviceService.isDesktop();
-  });
   readonly isMobile = computed(() => this.#deviceService.isMobile());
+  readonly hasSpeechRecognition =
+    this.#speechRecognitionService.hasSpeechRecognition;
 
   toggleSection(section: string): void {
     this.expandedSections.update((sections) => {

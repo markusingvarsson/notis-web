@@ -4,7 +4,6 @@ import {
   inject,
   input,
   output,
-  PLATFORM_ID,
   signal,
   ChangeDetectionStrategy,
 } from '@angular/core';
@@ -15,14 +14,13 @@ import { RecordButtonComponent } from '../components/record-button/record-button
 import { AudioLevelBarComponent } from '../components/audio-level-bar/audio-level-bar.component';
 import { NoteNameInputComponent } from '../components/note-name-input/note-name-input.component';
 import { ToasterService } from '../../../../../components/ui/toaster/toaster.service';
-import { isPlatformBrowser } from '@angular/common';
-import { DeviceDetectorService } from 'ngx-device-detector';
 import { TranscriptionSettingsPickerComponent } from '../components/transcription-settings-picker/transcription-settings-picker.component';
 import { SupportedLanguageCode } from '../../../../../core/services/language-picker.service';
 import { AddTagsComponent } from '../components/add-tags/add-tags.component';
 import { ConfirmationModalService } from '../../../../../components/ui/confirmation-modal/confirmation-modal.service';
 import { MicSelectorComponent } from '../components/mic-selector/mic-selector.component';
 import { TranscriptionSettingsPickerService } from '../components/transcription-settings-picker/transcription-settings-picker.service';
+import { SpeechRecognitionService } from '../../../services/speech-recognition.service';
 
 @Component({
   selector: 'app-create-audio-note',
@@ -44,14 +42,13 @@ export class CreateAudioNoteComponent {
     return this.recordingState() === RECORDER_STATE.RECORDING;
   });
 
-  #platformId = inject(PLATFORM_ID);
   #recordAudioService = inject(RecordAudioService);
   #toaster = inject(ToasterService);
-  #deviceService = inject(DeviceDetectorService);
   #transcriptionSettingsPickerService = inject(
-    TranscriptionSettingsPickerService
+    TranscriptionSettingsPickerService,
   );
   #confirmationModalService = inject(ConfirmationModalService);
+  #speechRecognitionService = inject(SpeechRecognitionService);
 
   readonly recordingState = this.#recordAudioService.recordingState;
   readonly audioBlob = this.#recordAudioService.audioBlob;
@@ -70,14 +67,8 @@ export class CreateAudioNoteComponent {
     SupportedLanguageCode | 'no-transcription'
   >(this.#transcriptionSettingsPickerService.getTranscriptionSettings());
 
-  readonly hasSpeechRecognition = computed(() => {
-    const isSpeechRecognitionSupported =
-      isPlatformBrowser(this.#platformId) &&
-      'webkitSpeechRecognition' in window;
-
-    return isSpeechRecognitionSupported && this.#deviceService.isDesktop();
-  });
-
+  readonly hasSpeechRecognition =
+    this.#speechRecognitionService.hasSpeechRecognition;
   readonly hasMicrophonePermission = computed(() => {
     return this.recordingState() !== RECORDER_STATE.BLOCKED;
   });
