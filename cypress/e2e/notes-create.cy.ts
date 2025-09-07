@@ -90,78 +90,14 @@ describe('Notes Creation', () => {
 
   describe('Recording Flow Integration', () => {
     it('should complete full note creation flow', () => {
-      // Wait for initial idle state
-      cy.get('[data-testid="record-button-idle"]').should('be.visible');
+      const testNote = {
+        noteName: 'Weekly Team Meeting',
+        tags: ['meeting', 'team', 'weekly'],
+        recordingDuration: 3000,
+      };
 
-      // Click to start recording (may prompt for microphone permission)
-      cy.get('[data-testid="record-button-idle"]').click();
-
-      // Should show recording state
-      cy.get('[data-testid="record-button-recording"]', {
-        timeout: 10000,
-      }).should('be.visible');
-
-      // If recording started successfully, continue the flow
-      cy.get('body').then(($body) => {
-        if ($body.find('[data-testid="record-button-recording"]').length > 0) {
-          // Wait a moment (simulate recording)
-          cy.wait(2000);
-
-          // Click to stop recording
-          cy.get('[data-testid="record-button-recording"]').click();
-
-          // Should show audio preview
-          cy.get('audio').should('be.visible');
-
-          // Fill out note name
-          cy.get(
-            'input[placeholder*="e.g., Meeting Summary"], input[placeholder*="title"]',
-          ).type('My Test Note');
-
-          // Add tags if available
-          cy.get('body').then(($tagBody) => {
-            if ($tagBody.find('button:contains("Add Tags")').length > 0) {
-              // Click "Add Tags" button first
-              cy.contains('button', 'Add Tags').click();
-
-              // Then type in the tag input that appears
-              cy.get('input[placeholder*="meeting, important"]').type(
-                'test{enter}',
-              );
-            }
-          });
-
-          // Save the note
-          cy.contains('button', /Save/).click();
-
-          // Should navigate to notes list or show success
-          cy.url().should('satisfy', (url) => {
-            return url.includes('/notes') && !url.includes('/notes/create');
-          });
-
-          // Verify the note was created and appears in the list as a note card
-          cy.get('app-note-card').contains('My Test Note').should('be.visible');
-
-          // Verify the tag was also added to the note card
-          cy.get('app-note-card').contains('test').should('be.visible');
-
-          // Verify the audio duration shows on the card
-          cy.get('app-note-card')
-            .should('contain', 'Audio')
-            .and('contain', '0:02');
-
-          // Verify the date shows as "less than a minute ago"
-          cy.get('app-note-card')
-            .contains('less than a minute ago')
-            .should('be.visible');
-        } else {
-          // If microphone is blocked, fail the test
-          cy.get('[data-testid="record-button-blocked"]').should('be.visible');
-          throw new Error(
-            'Microphone access blocked - test requires microphone permissions to pass',
-          );
-        }
-      });
+      cy.createAudioNote(testNote);
+      cy.verifyNoteCreated(testNote);
     });
 
     it('should handle recording cancellation', () => {
@@ -228,7 +164,7 @@ describe('Notes Creation', () => {
       });
     });
 
-    it('should show blocked state when microphone access is denied', { retries: 3 }, () => {
+    it('should show blocked state when microphone access is denied', () => {
       // Visit page with blocked microphone access from the start
       cy.visit('/notes/create', {
         onBeforeLoad(win) {
@@ -236,7 +172,7 @@ describe('Notes Creation', () => {
           cy.stub(win.navigator.mediaDevices, 'getUserMedia').rejects(
             new DOMException('Permission denied', 'NotAllowedError'),
           );
-          
+
           // Stub permissions API to return denied from the start
           if (win.navigator.permissions) {
             cy.stub(win.navigator.permissions, 'query').resolves({
