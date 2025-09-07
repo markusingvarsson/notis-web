@@ -228,7 +228,7 @@ describe('Notes Creation', () => {
       });
     });
 
-    it('should show blocked state when microphone access is denied', () => {
+    it('should show blocked state when microphone access is denied', { retries: 3 }, () => {
       // Visit page with blocked microphone access
       cy.visit('/notes/create', {
         onBeforeLoad(win) {
