@@ -17,6 +17,8 @@ declare namespace Cypress {
       tags?: string[];
       recordingDuration?: number;
     }): Chainable<Subject>;
+    
+    clearAllData(): Chainable<Subject>;
   }
 }
 
@@ -144,6 +146,33 @@ function verifyNoteCreated(options: {
     .should('be.visible');
 }
 
+/**
+ * Clears all data by navigating to settings and clicking the "Clear All Data" button
+ */
+function clearAllData(): void {
+  // Navigate to settings page
+  cy.visit('/settings');
+  
+  // Find and click the "Clear All Data" button
+  cy.contains('button', 'Clear All Data').click();
+  
+  // Confirm the action if there's a confirmation dialog
+  cy.get('body').then(($body) => {
+    // Look for confirmation dialog or button
+    if ($body.find('button:contains("Confirm")').length > 0) {
+      cy.contains('button', 'Confirm').click();
+    } else if ($body.find('button:contains("Yes")').length > 0) {
+      cy.contains('button', 'Yes').click();
+    } else if ($body.find('button:contains("Delete")').length > 0) {
+      cy.contains('button', 'Delete').click();
+    }
+  });
+  
+  // Wait a moment for the data to be cleared
+  cy.wait(500);
+}
+
 // Register the custom commands
 Cypress.Commands.add('createAudioNote', createAudioNote);
 Cypress.Commands.add('verifyNoteCreated', verifyNoteCreated);
+Cypress.Commands.add('clearAllData', clearAllData);

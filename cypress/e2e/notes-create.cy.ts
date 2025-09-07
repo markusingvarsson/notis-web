@@ -1,5 +1,6 @@
 describe('Notes Creation', () => {
   beforeEach(() => {
+    cy.clearAllData();
     cy.visit('/notes/create');
   });
 
@@ -98,6 +99,32 @@ describe('Notes Creation', () => {
 
       cy.createAudioNote(testNote);
       cy.verifyNoteCreated(testNote);
+    });
+
+    it('should create note and clear all data', () => {
+      const testNote = {
+        noteName: 'Test Note to Delete',
+        tags: ['test', 'delete'],
+        recordingDuration: 2000,
+      };
+
+      // Create a note
+      cy.createAudioNote(testNote);
+
+      // Verify the note exists
+      cy.verifyNoteCreated(testNote);
+
+      // Clear all data
+      cy.clearAllData();
+
+      // Navigate back to notes to verify data is cleared
+      cy.visit('/notes');
+
+      // Verify the note card is gone
+      cy.get('app-note-card').should('not.exist');
+
+      // Alternatively, verify that there are no notes with the specific name
+      cy.get('body').should('not.contain', testNote.noteName);
     });
 
     it('should handle recording cancellation', () => {
