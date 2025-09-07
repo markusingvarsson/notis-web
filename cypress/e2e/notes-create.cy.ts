@@ -229,30 +229,34 @@ describe('Notes Creation', () => {
     });
 
     it('should show blocked state when microphone access is denied', { retries: 3 }, () => {
-      // Visit page with blocked microphone access
+      // Visit page with blocked microphone access from the start
       cy.visit('/notes/create', {
         onBeforeLoad(win) {
+          // Stub getUserMedia to reject
           cy.stub(win.navigator.mediaDevices, 'getUserMedia').rejects(
             new DOMException('Permission denied', 'NotAllowedError'),
           );
+          
+          // Stub permissions API to return denied from the start
+          if (win.navigator.permissions) {
+            cy.stub(win.navigator.permissions, 'query').resolves({
+              state: 'denied',
+              onchange: null,
+            } as PermissionStatus);
+          }
         },
       });
 
-      // Wait for initial idle state
-      cy.get('[data-testid="record-button-idle"]').should('be.visible');
-
-      // Click to start recording
-      cy.get('[data-testid="record-button-idle"]').click();
-
-      // Should show blocked state
+      // Should show blocked state immediately (no idle state)
       cy.get('[data-testid="record-button-blocked"]', {
         timeout: 10000,
       }).should('be.visible');
 
-      // Verify the blocked button is in DOM and visible
+      // Verify the blocked button is properly displayed and disabled
       cy.get('[data-testid="record-button-blocked"]')
         .should('exist')
-        .and('be.visible');
+        .and('be.visible')
+        .and('be.disabled');
     });
   });
 
