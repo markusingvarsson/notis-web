@@ -87,7 +87,7 @@ describe('Notes Creation', () => {
       const testNote = {
         noteName: 'Test Note to Delete',
         tags: ['test', 'delete'],
-        recordingDuration: 2000,
+        recordingDuration: 2500,
       };
 
       // Create a note
