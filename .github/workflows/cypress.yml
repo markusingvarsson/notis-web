@@ -10,9 +10,15 @@ on:
       - main
       - 'hotfix/**'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   cypress-run:
     runs-on: ubuntu-latest
+    # Skip tests on draft PRs
+    if: github.event.pull_request.draft == false || github.event_name == 'push'
 
     env:
       CI: true
