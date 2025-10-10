@@ -34,16 +34,7 @@ describe('Notes Creation', () => {
   describe('Mobile Device Simulation', () => {
     beforeEach(() => {
       cy.viewport('iphone-6');
-
-      // Mock mobile user agent and disable speech recognition
-      cy.visit('/notes/create', {
-        onBeforeLoad: (win) => {
-          Object.defineProperty(win.navigator, 'userAgent', {
-            value:
-              'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1',
-          });
-        },
-      });
+      cy.visitAsIPhone('/notes/create');
     });
 
     it('should hide transcription settings on mobile without speech recognition', () => {
@@ -62,16 +53,7 @@ describe('Notes Creation', () => {
   describe('Navigation', () => {
     it('should not have navbar on mobile', () => {
       cy.viewport('iphone-6');
-
-      cy.visit('/notes/create', {
-        onBeforeLoad: (win) => {
-          Object.defineProperty(win.navigator, 'userAgent', {
-            value:
-              'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1',
-          });
-        },
-      });
-
+      cy.visitAsIPhone('/notes/create');
       cy.get('app-navbar').should('not.exist');
     });
 

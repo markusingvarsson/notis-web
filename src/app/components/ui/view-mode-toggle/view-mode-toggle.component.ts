@@ -16,6 +16,7 @@ export type ViewMode = 'grid' | 'single';
         [class.text-gray-600]="viewMode() !== 'grid'"
         [class.hover:text-[var(--tw-primary)]]="viewMode() !== 'grid'"
         aria-label="Grid view"
+        data-testid="view-toggle-grid"
       >
         <svg
           class="w-4 h-4"
@@ -40,6 +41,7 @@ export type ViewMode = 'grid' | 'single';
         [class.text-gray-600]="viewMode() !== 'single'"
         [class.hover:text-[var(--tw-primary)]]="viewMode() !== 'single'"
         aria-label="Single column view"
+        data-testid="view-toggle-list"
       >
         <svg
           class="w-4 h-4"

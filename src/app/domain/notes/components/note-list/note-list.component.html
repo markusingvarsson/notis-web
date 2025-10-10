@@ -12,6 +12,7 @@
           <!-- Center: Desktop Search (hidden on mobile) -->
           <div class="header-center flex-1 max-w-md mx-5 hidden lg:block">
             <app-search-input
+              data-testid="note-list-search"
               placeholder="Search notes..."
               [(value)]="filterService.searchQuery"
               class="w-full"
@@ -119,7 +120,7 @@
           Start by creating your first note
         }
       </p>
-      <app-button [link]="'/notes/create'" [queryParams]="{ CTA: 'true' }">
+      <app-button [link]="'/notes/create'" [queryParams]="{ CTA: 'true' }" data-testid="create-note-button">
         <app-microphone-icon [size]="16" />
         <span class="font-bold text-white">Record</span>
       </app-button>
@@ -127,6 +128,7 @@
     } @else {
     <div
       class="grid gap-6"
+      [attr.data-testid]="viewMode() === 'grid' ? 'notes-grid' : 'notes-list'"
       [class]="
         viewMode() === 'grid'
           ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'
