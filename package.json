@@ -12,7 +12,9 @@
     "lint": "ng lint",
     "quality-check": "npm run lint && npx tsc --noEmit --skipLibCheck && npm run build",
     "ngsw": "ng build && npx http-server -p 8080 -c-1 dist/notis-web/browser",
-    "ngrok": "ng serve --host 0.0.0.0 --disable-host-check"
+    "ngrok": "ng serve --host 0.0.0.0 --disable-host-check",
+    "cypress:open": "cypress open",
+    "cypress:run": "cypress run"
   },
   "private": true,
   "dependencies": {
@@ -39,12 +41,14 @@
     "@angular-devkit/build-angular": "^19.2.14",
     "@angular/cli": "^19.2.14",
     "@angular/compiler-cli": "^19.2.14",
+    "@cypress/schematic": "^4.1.1",
     "@tailwindcss/line-clamp": "^0.4.4",
     "@types/express": "^4.17.17",
     "@types/jasmine": "~5.1.0",
     "@types/node": "^18.18.0",
     "angular-eslint": "19.4.0",
     "autoprefixer": "^10.4.21",
+    "cypress": "^15.0.0",
     "eslint": "^9.26.0",
     "husky": "^9.1.7",
     "jasmine-core": "~5.6.0",

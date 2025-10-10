@@ -9,7 +9,7 @@
     [fixedNavbar]="!isMobile()"
   >
     <div class="mb-4 p-4 sm:px-0">
-      <h1 class="text-3xl font-bold tracking-tight">Settings</h1>
+      <h1 class="text-3xl font-bold tracking-tight" data-testid="settings-title">Settings</h1>
       <p class="text-muted-foreground mt-2">Customize your app experience</p>
     </div>
 
@@ -24,7 +24,7 @@
         <!-- Desktop: Always expanded -->
         <div class="hidden sm:block">
           <app-card-header>
-            <app-card-title>Transcription</app-card-title>
+            <app-card-title data-testid="transcription-title">Transcription</app-card-title>
             <app-card-description
               >Choose the language for audio
               transcription.</app-card-description
@@ -75,7 +75,7 @@
         <!-- Desktop: Always expanded -->
         <div class="hidden sm:block">
           <app-card-header>
-            <app-card-title>Microphone</app-card-title>
+            <app-card-title data-testid="microphone-title">Microphone</app-card-title>
             <app-card-description
               >Select your preferred microphone for audio
               recording.</app-card-description
@@ -119,7 +119,7 @@
         <!-- Desktop: Always expanded -->
         <div class="hidden sm:block">
           <app-card-header>
-            <app-card-title>Danger Zone</app-card-title>
+            <app-card-title data-testid="danger-zone-title">Danger Zone</app-card-title>
             <app-card-description>Manage your local data.</app-card-description>
           </app-card-header>
           <app-card-content class="p-4 flex justify-between items-center">
@@ -133,6 +133,7 @@
               size="lg"
               variant="destructive"
               (buttonClick)="requestClearData()"
+              data-testid="clear-data-button"
             >
               Clear All Data
             </app-button>
@@ -166,6 +167,7 @@
               size="lg"
               variant="destructive"
               (buttonClick)="requestClearData()"
+              data-testid="clear-data-button-mobile"
             >
               Clear All Data
             </app-button>

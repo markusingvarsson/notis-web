@@ -1,0 +1,260 @@
+describe('Notes Creation', () => {
+  beforeEach(() => {
+    cy.clearAllData();
+    cy.visit('/notes/create');
+  });
+
+  describe('Page Structure', () => {
+    it('should load the notes creation page', () => {
+      cy.url().should('include', '/notes/create');
+      cy.get('app-create-audio-note').should('be.visible');
+    });
+
+    it('should display the record button in idle state', () => {
+      cy.get('[data-testid="record-button-idle"]').should('be.visible');
+    });
+  });
+
+  describe('Recording Interface', () => {
+    it('should show recording controls', () => {
+      cy.get('app-record-button').should('be.visible');
+      cy.get('app-transcription-settings-picker').should('be.visible');
+    });
+
+    it('should have microphone selector when not recording', () => {
+      // Should show mic selector when not recording and has permission
+      cy.get('app-mic-selector').should('be.visible');
+    });
+
+    it('should display record label text', () => {
+      cy.contains('Click to start recording').should('be.visible');
+    });
+  });
+
+  describe('Mobile Device Simulation', () => {
+    beforeEach(() => {
+      cy.viewport('iphone-6');
+      cy.visitAsIPhone('/notes/create');
+    });
+
+    it('should hide transcription settings on mobile without speech recognition', () => {
+      cy.get('app-transcription-settings-picker').should('not.exist');
+    });
+
+    it('should not show navbar on mobile on note creation page', () => {
+      cy.get('app-navbar').should('not.exist');
+    });
+
+    it('should show record button in mobile layout', () => {
+      cy.get('[data-testid="record-button-idle"]').should('be.visible');
+    });
+  });
+
+  describe('Navigation', () => {
+    it('should not have navbar on mobile', () => {
+      cy.viewport('iphone-6');
+      cy.visitAsIPhone('/notes/create');
+      cy.get('app-navbar').should('not.exist');
+    });
+
+    it('should have working sidebar on desktop', () => {
+      cy.viewport(1280, 720);
+      cy.get('app-desktop-sidebar').should('be.visible');
+    });
+
+    it('should navigate back to notes list', () => {
+      cy.viewport(1280, 720);
+      cy.get('app-desktop-sidebar').within(() => {
+        cy.contains('Notes').click();
+      });
+      cy.url().should('include', '/notes');
+    });
+  });
+
+  describe('Recording Flow Integration', () => {
+    it('should complete full note creation flow', () => {
+      const testNote = {
+        noteName: 'Weekly Team Meeting',
+        tags: ['meeting', 'team', 'weekly'],
+        recordingDuration: 3000,
+      };
+
+      cy.createAudioNote(testNote);
+      cy.verifyNoteCreated(testNote);
+    });
+
+    it('should create note and clear all data', () => {
+      const testNote = {
+        noteName: 'Test Note to Delete',
+        tags: ['test', 'delete'],
+        recordingDuration: 2500,
+      };
+
+      // Create a note
+      cy.createAudioNote(testNote);
+
+      // Verify the note exists
+      cy.verifyNoteCreated(testNote);
+
+      // Clear all data
+      cy.clearAllData();
+
+      // Navigate back to notes to verify data is cleared
+      cy.visit('/notes');
+
+      // Verify the note card is gone
+      cy.get('app-note-card').should('not.exist');
+
+      // Alternatively, verify that there are no notes with the specific name
+      cy.get('body').should('not.contain', testNote.noteName);
+    });
+
+    it('should handle recording cancellation', () => {
+      // Start recording
+      cy.get('[data-testid="record-button-idle"]').click();
+
+      // Should show recording state
+      cy.get('[data-testid="record-button-recording"]', {
+        timeout: 10000,
+      }).should('be.visible');
+
+      // Only continue if recording actually started
+      cy.get('body').then(($body) => {
+        if ($body.find('[data-testid="record-button-recording"]').length > 0) {
+          // Look for cancel button if it exists
+          cy.get('body').then(($cancelBody) => {
+            if ($cancelBody.find('button:contains("Cancel")').length > 0) {
+              cy.contains('button', 'Cancel').click();
+              cy.get('[data-testid="record-button-idle"]').should('be.visible');
+            }
+          });
+        } else {
+          // If microphone is blocked, fail the test
+          cy.get('[data-testid="record-button-blocked"]').should('be.visible');
+          throw new Error(
+            'Microphone access blocked - test requires microphone permissions to pass',
+          );
+        }
+      });
+    });
+
+    it('should show recording duration during recording', () => {
+      // Start recording
+      cy.get('[data-testid="record-button-idle"]').click();
+
+      // Should show recording state
+      cy.get('[data-testid="record-button-recording"]', {
+        timeout: 10000,
+      }).should('be.visible');
+
+      // Only continue if recording actually started
+      cy.get('body').then(($body) => {
+        if ($body.find('[data-testid="record-button-recording"]').length > 0) {
+          // Should show some kind of recording indicator (timer, animation, etc.)
+          cy.get('body').should('satisfy', ($indicatorBody) => {
+            return (
+              $indicatorBody
+                .find('[data-testid="record-button-recording"]')
+                .hasClass('animate-pulse') ||
+              $indicatorBody.text().includes('00:') ||
+              $indicatorBody.find('.recording-indicator').length > 0
+            );
+          });
+
+          // Stop recording
+          cy.get('[data-testid="record-button-recording"]').click();
+        } else {
+          // If microphone is blocked, fail the test
+          cy.get('[data-testid="record-button-blocked"]').should('be.visible');
+          throw new Error(
+            'Microphone access blocked - test requires microphone permissions to pass',
+          );
+        }
+      });
+    });
+
+    it('should show blocked state when microphone access is denied', () => {
+      // Visit page with blocked microphone access from the start
+      cy.visit('/notes/create', {
+        onBeforeLoad(win) {
+          // Stub getUserMedia to reject
+          cy.stub(win.navigator.mediaDevices, 'getUserMedia').rejects(
+            new DOMException('Permission denied', 'NotAllowedError'),
+          );
+
+          // Stub permissions API to return denied from the start
+          if (win.navigator.permissions) {
+            cy.stub(win.navigator.permissions, 'query').resolves({
+              state: 'denied',
+              onchange: null,
+            } as PermissionStatus);
+          }
+        },
+      });
+
+      // Should show blocked state immediately (no idle state)
+      cy.get('[data-testid="record-button-blocked"]', {
+        timeout: 10000,
+      }).should('be.visible');
+
+      // Verify the blocked button is properly displayed and disabled
+      cy.get('[data-testid="record-button-blocked"]')
+        .should('exist')
+        .and('be.visible')
+        .and('be.disabled');
+    });
+  });
+
+  describe('Form Validation', () => {
+    beforeEach(() => {
+      // Simulate quick recording without mocking - let browser handle naturally
+      cy.get('[data-testid="record-button-idle"]').click();
+
+      // Handle recording state
+      cy.get('[data-testid="record-button-recording"]', {
+        timeout: 10000,
+      }).should('be.visible');
+
+      // Only continue if recording actually started
+      cy.get('body').then(($body) => {
+        if ($body.find('[data-testid="record-button-recording"]').length > 0) {
+          cy.wait(1000); // Brief recording
+          cy.get('[data-testid="record-button-recording"]').click();
+        } else {
+          // If microphone is blocked, fail the test
+          cy.get('[data-testid="record-button-blocked"]').should('be.visible');
+          throw new Error(
+            'Microphone access blocked - test requires microphone permissions to pass',
+          );
+        }
+      });
+    });
+
+    it('should allow saving with minimum required data', () => {
+      cy.contains('button', /Save/).click();
+
+      // Should successfully save and navigate
+      cy.url().should('not.include', '/notes/create');
+    });
+  });
+
+  describe('Responsiveness', () => {
+    it('should be responsive on mobile', () => {
+      cy.viewport('iphone-6');
+      cy.get('app-create-audio-note').should('be.visible');
+      cy.get('[data-testid="record-button-idle"]').should('be.visible');
+    });
+
+    it('should be responsive on tablet', () => {
+      cy.viewport('ipad-2');
+      cy.get('app-create-audio-note').should('be.visible');
+      cy.get('[data-testid="record-button-idle"]').should('be.visible');
+    });
+
+    it('should be responsive on desktop', () => {
+      cy.viewport(1280, 720);
+      cy.get('app-create-audio-note').should('be.visible');
+      cy.get('[data-testid="record-button-idle"]').should('be.visible');
+    });
+  });
+});

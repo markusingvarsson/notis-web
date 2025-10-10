@@ -30,6 +30,7 @@ import { MicrophoneSlashIconComponent } from '../../../../../../components/ui/ic
       [disabled]="state() === RECORDER_STATE.BLOCKED"
       [attr.aria-disabled]="state() === RECORDER_STATE.BLOCKED ? 'true' : null"
       [attr.aria-label]="ariaLabelInput()"
+      [attr.data-testid]="'record-button-' + state().toLowerCase()"
     >
       @switch (state()) { @case (RECORDER_STATE.RECORDING) {
       <app-stop-icon />

@@ -7,10 +7,11 @@
       <div class="text-center mb-12">
         <h2
           class="text-3xl sm:text-4xl font-bold mb-4 text-[var(--tw-primary-dark)]"
+          data-testid="usp-heading"
         >
           Built on Trust &amp; Transparency
         </h2>
-        <p class="text-lg text-[var(--tw-text-muted)]">
+        <p class="text-lg text-[var(--tw-text-muted)]" data-testid="usp-subtitle">
           Your notes, your device, your control. Always.
         </p>
       </div>
@@ -71,6 +72,7 @@
           target="_blank"
           rel="noopener noreferrer"
           class="inline-flex items-center gap-2 border-2 rounded-lg text-lg py-3 px-8 transition hover:bg-[var(--tw-primary-accent-bg)] border-[var(--tw-primary)] text-[var(--tw-primary)] font-semibold"
+          data-testid="github-link"
         >
           <app-github-link-icon [size]="20"></app-github-link-icon>
           View Source Code

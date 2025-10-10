@@ -43,3 +43,6 @@ Thumbs.db
 
 todo.txt
 .cursor/rules/cursorrules.mdc
+
+# Cypress
+/cypress/downloads
