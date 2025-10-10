@@ -6,16 +6,18 @@
       <div class="text-center">
         <h2
           class="text-3xl sm:text-4xl font-bold text-[var(--tw-primary-dark)] mb-6"
+          data-testid="cta-heading"
         >
           Turn Your Voice Into Action
         </h2>
-        <p class="text-lg text-[var(--tw-text-muted)] mb-8">
+        <p class="text-lg text-[var(--tw-text-muted)] mb-8" data-testid="cta-subtitle">
           Experience a smarter way to capture your thoughts.
         </p>
         <app-button
           [link]="'/notes/create'"
           [queryParams]="{ CTA: 'true' }"
           class="transform hover:scale-105 transition-transform duration-200"
+          data-testid="cta-get-started-button"
         >
           <app-microphone-icon [size]="16" />
           <span class="font-bold text-white">Get Started</span>

@@ -68,6 +68,7 @@ import { ButtonComponent } from '../../../../components/ui/button/button.compone
             </div>
             @if (selectedTags().length > 0) {
               <app-button
+                data-testid="clear-filters-mobile"
                 variant="outline"
                 size="sm"
                 (buttonClick)="onClearFilters()"

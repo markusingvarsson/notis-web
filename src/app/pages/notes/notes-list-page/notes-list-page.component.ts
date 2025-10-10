@@ -33,7 +33,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
       [fixedNavbar]="!isMobile()"
     >
       <app-desktop-sidebar>
-        <app-tag-filter slot="tags"></app-tag-filter>
+        <app-tag-filter slot="tags" data-testid="tag-filter"></app-tag-filter>
       </app-desktop-sidebar>
       <div class="space-y-8 p-4">
         <app-note-list></app-note-list>

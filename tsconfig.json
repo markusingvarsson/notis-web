@@ -16,8 +16,14 @@
     "moduleResolution": "bundler",
     "importHelpers": true,
     "target": "ES2022",
-    "module": "ES2022"
+    "module": "ES2022",
+    "types": ["jasmine", "node"],
+    "typeRoots": ["./node_modules/@types"]
   },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": ["cypress/**/*"],
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,

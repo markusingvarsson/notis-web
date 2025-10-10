@@ -110,13 +110,28 @@
               "src/**/*.html"
             ]
           }
+        },
+        "e2e": {
+          "builder": "@cypress/schematic:cypress",
+          "options": {
+            "devServerTarget": "notis-web:serve",
+            "watch": true,
+            "headless": false
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "notis-web:serve:production"
+            }
+          }
         }
       }
     }
   },
   "cli": {
     "schematicCollections": [
-      "angular-eslint"
+      "@cypress/schematic",
+      "angular-eslint",
+      "@schematics/angular"
     ]
   }
 }
