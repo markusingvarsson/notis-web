@@ -12,13 +12,14 @@ import {
   SpeechRecognitionEvent,
   SpeechRecognitionErrorEvent,
 } from '../../../index';
+import { pipeline } from '@huggingface/transformers';
 
 /**
  * WebKit Speech Recognition provider
  * Uses the Web Speech API available in WebKit-based browsers (Chrome, Safari, Edge)
  */
 @Injectable({ providedIn: 'root' })
-export class WebkitSpeechProvider implements TranscriptionProvider {
+export class WhisperProvider implements TranscriptionProvider {
   #platformId = inject(PLATFORM_ID);
   #deviceService = inject(DeviceDetectorService);
   #toaster = inject(ToasterService);
@@ -190,8 +191,18 @@ export class WebkitSpeechProvider implements TranscriptionProvider {
     });
   }
 
-  initialize(callback: (progress: number) => void): Promise<void> {
-    callback(100);
+  async initialize(callback: (progress: number) => void): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const foo = await pipeline(
+      'automatic-speech-recognition',
+      'Xenova/whisper-tiny.en', // Web-optimized English model
+      {
+        progress_callback: (progressInfo) =>
+          callback(
+            progressInfo.status === 'progress' ? progressInfo.progress : 0,
+          ),
+      },
+    );
     return Promise.resolve();
   }
 }

@@ -11,6 +11,7 @@ export interface TranscriptionProvider {
   readonly transcriptText: Signal<string>;
   readonly lastError: Signal<TranscriptionError | null>;
 
+  initialize(callback: (progress: number) => void): Promise<void>;
   startTranscription(options: TranscriptionOptions): Promise<void>;
   stopTranscription(): void;
   handleError(error: SpeechRecognitionErrorEvent): boolean;

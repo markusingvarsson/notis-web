@@ -32,7 +32,7 @@ export class CreateNoteComponent {
   #recordAudioService = inject(RecordAudioService);
   #router = inject(Router);
   #transcriptionSettingsPickerService = inject(
-    TranscriptionSettingsPickerService
+    TranscriptionSettingsPickerService,
   );
   readonly CTA = input<boolean>(false);
   readonly tags = input<Record<string, Tag>>({});
@@ -54,7 +54,7 @@ export class CreateNoteComponent {
   });
 
   readonly isSaving = computed(
-    () => this.recordingState() === RECORDER_STATE.SAVING
+    () => this.recordingState() === RECORDER_STATE.SAVING,
   );
 
   readonly headerClasses = computed(() => {
@@ -70,7 +70,6 @@ export class CreateNoteComponent {
     }
     return 'text-[var(--tw-primary-dark)]';
   });
-
 
   constructor() {
     effect(() => {

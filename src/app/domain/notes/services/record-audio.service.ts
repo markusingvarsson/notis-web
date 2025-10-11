@@ -7,11 +7,8 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import {
-  RECORDER_STATE,
-  RecorderState,
-} from '../'; // Adjust path as needed
-import { AUDIO_MIME_TYPE } from './mime-type'; // Adjust path as needed
+import { RECORDER_STATE, RecorderState } from '../';
+import { AUDIO_MIME_TYPE } from './mime-type';
 import { ToasterService } from '../../../components/ui/toaster/toaster.service';
 import { NoSoundDetector } from '../utils/no-sound-detector.util';
 import { AudioAnalyzer } from './audio-analyzer.util';
@@ -280,7 +277,9 @@ export class RecordAudioService implements OnDestroy {
       // Start transcription if language is specified
       if (transcriptionLanguage) {
         try {
-          await this.#speechRecognitionService.startTranscription(transcriptionLanguage);
+          await this.#speechRecognitionService.startTranscription(
+            transcriptionLanguage,
+          );
         } catch (error) {
           console.error('Failed to start transcription:', error);
           // Continue with recording even if transcription fails

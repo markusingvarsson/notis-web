@@ -1,0 +1,26 @@
+# WORKAROUND: Force @huggingface/transformers to use web version in SSR
+# Issue: The package uses onnxruntime-node in Node environments which breaks Angular SSR builds
+# because .node binary files cannot be bundled by webpack/esbuild
+#
+# This patch changes the package.json exports to always use transformers.web.js
+# instead of transformers.node.mjs/cjs, preventing onnxruntime-node from being imported
+#
+diff --git a/node_modules/@huggingface/transformers/package.json b/node_modules/@huggingface/transformers/package.json
+index 1234567..abcdefg 100644
+--- a/node_modules/@huggingface/transformers/package.json
++++ b/node_modules/@huggingface/transformers/package.json
+@@ -8,12 +8,12 @@
+   "exports": {
+     "node": {
+       "import": {
+         "types": "./types/transformers.d.ts",
+-        "default": "./dist/transformers.node.mjs"
++        "default": "./dist/transformers.web.js"
+       },
+       "require": {
+         "types": "./types/transformers.d.ts",
+-        "default": "./dist/transformers.node.cjs"
++        "default": "./dist/transformers.web.js"
+       }
+     },
+     "default": {
