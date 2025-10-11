@@ -80,4 +80,8 @@ export class SpeechRecognitionService {
   cleanup(): void {
     this.activeProvider.cleanup();
   }
+
+  initialize(callback: (progress: number) => void): Promise<void> {
+    return this.activeProvider.initialize(callback);
+  }
 }

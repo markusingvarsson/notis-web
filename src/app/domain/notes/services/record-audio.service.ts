@@ -277,6 +277,7 @@ export class RecordAudioService implements OnDestroy {
       // Start transcription if language is specified
       if (transcriptionLanguage) {
         try {
+          await this.#speechRecognitionService.initialize(() => undefined);
           await this.#speechRecognitionService.startTranscription(
             transcriptionLanguage,
           );
