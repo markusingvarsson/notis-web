@@ -10,26 +10,27 @@ import { isPlatformBrowser } from '@angular/common';
 import {
   RECORDER_STATE,
   RecorderState,
-  SpeechRecognitionEvent,
-  SpeechRecognitionErrorEvent,
-  WebkitSpeechRecognition,
 } from '../'; // Adjust path as needed
 import { AUDIO_MIME_TYPE } from './mime-type'; // Adjust path as needed
 import { ToasterService } from '../../../components/ui/toaster/toaster.service';
 import { NoSoundDetector } from '../utils/no-sound-detector.util';
 import { AudioAnalyzer } from './audio-analyzer.util';
 import { SupportedLanguageCode } from '../../../core/services/language-picker.service';
+import { SpeechRecognitionService } from './speech-recognition.service';
 
 @Injectable()
 export class RecordAudioService implements OnDestroy {
   #platformId = inject(PLATFORM_ID);
   #audioMimeType = inject(AUDIO_MIME_TYPE);
   #toaster = inject(ToasterService);
+  #speechRecognitionService = inject(SpeechRecognitionService);
 
   // Public signals for component consumption
   readonly recordingState = signal<RecorderState>(RECORDER_STATE.IDLE);
   readonly audioBlob = signal<Blob | null>(null);
-  readonly transcriptText = signal('');
+
+  // Delegate transcript text to speech recognition service
+  readonly transcriptText = this.#speechRecognitionService.transcriptText;
   readonly selectedDeviceId = signal<string>('');
 
   // Audio visualization signals
@@ -54,7 +55,6 @@ export class RecordAudioService implements OnDestroy {
   // Private state
   private audioUrl?: string;
   private mediaRecorder: MediaRecorder | null = null;
-  private recognition: WebkitSpeechRecognition | null = null;
   private permissionStatusSubscription: PermissionStatus | null = null;
 
   // Audio analysis properties
@@ -98,7 +98,7 @@ export class RecordAudioService implements OnDestroy {
       this.permissionStatusSubscription.onchange = null;
       this.permissionStatusSubscription = null;
     }
-    this.cleanupSpeechRecognition();
+    this.#speechRecognitionService.cleanup();
     this.audioAnalyzer.stop();
     this.voiceLevel.set(0);
   }
@@ -273,45 +273,18 @@ export class RecordAudioService implements OnDestroy {
         console.error('MediaRecorder error:', event);
         this.recordingState.set(RECORDER_STATE.IDLE);
         stream.getTracks().forEach((track) => track.stop()); // Ensure stream is cleaned up
-        this.cleanupSpeechRecognition(); // Clean up speech recognition resources
+        this.#speechRecognitionService.cleanup(); // Clean up speech recognition resources
         this.audioAnalyzer.stop();
       };
 
-      if (transcriptionLanguage && window.webkitSpeechRecognition) {
-        this.recognition = new window.webkitSpeechRecognition();
-        this.recognition.continuous = true;
-        this.recognition.interimResults = true;
-        this.recognition.lang = transcriptionLanguage;
-        this.recognition.onresult = (e: SpeechRecognitionEvent) => {
-          const transcript = Array.from(e.results) // Use Array.from for SpeechRecognitionResultList
-            .map((result) => result[0]) // Get the first alternative
-            .map((alternative) => alternative.transcript)
-            .join('');
-          this.transcriptText.set(transcript);
-        };
-        this.recognition.onerror = (
-          eventRecognitionError: SpeechRecognitionErrorEvent,
-        ) => {
-          console.error('Speech recognition error:', eventRecognitionError);
-
-          // Try to handle known errors with appropriate recovery strategies
-          const wasHandled = this.handleTranscriptionError(
-            eventRecognitionError,
-          );
-
-          // If the error wasn't handled by our known error strategies, clean up
-          if (!wasHandled) {
-            console.warn(
-              `Unhandled speech recognition error: ${eventRecognitionError.error}`,
-            );
-            this.cleanupSpeechRecognition();
-          }
-        };
-        this.recognition.onend = () => {
-          // console.log('Speech recognition ended.');
-          // Optionally handle natural end of speech if not continuous, or if stop() was called.
-        };
-        this.recognition.start();
+      // Start transcription if language is specified
+      if (transcriptionLanguage) {
+        try {
+          await this.#speechRecognitionService.startTranscription(transcriptionLanguage);
+        } catch (error) {
+          console.error('Failed to start transcription:', error);
+          // Continue with recording even if transcription fails
+        }
       }
 
       this.recordingState.set(RECORDER_STATE.STARTING);
@@ -322,7 +295,7 @@ export class RecordAudioService implements OnDestroy {
       if (this.mediaRecorder?.stream) {
         this.mediaRecorder.stream.getTracks().forEach((track) => track.stop());
       }
-      this.cleanupSpeechRecognition();
+      this.#speechRecognitionService.cleanup();
       this.audioAnalyzer.stop();
       this.voiceLevel.set(0);
     }
@@ -336,9 +309,7 @@ export class RecordAudioService implements OnDestroy {
     if (this.mediaRecorder && this.mediaRecorder.state === 'recording') {
       this.mediaRecorder.stop();
     }
-    if (this.recognition) {
-      this.recognition.stop();
-    }
+    this.#speechRecognitionService.stopTranscription();
     this.audioAnalyzer.stop();
     this.voiceLevel.set(0);
 
@@ -355,80 +326,12 @@ export class RecordAudioService implements OnDestroy {
       this.audioUrl = undefined;
     }
     this.audioBlob.set(null);
-    this.transcriptText.set('');
+    this.#speechRecognitionService.clearTranscript();
     this.voiceLevel.set(0);
     this.noSoundDetector.reset();
     this.audioAnalyzer.stop();
-    // Speech recognition artifacts (like the recognition object itself) are typically reset
-    // when starting a new recognition or when explicitly clearing.
-    this.cleanupSpeechRecognition();
-  }
-
-  // Handle known transcription errors with appropriate recovery strategies
-  private handleTranscriptionError(
-    error: SpeechRecognitionErrorEvent,
-  ): boolean {
-    switch (error.error) {
-      case 'no-speech':
-        console.log('No speech detected, restarting recognition...');
-        this.restartSpeechRecognition();
-        return true; // Error was handled
-
-      case 'audio-capture':
-        console.warn('Audio capture error, stopping transcription');
-        this.#toaster.warning(
-          'Audio capture issue detected. Transcription stopped.',
-        );
-        this.cleanupSpeechRecognition();
-        return true;
-
-      case 'not-allowed':
-        console.warn('Speech recognition not allowed');
-        this.#toaster.error('Speech recognition permission denied');
-        this.cleanupSpeechRecognition();
-        return true;
-
-      case 'network':
-        console.warn('Network error during speech recognition');
-        this.#toaster.warning('Network error. Transcription may be affected.');
-        this.restartSpeechRecognition();
-        return true;
-
-      case 'aborted':
-        console.log('Speech recognition was aborted');
-        return true; // No action needed, likely intentional
-
-      default:
-        return false; // Unknown error, let caller handle
-    }
-  }
-
-  // Helper to restart speech recognition with error handling
-  private restartSpeechRecognition(): void {
-    setTimeout(() => {
-      if (
-        this.recognition &&
-        this.recordingState() === RECORDER_STATE.RECORDING
-      ) {
-        try {
-          this.recognition.start();
-        } catch (e) {
-          console.warn('Failed to restart speech recognition:', e);
-          // If restart fails multiple times, we could implement exponential backoff here
-        }
-      }
-    }, 100);
-  }
-
-  // Helper to clean up speech recognition resources
-  private cleanupSpeechRecognition(): void {
-    if (this.recognition) {
-      this.recognition.abort();
-      this.recognition.onresult = undefined!;
-      this.recognition.onerror = undefined!;
-      this.recognition.onend = undefined;
-      this.recognition = null;
-    }
+    // Speech recognition cleanup is now handled by the service
+    this.#speechRecognitionService.cleanup();
   }
 
   clearRecording(): void {
