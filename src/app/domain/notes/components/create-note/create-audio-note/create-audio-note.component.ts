@@ -6,7 +6,9 @@ import {
   output,
   signal,
   ChangeDetectionStrategy,
+  PLATFORM_ID,
 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { NoteCreated, RECORDER_STATE, Tag } from '../../..';
 import { RecordAudioService } from '../../../services/record-audio.service';
 import { FormsModule } from '@angular/forms';
@@ -21,6 +23,9 @@ import { ConfirmationModalService } from '../../../../../components/ui/confirmat
 import { MicSelectorComponent } from '../components/mic-selector/mic-selector.component';
 import { TranscriptionSettingsPickerService } from '../components/transcription-settings-picker/transcription-settings-picker.service';
 import { SpeechRecognitionService } from '../../../services/speech-recognition.service';
+import { WhisperModelStatusService } from '../../../services/transcription/whisper-model-status.service';
+import { WhisperDownloadModalService } from '../components/whisper-download-modal/whisper-download-modal.service';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-create-audio-note',
@@ -42,6 +47,7 @@ export class CreateAudioNoteComponent {
     return this.recordingState() === RECORDER_STATE.RECORDING;
   });
 
+  #platformId = inject(PLATFORM_ID);
   #recordAudioService = inject(RecordAudioService);
   #toaster = inject(ToasterService);
   #transcriptionSettingsPickerService = inject(
@@ -49,6 +55,9 @@ export class CreateAudioNoteComponent {
   );
   #confirmationModalService = inject(ConfirmationModalService);
   #speechRecognitionService = inject(SpeechRecognitionService);
+  #modelStatusService = inject(WhisperModelStatusService);
+  #whisperDownloadModalService = inject(WhisperDownloadModalService);
+  #deviceService = inject(DeviceDetectorService);
 
   readonly recordingState = this.#recordAudioService.recordingState;
   readonly audioBlob = this.#recordAudioService.audioBlob;
@@ -73,28 +82,114 @@ export class CreateAudioNoteComponent {
     return this.recordingState() !== RECORDER_STATE.BLOCKED;
   });
 
+  readonly showModelRequiredBadge = computed(() => {
+    if (!isPlatformBrowser(this.#platformId)) {
+      return false;
+    }
+
+    const transcriptionSetting = this.selectedTranscriptionSetting();
+    const storedProvider = localStorage.getItem('transcriptionProvider');
+
+    return (
+      transcriptionSetting !== 'no-transcription' &&
+      storedProvider === 'whisper' &&
+      !this.#modelStatusService.isDownloaded()
+    );
+  });
+
+  readonly modelStatusBadgeText = computed(() => {
+    if (this.#modelStatusService.isDownloading()) {
+      return 'Downloading...';
+    }
+    return 'Model Required';
+  });
+
   onDeviceSelected(deviceId: string): void {
     this.#recordAudioService.setSelectedDevice(deviceId);
   }
 
-  toggleRecording(): void {
+  async toggleRecording(): Promise<void> {
     if (this.recordingState() === RECORDER_STATE.BLOCKED) {
       return;
     }
 
     if (this.recordingState() === RECORDER_STATE.IDLE) {
-      // Before starting, ensure any previous audio/text is handled or explicitly cleared by user if necessary
-      // For now, service's startRecording clears previous artifacts.
       const transcriptionLanguage = this.selectedTranscriptionSetting();
       const languageSetting =
         transcriptionLanguage === 'no-transcription'
           ? null
           : transcriptionLanguage;
-      this.#recordAudioService.startRecording(languageSetting);
+
+      // Check if we need Whisper model and it's not downloaded
+      if (languageSetting && !this.#modelStatusService.isDownloaded()) {
+        // Check if user selected Whisper provider
+        if (await this.needsWhisperDownload()) {
+          const action = await this.#whisperDownloadModalService.open({
+            hasWebkitAvailable: this.checkWebkitAvailability(),
+          });
+
+          switch (action) {
+            case 'download-and-record':
+              // Model was downloaded in modal, proceed with recording
+              this.#recordAudioService.startRecording(languageSetting);
+              break;
+
+            case 'record-without-transcription':
+              // Start recording without transcription and persist this choice
+              this.selectedTranscriptionSetting.set('no-transcription');
+              this.#transcriptionSettingsPickerService.storeTranscriptionSettings(
+                'no-transcription',
+              );
+              this.#recordAudioService.startRecording(null);
+              break;
+
+            case 'switch-provider':
+              // Switch to WebKit provider
+              if (isPlatformBrowser(this.#platformId)) {
+                localStorage.setItem('transcriptionProvider', 'webkit-speech');
+                this.#toaster.info('Switched to WebKit Speech. Please reload the page.');
+              }
+              return;
+
+            case 'cancel':
+              // User cancelled, do nothing
+              return;
+          }
+        } else {
+          // WebKit or no transcription
+          this.#recordAudioService.startRecording(languageSetting);
+        }
+      } else {
+        // Model already downloaded or no transcription needed
+        this.#recordAudioService.startRecording(languageSetting);
+      }
     } else if (this.recordingState() === RECORDER_STATE.RECORDING) {
       this.#recordAudioService.stopRecording();
       this.currentView.set('preview');
     }
+  }
+
+  /**
+   * Check if we need to download Whisper model
+   */
+  private async needsWhisperDownload(): Promise<boolean> {
+    if (!isPlatformBrowser(this.#platformId)) {
+      return false;
+    }
+
+    const storedProvider = localStorage.getItem('transcriptionProvider');
+    return storedProvider === 'whisper';
+  }
+
+  /**
+   * Check if WebKit Speech Recognition is available
+   */
+  private checkWebkitAvailability(): boolean {
+    return (
+      isPlatformBrowser(this.#platformId) &&
+      'webkitSpeechRecognition' in window &&
+      this.#deviceService.isDesktop()
+    );
   }
 
   async handleSave(): Promise<void> {

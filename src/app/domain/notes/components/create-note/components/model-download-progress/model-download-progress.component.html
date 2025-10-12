@@ -1,0 +1,25 @@
+<div class="w-full space-y-2">
+  @if (showLabel()) {
+    <div class="flex items-center justify-between text-sm">
+      <span class="text-[var(--tw-text-muted)]">Downloading model...</span>
+      <span class="font-medium text-[var(--tw-primary-dark)]">
+        {{ progressLabel() }}
+      </span>
+    </div>
+  }
+
+  <div
+    class="w-full bg-[var(--tw-bg)] rounded-full overflow-hidden"
+    [class]="barHeight()"
+  >
+    <div
+      class="bg-[var(--tw-primary)] transition-all duration-300 ease-out rounded-full"
+      [class]="barHeight()"
+      [style.width.%]="progress()"
+      role="progressbar"
+      [attr.aria-valuenow]="progress()"
+      [attr.aria-valuemin]="0"
+      [attr.aria-valuemax]="100"
+    ></div>
+  </div>
+</div>

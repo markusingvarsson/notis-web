@@ -38,3 +38,26 @@ export interface TranscriptionProviderConfig {
   settings?: Record<string, unknown>;
   enabled: boolean;
 }
+
+export type ModelDownloadStatus =
+  | 'not-downloaded'
+  | 'downloading'
+  | 'downloaded'
+  | 'error';
+
+export interface ModelStatusInfo {
+  status: ModelDownloadStatus;
+  progress: number; // 0-100
+  downloadedSize?: number; // bytes
+  totalSize?: number; // bytes
+  error?: string;
+  lastDownloaded?: string; // ISO date string
+}
+
+export interface ModelDownloadProgress {
+  status: 'progress' | 'done' | 'error';
+  progress: number; // 0-100
+  file?: string;
+  loaded?: number;
+  total?: number;
+}

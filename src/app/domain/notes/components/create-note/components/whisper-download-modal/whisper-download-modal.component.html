@@ -1,0 +1,212 @@
+<!-- Modal Overlay -->
+<div
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+  (click)="onCancel()"
+  (keydown.escape)="onCancel()"
+  tabindex="0"
+  role="button"
+  aria-label="Close modal"
+>
+  <!-- Modal Container -->
+  <div
+    class="relative w-full max-w-lg mx-4 bg-[var(--tw-bg)] rounded-lg shadow-xl"
+    (click)="$event.stopPropagation()"
+    (keydown)="$event.stopPropagation()"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-title"
+  >
+    @if (!showDownloadProgress()) {
+      <!-- Header -->
+      <div class="p-6 border-b border-[var(--tw-border-light)]">
+        <h2
+          id="modal-title"
+          class="text-xl font-semibold text-[var(--tw-primary-dark)]"
+        >
+          Download Whisper Model?
+        </h2>
+        <p class="mt-2 text-sm text-[var(--tw-text-muted)]">
+          Whisper provides high-quality offline transcription. This requires
+          downloading a {{ modelSize }} model file to your device.
+        </p>
+      </div>
+
+      <!-- Content -->
+      <div class="p-6 space-y-4">
+        <!-- Benefits -->
+        <div class="space-y-2">
+          <div class="flex items-center gap-3">
+            <svg
+              class="w-5 h-5 text-[var(--tw-success)]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            <span class="text-sm text-[var(--tw-text)]"
+              >Works offline - no internet required</span
+            >
+          </div>
+          <div class="flex items-center gap-3">
+            <svg
+              class="w-5 h-5 text-[var(--tw-success)]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            <span class="text-sm text-[var(--tw-text)]"
+              >Better transcription accuracy</span
+            >
+          </div>
+          <div class="flex items-center gap-3">
+            <svg
+              class="w-5 h-5 text-[var(--tw-success)]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+            <span class="text-sm text-[var(--tw-text)]"
+              >Privacy-focused - runs on your device</span
+            >
+          </div>
+        </div>
+
+        <!-- Info box -->
+        <div
+          class="p-4 bg-[var(--tw-bg-light)] border border-[var(--tw-border-light)] rounded-lg"
+        >
+          <p class="text-sm text-[var(--tw-text-muted)]">
+            The model will be cached in your browser and only needs to be
+            downloaded once. Download size: {{ modelSize }}.
+          </p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="p-6 border-t border-[var(--tw-border-light)] space-y-3">
+        <!-- Primary action -->
+        <app-button
+          variant="default"
+          size="lg"
+          (buttonClick)="onDownloadAndRecord()"
+          class="w-full"
+        >
+          Download & Start Recording
+        </app-button>
+
+        <!-- Secondary actions -->
+        <div class="grid grid-cols-2 gap-3">
+          <app-button
+            variant="outline"
+            size="default"
+            (buttonClick)="onRecordWithoutTranscription()"
+          >
+            Record Without Transcription
+          </app-button>
+
+          @if (hasWebkitAvailable()) {
+            <app-button
+              variant="outline"
+              size="default"
+              (buttonClick)="onSwitchProvider()"
+            >
+              Use WebKit Instead
+            </app-button>
+          } @else {
+            <app-button
+              variant="ghost"
+              size="default"
+              (buttonClick)="onCancel()"
+            >
+              Cancel
+            </app-button>
+          }
+        </div>
+
+        @if (hasWebkitAvailable()) {
+          <app-button
+            variant="ghost"
+            size="sm"
+            (buttonClick)="onCancel()"
+            class="w-full"
+          >
+            Cancel
+          </app-button>
+        }
+      </div>
+    } @else {
+      <!-- Download Progress View -->
+      <div class="p-6">
+        <div class="space-y-4">
+          <div>
+            <h3 class="text-lg font-semibold text-[var(--tw-primary-dark)]">
+              Downloading Model
+            </h3>
+            <p class="mt-1 text-sm text-[var(--tw-text-muted)]">
+              This may take a few minutes depending on your connection speed.
+              The model will be cached for future use.
+            </p>
+          </div>
+
+          <app-model-download-progress
+            [progress]="downloadProgress()"
+            [downloadedSize]="modelStatus().downloadedSize"
+            [totalSize]="modelStatus().totalSize"
+          />
+
+          @if (modelStatus().status === 'error') {
+            <div
+              class="p-4 bg-[var(--tw-error-bg)] border border-[var(--tw-error)] rounded-lg"
+            >
+              <p class="text-sm text-[var(--tw-error)]">
+                {{ modelStatus().error || 'Download failed' }}
+              </p>
+            </div>
+          }
+
+          <div class="flex gap-3">
+            <app-button
+              variant="outline"
+              size="default"
+              (buttonClick)="cancelDownload()"
+              class="flex-1"
+            >
+              Cancel
+            </app-button>
+
+            @if (modelStatus().status === 'error') {
+              <app-button
+                variant="default"
+                size="default"
+                (buttonClick)="onDownloadAndRecord()"
+                class="flex-1"
+              >
+                Retry
+              </app-button>
+            }
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</div>

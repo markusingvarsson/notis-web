@@ -14,6 +14,7 @@ import {
 } from '../../../../index';
 // import { pipeline } from '@huggingface/transformers';
 import { TRANSCRIPTION_INJECTION_TOKEN } from '../../transcription.token';
+import { WhisperModelStatusService } from '../../whisper-model-status.service';
 
 /**
  * WebKit Speech Recognition provider
@@ -23,6 +24,7 @@ class WhisperProvider implements TranscriptionProvider {
   #platformId = inject(PLATFORM_ID);
   #deviceService = inject(DeviceDetectorService);
   #toaster = inject(ToasterService);
+  #modelStatusService = inject(WhisperModelStatusService);
 
   // Provider state
   readonly isAvailable = signal(this.checkAvailability());
@@ -32,6 +34,7 @@ class WhisperProvider implements TranscriptionProvider {
 
   private recognition: WebkitSpeechRecognition | null = null;
   private currentOptions: TranscriptionOptions | null = null;
+  private downloadCancelled = false;
 
   private checkAvailability(): boolean {
     return (
@@ -192,20 +195,81 @@ class WhisperProvider implements TranscriptionProvider {
   }
 
   async initialize(callback: (progress: number) => void): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { pipeline } = await import('@huggingface/transformers');
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const foo = await pipeline(
-      'automatic-speech-recognition',
-      'Xenova/whisper-tiny.en', // Web-optimized English model
-      {
-        progress_callback: (progressInfo) =>
-          callback(
-            progressInfo.status === 'progress' ? progressInfo.progress : 0,
-          ),
-      },
-    );
-    return Promise.resolve();
+    this.downloadCancelled = false;
+
+    try {
+      // Check if already downloaded
+      if (this.#modelStatusService.isDownloaded()) {
+        callback(100);
+        return;
+      }
+
+      // Set status to downloading
+      this.#modelStatusService.updateStatus({
+        status: 'downloading',
+        progress: 0,
+      });
+
+      const { pipeline } = await import('@huggingface/transformers');
+
+      const model = await pipeline(
+        'automatic-speech-recognition',
+        'Xenova/whisper-tiny.en', // Web-optimized English model
+        {
+          progress_callback: (progressInfo) => {
+            if (this.downloadCancelled) {
+              throw new Error('Download cancelled');
+            }
+
+            if (progressInfo.status === 'progress') {
+              const progress = progressInfo.progress || 0;
+              callback(progress);
+
+              this.#modelStatusService.setDownloadProgress(
+                progress,
+                progressInfo.loaded,
+                progressInfo.total,
+              );
+            } else if (progressInfo.status === 'done') {
+              callback(100);
+            }
+          },
+        },
+      );
+
+      // Mark as downloaded when complete
+      this.#modelStatusService.markAsDownloaded();
+      this.#toaster.success('Whisper model downloaded successfully');
+
+      // Store reference (optional, for future use)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const _model = model;
+    } catch (error) {
+      if (this.downloadCancelled) {
+        this.#modelStatusService.resetStatus();
+        this.#toaster.info('Model download cancelled');
+      } else {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Download failed';
+        this.#modelStatusService.markAsError(errorMessage);
+        this.#toaster.error(`Failed to download model: ${errorMessage}`);
+      }
+      throw error;
+    }
+  }
+
+  /**
+   * Cancel ongoing download
+   */
+  cancelDownload(): void {
+    this.downloadCancelled = true;
+  }
+
+  /**
+   * Check if model is downloaded
+   */
+  isModelDownloaded(): boolean {
+    return this.#modelStatusService.isDownloaded();
   }
 }
 

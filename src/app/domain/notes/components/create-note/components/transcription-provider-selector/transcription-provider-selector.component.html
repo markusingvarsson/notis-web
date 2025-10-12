@@ -69,4 +69,147 @@
       </button>
     </div>
   }
+
+  <!-- Model Status Section (only for Whisper provider) -->
+  @if (showModelStatus()) {
+    <div class="mt-4 p-4 border border-[var(--tw-border-light)] rounded-lg bg-[var(--tw-bg-light)]">
+      <!-- Not Downloaded -->
+      @if (modelStatus().status === 'not-downloaded') {
+        <div class="space-y-3">
+          <div>
+            <h4 class="text-sm font-semibold text-[var(--tw-primary-dark)]">
+              Whisper Model Required
+            </h4>
+            <p class="text-sm text-[var(--tw-text-muted)] mt-1">
+              Download the Whisper model ({{ modelSizeFormatted() }}) to enable offline transcription.
+            </p>
+          </div>
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center gap-2 text-sm text-[var(--tw-text-muted)]">
+              <svg class="w-4 h-4 text-[var(--tw-success)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Works offline</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-[var(--tw-text-muted)]">
+              <svg class="w-4 h-4 text-[var(--tw-success)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Better accuracy</span>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-[var(--tw-text-muted)]">
+              <svg class="w-4 h-4 text-[var(--tw-success)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+              </svg>
+              <span>Privacy-focused</span>
+            </div>
+          </div>
+          <app-button
+            variant="default"
+            size="lg"
+            (buttonClick)="downloadModel()"
+            class="w-full"
+          >
+            Download Model
+          </app-button>
+        </div>
+      }
+
+      <!-- Downloading -->
+      @if (modelStatus().status === 'downloading') {
+        <div class="space-y-3">
+          <div>
+            <h4 class="text-sm font-semibold text-[var(--tw-primary-dark)]">
+              Downloading Model
+            </h4>
+            <p class="text-sm text-[var(--tw-text-muted)] mt-1">
+              This may take a few minutes depending on your connection speed.
+            </p>
+          </div>
+          <app-model-download-progress
+            [progress]="downloadProgress()"
+            [downloadedSize]="modelStatus().downloadedSize"
+            [totalSize]="modelStatus().totalSize"
+          />
+          <app-button
+            variant="outline"
+            size="default"
+            (buttonClick)="cancelDownload()"
+            class="w-full"
+          >
+            Cancel Download
+          </app-button>
+        </div>
+      }
+
+      <!-- Downloaded -->
+      @if (modelStatus().status === 'downloaded') {
+        <div class="space-y-3">
+          <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-[var(--tw-success)] mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div class="flex-1">
+              <h4 class="text-sm font-semibold text-[var(--tw-primary-dark)]">
+                Model Ready
+              </h4>
+              <p class="text-sm text-[var(--tw-text-muted)] mt-1">
+                Whisper model is downloaded and ready to use.
+              </p>
+              @if (modelStatus().lastDownloaded) {
+                <p class="text-xs text-[var(--tw-text-muted)] mt-1">
+                  Downloaded on {{ modelStatus().lastDownloaded | date: 'short' }}
+                </p>
+              }
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <app-button
+              variant="outline"
+              size="sm"
+              (buttonClick)="redownloadModel()"
+              class="flex-1"
+            >
+              Re-download
+            </app-button>
+            <app-button
+              variant="destructive"
+              size="sm"
+              (buttonClick)="deleteModel()"
+              class="flex-1"
+            >
+              Delete Model
+            </app-button>
+          </div>
+        </div>
+      }
+
+      <!-- Error -->
+      @if (modelStatus().status === 'error') {
+        <div class="space-y-3">
+          <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-[var(--tw-error)] mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <div class="flex-1">
+              <h4 class="text-sm font-semibold text-[var(--tw-error)]">
+                Download Failed
+              </h4>
+              <p class="text-sm text-[var(--tw-text-muted)] mt-1">
+                {{ modelStatus().error || 'An error occurred while downloading the model.' }}
+              </p>
+            </div>
+          </div>
+          <app-button
+            variant="default"
+            size="lg"
+            (buttonClick)="downloadModel()"
+            class="w-full"
+          >
+            Retry Download
+          </app-button>
+        </div>
+      }
+    </div>
+  }
 </div>
