@@ -1,24 +1,24 @@
-import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
+import { inject, PLATFORM_ID, Provider, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { ToasterService } from '../../../../../components/ui/toaster/toaster.service';
+import { ToasterService } from '../../../../../../components/ui/toaster/toaster.service';
 import {
   TranscriptionProvider,
   TranscriptionOptions,
   TranscriptionError,
-} from '../transcription.types';
+} from '../../transcription.types';
 import {
   WebkitSpeechRecognition,
   SpeechRecognitionEvent,
   SpeechRecognitionErrorEvent,
-} from '../../../index';
+} from '../../../../index';
+import { TRANSCRIPTION_INJECTION_TOKEN } from '../../transcription.token';
 
 /**
  * WebKit Speech Recognition provider
  * Uses the Web Speech API available in WebKit-based browsers (Chrome, Safari, Edge)
  */
-@Injectable({ providedIn: 'root' })
-export class WebkitSpeechProvider implements TranscriptionProvider {
+class WebkitSpeechProvider implements TranscriptionProvider {
   #platformId = inject(PLATFORM_ID);
   #deviceService = inject(DeviceDetectorService);
   #toaster = inject(ToasterService);
@@ -195,3 +195,7 @@ export class WebkitSpeechProvider implements TranscriptionProvider {
     return Promise.resolve();
   }
 }
+
+export const WEBKIT_SPEECH_PROVIDER: Provider[] = [
+  { provide: TRANSCRIPTION_INJECTION_TOKEN, useClass: WebkitSpeechProvider },
+];

@@ -46,3 +46,4 @@ todo.txt
 
 # Cypress
 /cypress/downloads
+/cypress/screenshots

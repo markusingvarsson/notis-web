@@ -12,7 +12,7 @@ import { TRANSCRIPTION_INJECTION_TOKEN } from './transcription/transcription.tok
 @Injectable({ providedIn: 'root' })
 export class SpeechRecognitionService {
   #toaster = inject(ToasterService);
-  activeProvider = inject(TRANSCRIPTION_INJECTION_TOKEN);
+  readonly activeProvider = inject(TRANSCRIPTION_INJECTION_TOKEN);
 
   // Computed signals that delegate to active provider
   readonly transcriptText = computed(() => {
@@ -81,7 +81,7 @@ export class SpeechRecognitionService {
     this.activeProvider.cleanup();
   }
 
-  initialize(callback: (progress: number) => void): Promise<void> {
+  initialize(callback: (progress: number) => void): Promise<void> | undefined {
     return this.activeProvider.initialize(callback);
   }
 }

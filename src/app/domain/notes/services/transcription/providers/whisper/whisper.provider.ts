@@ -1,25 +1,25 @@
-import { inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
+import { inject, PLATFORM_ID, Provider, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { DeviceDetectorService } from 'ngx-device-detector';
-import { ToasterService } from '../../../../../components/ui/toaster/toaster.service';
+import { ToasterService } from '../../../../../../components/ui/toaster/toaster.service';
 import {
   TranscriptionProvider,
   TranscriptionOptions,
   TranscriptionError,
-} from '../transcription.types';
+} from '../../transcription.types';
 import {
   WebkitSpeechRecognition,
   SpeechRecognitionEvent,
   SpeechRecognitionErrorEvent,
-} from '../../../index';
-import { pipeline } from '@huggingface/transformers';
+} from '../../../../index';
+// import { pipeline } from '@huggingface/transformers';
+import { TRANSCRIPTION_INJECTION_TOKEN } from '../../transcription.token';
 
 /**
  * WebKit Speech Recognition provider
  * Uses the Web Speech API available in WebKit-based browsers (Chrome, Safari, Edge)
  */
-@Injectable({ providedIn: 'root' })
-export class WhisperProvider implements TranscriptionProvider {
+class WhisperProvider implements TranscriptionProvider {
   #platformId = inject(PLATFORM_ID);
   #deviceService = inject(DeviceDetectorService);
   #toaster = inject(ToasterService);
@@ -193,6 +193,8 @@ export class WhisperProvider implements TranscriptionProvider {
 
   async initialize(callback: (progress: number) => void): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { pipeline } = await import('@huggingface/transformers');
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const foo = await pipeline(
       'automatic-speech-recognition',
       'Xenova/whisper-tiny.en', // Web-optimized English model
@@ -206,3 +208,7 @@ export class WhisperProvider implements TranscriptionProvider {
     return Promise.resolve();
   }
 }
+
+export const WHISPER_RPOVIDER: Provider[] = [
+  { provide: TRANSCRIPTION_INJECTION_TOKEN, useClass: WhisperProvider },
+];
