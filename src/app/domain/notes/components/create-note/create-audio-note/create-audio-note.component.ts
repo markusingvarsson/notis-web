@@ -25,7 +25,6 @@ import { TranscriptionSettingsPickerService } from '../components/transcription-
 import { SpeechRecognitionService } from '../../../services/speech-recognition.service';
 import { WhisperModelStatusService } from '../../../services/transcription/whisper-model-status.service';
 import { WhisperDownloadModalService } from '../components/whisper-download-modal/whisper-download-modal.service';
-import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-create-audio-note',
@@ -57,7 +56,6 @@ export class CreateAudioNoteComponent {
   #speechRecognitionService = inject(SpeechRecognitionService);
   #modelStatusService = inject(WhisperModelStatusService);
   #whisperDownloadModalService = inject(WhisperDownloadModalService);
-  #deviceService = inject(DeviceDetectorService);
 
   readonly recordingState = this.#recordAudioService.recordingState;
   readonly audioBlob = this.#recordAudioService.audioBlob;
@@ -124,9 +122,7 @@ export class CreateAudioNoteComponent {
       if (languageSetting && !this.#modelStatusService.isDownloaded()) {
         // Check if user selected Whisper provider
         if (await this.needsWhisperDownload()) {
-          const action = await this.#whisperDownloadModalService.open({
-            hasWebkitAvailable: this.checkWebkitAvailability(),
-          });
+          const action = await this.#whisperDownloadModalService.open();
 
           switch (action) {
             case 'download-and-record':
@@ -147,7 +143,9 @@ export class CreateAudioNoteComponent {
               // Switch to WebKit provider
               if (isPlatformBrowser(this.#platformId)) {
                 localStorage.setItem('transcriptionProvider', 'webkit-speech');
-                this.#toaster.info('Switched to WebKit Speech. Please reload the page.');
+                this.#toaster.info(
+                  'Switched to WebKit Speech. Please reload the page.',
+                );
               }
               return;
 
@@ -179,17 +177,6 @@ export class CreateAudioNoteComponent {
 
     const storedProvider = localStorage.getItem('transcriptionProvider');
     return storedProvider === 'whisper';
-  }
-
-  /**
-   * Check if WebKit Speech Recognition is available
-   */
-  private checkWebkitAvailability(): boolean {
-    return (
-      isPlatformBrowser(this.#platformId) &&
-      'webkitSpeechRecognition' in window &&
-      this.#deviceService.isDesktop()
-    );
   }
 
   async handleSave(): Promise<void> {

@@ -91,7 +91,7 @@
               variant="default"
               size="default"
               (buttonClick)="downloadModel()"
-              class="w-full"
+              [className]="'w-full'"
             >
               Download Model
             </app-button>
@@ -111,7 +111,7 @@
               variant="outline"
               size="default"
               (buttonClick)="cancelDownload()"
-              class="w-full"
+              [className]="'w-full'"
             >
               Cancel
             </app-button>
@@ -163,7 +163,7 @@
               variant="default"
               size="default"
               (buttonClick)="downloadModel()"
-              class="w-full"
+              [className]="'w-full'"
             >
               Retry
             </app-button>

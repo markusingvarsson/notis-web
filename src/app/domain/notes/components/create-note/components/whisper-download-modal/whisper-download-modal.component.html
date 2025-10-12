@@ -18,7 +18,7 @@
   >
     @if (!showDownloadProgress()) {
       <!-- Header -->
-      <div class="p-6 border-b border-[var(--tw-border-light)]">
+      <div class="p-6 border-b border-[var(--tw-border-light)] text-center">
         <h2
           id="modal-title"
           class="text-xl font-semibold text-[var(--tw-primary-dark)]"
@@ -26,133 +26,42 @@
           Download Whisper Model?
         </h2>
         <p class="mt-2 text-sm text-[var(--tw-text-muted)]">
-          Whisper provides high-quality offline transcription. This requires
-          downloading a {{ modelSize }} model file to your device.
+          Download the model to enable offline transcription with enhanced accuracy.
         </p>
       </div>
 
-      <!-- Content -->
-      <div class="p-6 space-y-4">
-        <!-- Benefits -->
-        <div class="space-y-2">
-          <div class="flex items-center gap-3">
-            <svg
-              class="w-5 h-5 text-[var(--tw-success)]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-            <span class="text-sm text-[var(--tw-text)]"
-              >Works offline - no internet required</span
-            >
-          </div>
-          <div class="flex items-center gap-3">
-            <svg
-              class="w-5 h-5 text-[var(--tw-success)]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-            <span class="text-sm text-[var(--tw-text)]"
-              >Better transcription accuracy</span
-            >
-          </div>
-          <div class="flex items-center gap-3">
-            <svg
-              class="w-5 h-5 text-[var(--tw-success)]"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-            <span class="text-sm text-[var(--tw-text)]"
-              >Privacy-focused - runs on your device</span
-            >
-          </div>
-        </div>
-
-        <!-- Info box -->
-        <div
-          class="p-4 bg-[var(--tw-bg-light)] border border-[var(--tw-border-light)] rounded-lg"
-        >
-          <p class="text-sm text-[var(--tw-text-muted)]">
-            The model will be cached in your browser and only needs to be
-            downloaded once. Download size: {{ modelSize }}.
-          </p>
-        </div>
-      </div>
-
       <!-- Actions -->
-      <div class="p-6 border-t border-[var(--tw-border-light)] space-y-3">
+      <div class="p-6 flex flex-col items-center gap-3">
         <!-- Primary action -->
         <app-button
           variant="default"
           size="lg"
           (buttonClick)="onDownloadAndRecord()"
-          class="w-full"
+          [className]="'w-full max-w-xs'"
         >
-          Download & Start Recording
+          Download & Record
         </app-button>
 
         <!-- Secondary actions -->
-        <div class="grid grid-cols-2 gap-3">
+        <div class="flex flex-col gap-2 w-full max-w-xs">
           <app-button
             variant="outline"
             size="default"
             (buttonClick)="onRecordWithoutTranscription()"
+            [className]="'w-full'"
           >
             Record Without Transcription
           </app-button>
 
-          @if (hasWebkitAvailable()) {
-            <app-button
-              variant="outline"
-              size="default"
-              (buttonClick)="onSwitchProvider()"
-            >
-              Use WebKit Instead
-            </app-button>
-          } @else {
-            <app-button
-              variant="ghost"
-              size="default"
-              (buttonClick)="onCancel()"
-            >
-              Cancel
-            </app-button>
-          }
-        </div>
-
-        @if (hasWebkitAvailable()) {
           <app-button
             variant="ghost"
-            size="sm"
+            size="default"
             (buttonClick)="onCancel()"
-            class="w-full"
+            [className]="'w-full'"
           >
             Cancel
           </app-button>
-        }
+        </div>
       </div>
     } @else {
       <!-- Download Progress View -->
@@ -163,8 +72,7 @@
               Downloading Model
             </h3>
             <p class="mt-1 text-sm text-[var(--tw-text-muted)]">
-              This may take a few minutes depending on your connection speed.
-              The model will be cached for future use.
+              This may take a few minutes...
             </p>
           </div>
 
@@ -184,26 +92,25 @@
             </div>
           }
 
-          <div class="flex gap-3">
-            <app-button
-              variant="outline"
-              size="default"
-              (buttonClick)="cancelDownload()"
-              class="flex-1"
-            >
-              Cancel
-            </app-button>
-
+          <div class="flex gap-2">
             @if (modelStatus().status === 'error') {
               <app-button
                 variant="default"
                 size="default"
                 (buttonClick)="onDownloadAndRecord()"
-                class="flex-1"
+                [className]="'flex-1'"
               >
                 Retry
               </app-button>
             }
+            <app-button
+              variant="outline"
+              size="default"
+              (buttonClick)="cancelDownload()"
+              [className]="'flex-1'"
+            >
+              Cancel
+            </app-button>
           </div>
         </div>
       </div>

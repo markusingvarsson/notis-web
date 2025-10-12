@@ -1,6 +1,5 @@
 import {
   Component,
-  input,
   output,
   inject,
   signal,
@@ -23,7 +22,6 @@ import { WhisperModelStatusService } from '../../../../services/transcription/wh
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class WhisperDownloadModalComponent {
-  readonly hasWebkitAvailable = input<boolean>(false);
   readonly action = output<WhisperDownloadModalAction>();
 
   #speechRecognitionService = inject(SpeechRecognitionService);

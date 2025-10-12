@@ -14,10 +14,6 @@ export type WhisperDownloadModalAction =
   | 'switch-provider'
   | 'cancel';
 
-export interface WhisperDownloadModalOptions {
-  hasWebkitAvailable: boolean;
-}
-
 @Injectable({
   providedIn: 'root',
 })
@@ -25,16 +21,11 @@ export class WhisperDownloadModalService {
   private appRef = inject(ApplicationRef);
   private injector = inject(EnvironmentInjector);
 
-  open(
-    options: WhisperDownloadModalOptions,
-  ): Promise<WhisperDownloadModalAction> {
+  open(): Promise<WhisperDownloadModalAction> {
     return new Promise<WhisperDownloadModalAction>((resolve) => {
       const componentRef = createComponent(WhisperDownloadModalComponent, {
         environmentInjector: this.injector,
       });
-
-      // Set inputs
-      componentRef.setInput('hasWebkitAvailable', options.hasWebkitAvailable);
 
       // Attach to view so it's part of change detection
       this.appRef.attachView(componentRef.hostView);
