@@ -30,17 +30,15 @@
           </app-card-header>
           <app-card-content class="space-y-6 md:space-y-8">
             <!-- Transcription Toggle and Language -->
-            @if (hasSpeechRecognition()) {
-              <div class="pb-4">
-                <app-transcription-settings-picker
-                  [(selectedTranscriptionSetting)]="selectedTranscriptionSetting"
-                  [disabled]="false"
-                ></app-transcription-settings-picker>
-              </div>
-            }
+            <div class="pb-4">
+              <app-transcription-settings-picker
+                [(selectedTranscriptionSetting)]="selectedTranscriptionSetting"
+                [disabled]="false"
+              ></app-transcription-settings-picker>
+            </div>
 
             <!-- Provider Selection (only shown when transcription is enabled) -->
-            @if (hasSpeechRecognition() && transcriptionEnabled()) {
+            @if (transcriptionEnabled()) {
               <div class="pt-6 border-t-2 border-[var(--tw-border-light)]">
                 <h3 class="text-sm font-semibold text-[var(--tw-primary-dark)] mb-4">Transcription Engine</h3>
                 <app-transcription-provider-selector></app-transcription-provider-selector>
@@ -68,17 +66,15 @@
           @if (expandedSections().has('transcription')) {
           <div class="p-4 space-y-6">
             <!-- Transcription Toggle and Language -->
-            @if (hasSpeechRecognition()) {
-              <div class="pb-2">
-                <app-transcription-settings-picker
-                  [(selectedTranscriptionSetting)]="selectedTranscriptionSetting"
-                  [disabled]="false"
-                ></app-transcription-settings-picker>
-              </div>
-            }
+            <div class="pb-2">
+              <app-transcription-settings-picker
+                [(selectedTranscriptionSetting)]="selectedTranscriptionSetting"
+                [disabled]="false"
+              ></app-transcription-settings-picker>
+            </div>
 
             <!-- Provider Selection (only shown when transcription is enabled) -->
-            @if (hasSpeechRecognition() && transcriptionEnabled()) {
+            @if (transcriptionEnabled()) {
               <div class="pt-6 border-t-2 border-[var(--tw-border-light)]">
                 <h3 class="text-sm font-semibold text-[var(--tw-primary-dark)] mb-4">Transcription Engine</h3>
                 <app-transcription-provider-selector></app-transcription-provider-selector>
