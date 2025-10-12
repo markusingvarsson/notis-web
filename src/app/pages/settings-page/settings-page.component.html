@@ -15,7 +15,6 @@
 
     <div class="space-y-4">
       <!-- Transcription Settings -->
-      @if (hasSpeechRecognition()) {
       <app-card
         [className]="
           'border border-[var(--tw-border-light)] rounded-lg bg-card'
@@ -24,17 +23,28 @@
         <!-- Desktop: Always expanded -->
         <div class="hidden sm:block">
           <app-card-header>
-            <app-card-title data-testid="transcription-title">Transcription</app-card-title>
+            <app-card-title data-testid="transcription-title">Transcription Settings</app-card-title>
             <app-card-description
-              >Choose the language for audio
-              transcription.</app-card-description
+              >Configure your transcription engine and language preferences.</app-card-description
             >
           </app-card-header>
-          <app-card-content>
-            <app-transcription-settings-picker
-              [(selectedTranscriptionSetting)]="selectedTranscriptionSetting"
-              [disabled]="false"
-            ></app-transcription-settings-picker>
+          <app-card-content class="space-y-6">
+            <!-- Provider Selection -->
+            <div>
+              <h3 class="text-sm font-semibold text-[var(--tw-primary-dark)] mb-3">Transcription Engine</h3>
+              <app-transcription-provider-selector></app-transcription-provider-selector>
+            </div>
+
+            <!-- Language Selection -->
+            @if (hasSpeechRecognition()) {
+              <div class="pt-4 border-t border-[var(--tw-border-light)]">
+                <h3 class="text-sm font-semibold text-[var(--tw-primary-dark)] mb-3">Language</h3>
+                <app-transcription-settings-picker
+                  [(selectedTranscriptionSetting)]="selectedTranscriptionSetting"
+                  [disabled]="false"
+                ></app-transcription-settings-picker>
+              </div>
+            }
           </app-card-content>
         </div>
 
@@ -46,7 +56,7 @@
             class="w-full p-4 flex items-center justify-between text-left transition-colors"
             [attr.aria-expanded]="expandedSections().has('transcription')"
           >
-            <h2 class="text-lg font-semibold">Transcription</h2>
+            <h2 class="text-lg font-semibold">Transcription Settings</h2>
             @if (expandedSections().has('transcription')) {
             <app-icon-chevron [orientation]="'down'" />
             } @else {
@@ -55,16 +65,27 @@
           </button>
 
           @if (expandedSections().has('transcription')) {
-          <div class="p-4">
-            <app-transcription-settings-picker
-              [(selectedTranscriptionSetting)]="selectedTranscriptionSetting"
-              [disabled]="false"
-            ></app-transcription-settings-picker>
+          <div class="p-4 space-y-6">
+            <!-- Provider Selection -->
+            <div>
+              <h3 class="text-sm font-semibold text-[var(--tw-primary-dark)] mb-3">Transcription Engine</h3>
+              <app-transcription-provider-selector></app-transcription-provider-selector>
+            </div>
+
+            <!-- Language Selection -->
+            @if (hasSpeechRecognition()) {
+              <div class="pt-4 border-t border-[var(--tw-border-light)]">
+                <h3 class="text-sm font-semibold text-[var(--tw-primary-dark)] mb-3">Language</h3>
+                <app-transcription-settings-picker
+                  [(selectedTranscriptionSetting)]="selectedTranscriptionSetting"
+                  [disabled]="false"
+                ></app-transcription-settings-picker>
+              </div>
+            }
           </div>
           }
         </div>
       </app-card>
-      }
 
       <!-- Microphone Settings -->
       <app-card

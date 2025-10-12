@@ -31,7 +31,7 @@ export interface TranscriptionError {
   originalError?: unknown;
 }
 
-export type ProviderId = 'webkit-speech';
+export type ProviderId = 'webkit-speech' | 'whisper';
 
 export interface TranscriptionProviderConfig {
   provider: ProviderId;

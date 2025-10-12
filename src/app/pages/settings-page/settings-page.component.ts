@@ -23,6 +23,7 @@ import { DeviceDetectorService } from 'ngx-device-detector';
 import { TranscriptionSettingsPickerService } from '../../domain/notes/components/create-note/components/transcription-settings-picker/transcription-settings-picker.service';
 import { MicSelectorComponent } from '../../domain/notes/components/create-note/components/mic-selector/mic-selector.component';
 import { SpeechRecognitionService } from '../../domain/notes/services/speech-recognition.service';
+import { TranscriptionProviderSelectorComponent } from '../../domain/notes/components/create-note/components/transcription-provider-selector/transcription-provider-selector.component';
 
 @Component({
   selector: 'app-settings-page',
@@ -39,6 +40,7 @@ import { SpeechRecognitionService } from '../../domain/notes/services/speech-rec
     TranscriptionSettingsPickerComponent,
     IconChevronComponent,
     MicSelectorComponent,
+    TranscriptionProviderSelectorComponent,
   ],
   templateUrl: './settings-page.component.html',
   styleUrl: './settings-page.component.scss',

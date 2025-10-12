@@ -1,0 +1,72 @@
+<div class="space-y-4">
+  <div class="space-y-3">
+    @for (provider of availableProviders(); track provider.id) {
+      <div
+        class="flex items-start p-4 border rounded-lg transition-colors duration-150"
+        [class.opacity-50]="!provider.isAvailable"
+        [class.cursor-not-allowed]="!provider.isAvailable"
+        [class.cursor-pointer]="provider.isAvailable"
+        [ngClass]="{
+          'border-[var(--tw-border-light)] bg-[var(--tw-bg-light)]': selectedProvider() !== provider.id,
+          'border-[var(--tw-primary)] bg-[var(--tw-primary-accent-bg)]': selectedProvider() === provider.id && provider.isAvailable
+        }"
+        [attr.tabindex]="provider.isAvailable ? 0 : -1"
+        [attr.role]="'radio'"
+        [attr.aria-checked]="selectedProvider() === provider.id"
+        [attr.aria-disabled]="!provider.isAvailable"
+        (click)="provider.isAvailable && onProviderChange(provider.id)"
+        (keydown.enter)="provider.isAvailable && onProviderChange(provider.id)"
+        (keydown.space)="provider.isAvailable && onProviderChange(provider.id)"
+      >
+        <input
+          type="radio"
+          [value]="provider.id"
+          [checked]="selectedProvider() === provider.id"
+          [disabled]="!provider.isAvailable"
+          [name]="'transcription-provider'"
+          class="mt-1 h-4 w-4 border-[var(--tw-border-light)] focus:ring-2 focus:ring-[var(--tw-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
+          [style.accent-color]="'var(--tw-primary)'"
+        />
+        <div class="ml-3 flex-1">
+          <div class="flex items-center gap-2">
+            <span class="text-sm font-semibold text-[var(--tw-primary-dark)]">
+              {{ provider.name }}
+            </span>
+            @if (!provider.isAvailable) {
+              <span
+                class="text-xs px-2 py-0.5 rounded-full bg-[var(--tw-bg)] text-[var(--tw-text-muted)]"
+              >
+                Not Available
+              </span>
+            }
+          </div>
+          <p class="text-sm text-[var(--tw-text-muted)] mt-1">
+            {{ provider.description }}
+          </p>
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (needsReload()) {
+    <div
+      class="flex items-center justify-between p-4 bg-[var(--tw-highlight-light)] border border-[var(--tw-highlight-dark)] rounded-lg"
+    >
+      <div class="flex-1">
+        <p class="text-sm font-medium text-[var(--tw-primary-dark)]">
+          Reload required
+        </p>
+        <p class="text-sm text-[var(--tw-text-muted)] mt-1">
+          Reload the page to apply the new transcription provider
+        </p>
+      </div>
+      <button
+        type="button"
+        (click)="reloadPage()"
+        class="ml-4 px-4 py-2 bg-[var(--tw-primary)] text-white text-sm font-medium rounded-lg hover:bg-[var(--tw-primary-light)] transition-colors duration-150"
+      >
+        Reload Now
+      </button>
+    </div>
+  }
+</div>
