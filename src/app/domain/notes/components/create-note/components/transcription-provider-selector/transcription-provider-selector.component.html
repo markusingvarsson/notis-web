@@ -1,14 +1,16 @@
 <div class="space-y-4">
-  <div class="space-y-3">
+  <!-- Provider Selection Section -->
+  <div class="space-y-4">
     @for (provider of availableProviders(); track provider.id) {
       <div
-        class="flex items-start p-4 border rounded-lg transition-colors duration-150"
+        class="flex items-start p-3.5 border rounded-lg transition-colors duration-150"
         [class.opacity-50]="!provider.isAvailable"
         [class.cursor-not-allowed]="!provider.isAvailable"
         [class.cursor-pointer]="provider.isAvailable"
         [ngClass]="{
-          'border-[var(--tw-border-light)] bg-[var(--tw-bg-light)]': selectedProvider() !== provider.id,
-          'border-[var(--tw-primary)] bg-[var(--tw-primary-accent-bg)]': selectedProvider() === provider.id && provider.isAvailable
+          'border-[var(--tw-border-light)] bg-[var(--tw-bg-light)] hover:border-[var(--tw-primary)] hover:bg-[var(--tw-primary-accent-bg)]': selectedProvider() !== provider.id && provider.isAvailable,
+          'border-[var(--tw-border-light)] bg-[var(--tw-bg-light)]': selectedProvider() !== provider.id && !provider.isAvailable,
+          'border-[var(--tw-primary)] bg-[var(--tw-primary-accent-bg)] ring-1 ring-[var(--tw-primary)]': selectedProvider() === provider.id && provider.isAvailable
         }"
         [attr.tabindex]="provider.isAvailable ? 0 : -1"
         [attr.role]="'radio'"
@@ -24,7 +26,7 @@
           [checked]="selectedProvider() === provider.id"
           [disabled]="!provider.isAvailable"
           [name]="'transcription-provider'"
-          class="mt-1 h-4 w-4 border-[var(--tw-border-light)] focus:ring-2 focus:ring-[var(--tw-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
+          class="mt-0.5 h-4 w-4 border-[var(--tw-border-light)] focus:ring-2 focus:ring-[var(--tw-primary)] disabled:opacity-50 disabled:cursor-not-allowed"
           [style.accent-color]="'var(--tw-primary)'"
         />
         <div class="ml-3 flex-1">
@@ -70,146 +72,104 @@
     </div>
   }
 
-  <!-- Model Status Section (only for Whisper provider) -->
+  <!-- Model Management Section (only for Whisper provider) -->
   @if (showModelStatus()) {
-    <div class="mt-4 p-4 border border-[var(--tw-border-light)] rounded-lg bg-[var(--tw-bg-light)]">
-      <!-- Not Downloaded -->
-      @if (modelStatus().status === 'not-downloaded') {
-        <div class="space-y-3">
-          <div>
-            <h4 class="text-sm font-semibold text-[var(--tw-primary-dark)]">
-              Whisper Model Required
-            </h4>
-            <p class="text-sm text-[var(--tw-text-muted)] mt-1">
-              Download the Whisper model ({{ modelSizeFormatted() }}) to enable offline transcription.
-            </p>
-          </div>
-          <div class="flex flex-col gap-2">
-            <div class="flex items-center gap-2 text-sm text-[var(--tw-text-muted)]">
-              <svg class="w-4 h-4 text-[var(--tw-success)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-              </svg>
-              <span>Works offline</span>
-            </div>
-            <div class="flex items-center gap-2 text-sm text-[var(--tw-text-muted)]">
-              <svg class="w-4 h-4 text-[var(--tw-success)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-              </svg>
-              <span>Better accuracy</span>
-            </div>
-            <div class="flex items-center gap-2 text-sm text-[var(--tw-text-muted)]">
-              <svg class="w-4 h-4 text-[var(--tw-success)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-              </svg>
-              <span>Privacy-focused</span>
-            </div>
-          </div>
-          <app-button
-            variant="default"
-            size="lg"
-            (buttonClick)="downloadModel()"
-            class="w-full"
-          >
-            Download Model
-          </app-button>
-        </div>
-      }
+    <div class="mt-8 border-t-2 border-[var(--tw-border-light)] pt-6">
+      <div class="rounded-xl border-2 border-[var(--tw-border-light)] bg-[var(--tw-bg)] p-5 md:p-6 shadow-sm">
+        <h4 class="text-sm font-semibold text-[var(--tw-primary-dark)] mb-4">Model Management</h4>
 
-      <!-- Downloading -->
-      @if (modelStatus().status === 'downloading') {
-        <div class="space-y-3">
-          <div>
-            <h4 class="text-sm font-semibold text-[var(--tw-primary-dark)]">
-              Downloading Model
-            </h4>
-            <p class="text-sm text-[var(--tw-text-muted)] mt-1">
-              This may take a few minutes depending on your connection speed.
-            </p>
-          </div>
-          <app-model-download-progress
-            [progress]="downloadProgress()"
-            [downloadedSize]="modelStatus().downloadedSize"
-            [totalSize]="modelStatus().totalSize"
-          />
-          <app-button
-            variant="outline"
-            size="default"
-            (buttonClick)="cancelDownload()"
-            class="w-full"
-          >
-            Cancel Download
-          </app-button>
-        </div>
-      }
-
-      <!-- Downloaded -->
-      @if (modelStatus().status === 'downloaded') {
-        <div class="space-y-3">
-          <div class="flex items-start gap-3">
-            <svg class="w-5 h-5 text-[var(--tw-success)] mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <div class="flex-1">
-              <h4 class="text-sm font-semibold text-[var(--tw-primary-dark)]">
-                Model Ready
-              </h4>
-              <p class="text-sm text-[var(--tw-text-muted)] mt-1">
-                Whisper model is downloaded and ready to use.
+        <!-- Not Downloaded -->
+        @if (modelStatus().status === 'not-downloaded') {
+          <div class="space-y-4">
+            <div>
+              <p class="text-sm font-medium text-[var(--tw-primary-dark)] mb-2">Model Required</p>
+              <p class="text-sm text-[var(--tw-text-muted)]">
+                Download to enable offline transcription.
               </p>
+            </div>
+            <app-button
+              variant="default"
+              size="default"
+              (buttonClick)="downloadModel()"
+              class="w-full"
+            >
+              Download Model
+            </app-button>
+          </div>
+        }
+
+        <!-- Downloading -->
+        @if (modelStatus().status === 'downloading') {
+          <div class="space-y-4">
+            <p class="text-sm text-[var(--tw-text-muted)]">Downloading...</p>
+            <app-model-download-progress
+              [progress]="downloadProgress()"
+              [downloadedSize]="modelStatus().downloadedSize"
+              [totalSize]="modelStatus().totalSize"
+            />
+            <app-button
+              variant="outline"
+              size="default"
+              (buttonClick)="cancelDownload()"
+              class="w-full"
+            >
+              Cancel
+            </app-button>
+          </div>
+        }
+
+        <!-- Downloaded -->
+        @if (modelStatus().status === 'downloaded') {
+          <div class="space-y-4">
+            <div>
+              <p class="text-sm font-medium text-[var(--tw-primary-dark)]">Model Ready</p>
               @if (modelStatus().lastDownloaded) {
                 <p class="text-xs text-[var(--tw-text-muted)] mt-1">
-                  Downloaded on {{ modelStatus().lastDownloaded | date: 'short' }}
+                  {{ modelStatus().lastDownloaded | date: 'short' }}
                 </p>
               }
             </div>
-          </div>
-          <div class="flex gap-2">
-            <app-button
-              variant="outline"
-              size="sm"
-              (buttonClick)="redownloadModel()"
-              class="flex-1"
-            >
-              Re-download
-            </app-button>
-            <app-button
-              variant="destructive"
-              size="sm"
-              (buttonClick)="deleteModel()"
-              class="flex-1"
-            >
-              Delete Model
-            </app-button>
-          </div>
-        </div>
-      }
-
-      <!-- Error -->
-      @if (modelStatus().status === 'error') {
-        <div class="space-y-3">
-          <div class="flex items-start gap-3">
-            <svg class="w-5 h-5 text-[var(--tw-error)] mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <div class="flex-1">
-              <h4 class="text-sm font-semibold text-[var(--tw-error)]">
-                Download Failed
-              </h4>
-              <p class="text-sm text-[var(--tw-text-muted)] mt-1">
-                {{ modelStatus().error || 'An error occurred while downloading the model.' }}
-              </p>
+            <div class="flex gap-2">
+              <app-button
+                variant="outline"
+                size="sm"
+                (buttonClick)="redownloadModel()"
+              >
+                Re-download
+              </app-button>
+              <app-button
+                variant="destructive"
+                size="sm"
+                (buttonClick)="deleteModel()"
+              >
+                Delete
+              </app-button>
             </div>
           </div>
-          <app-button
-            variant="default"
-            size="lg"
-            (buttonClick)="downloadModel()"
-            class="w-full"
-          >
-            Retry Download
-          </app-button>
-        </div>
-      }
+        }
+
+        <!-- Error -->
+        @if (modelStatus().status === 'error') {
+          <div class="space-y-4">
+            <div>
+              <p class="text-sm font-medium text-[var(--tw-primary-dark)]">Download Failed</p>
+              @if (modelStatus().error) {
+                <p class="text-sm text-[var(--tw-text-muted)] mt-1">
+                  {{ modelStatus().error }}
+                </p>
+              }
+            </div>
+            <app-button
+              variant="default"
+              size="default"
+              (buttonClick)="downloadModel()"
+              class="w-full"
+            >
+              Retry
+            </app-button>
+          </div>
+        }
+      </div>
     </div>
   }
 </div>
