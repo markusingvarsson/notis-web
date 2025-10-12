@@ -63,6 +63,9 @@ export class SettingsPageComponent {
   readonly isMobile = computed(() => this.#deviceService.isMobile());
   readonly hasSpeechRecognition =
     this.#speechRecognitionService.hasSpeechRecognition;
+  readonly transcriptionEnabled = computed(
+    () => this.selectedTranscriptionSetting() !== 'no-transcription',
+  );
 
   toggleSection(section: string): void {
     this.expandedSections.update((sections) => {

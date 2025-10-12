@@ -3,6 +3,7 @@ import {
   inject,
   input,
   model,
+  computed,
   ChangeDetectionStrategy,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -28,19 +29,45 @@ export class TranscriptionSettingsPickerComponent {
   >();
 
   #transcriptionSettingsPickerService = inject(
-    TranscriptionSettingsPickerService
+    TranscriptionSettingsPickerService,
   );
 
+  // Language options (without "No transcription")
   readonly languages: TranscriptionSetting[] = [
-    { name: 'No transcription', value: 'no-transcription' },
     { name: 'English', value: 'en-US' },
     { name: 'Svenska', value: 'sv-SE' },
     { name: 'Español', value: 'es-ES' },
   ];
 
-  onTranscriptionSettingsChange(
-    $event: SupportedLanguageCode | 'no-transcription'
-  ) {
+  // Computed: is transcription enabled?
+  readonly transcriptionEnabled = computed(() => {
+    return this.selectedTranscriptionSetting() !== 'no-transcription';
+  });
+
+  // Computed: selected language (defaults to en-US if no-transcription)
+  readonly selectedLanguage = computed((): SupportedLanguageCode => {
+    const current = this.selectedTranscriptionSetting();
+    return current === 'no-transcription' || !current ? 'en-US' : current;
+  });
+
+  onToggleChange(enabled: boolean): void {
+    if (enabled) {
+      // Enable transcription with current/default language
+      const language = this.selectedLanguage();
+      this.selectedTranscriptionSetting.set(language);
+      this.#transcriptionSettingsPickerService.storeTranscriptionSettings(
+        language,
+      );
+    } else {
+      // Disable transcription
+      this.selectedTranscriptionSetting.set('no-transcription');
+      this.#transcriptionSettingsPickerService.storeTranscriptionSettings(
+        'no-transcription',
+      );
+    }
+  }
+
+  onLanguageChange($event: SupportedLanguageCode): void {
     this.selectedTranscriptionSetting.set($event);
     this.#transcriptionSettingsPickerService.storeTranscriptionSettings($event);
   }
