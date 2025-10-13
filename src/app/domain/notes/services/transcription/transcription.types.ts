@@ -21,6 +21,7 @@ export interface TranscriptionProvider {
 
 export interface TranscriptionOptions {
   language: SupportedLanguageCode;
+  audioSource?: MediaStream;
   providerConfig?: Record<string, unknown>;
 }
 

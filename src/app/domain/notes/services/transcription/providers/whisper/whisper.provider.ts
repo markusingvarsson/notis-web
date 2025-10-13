@@ -7,18 +7,22 @@ import {
   TranscriptionOptions,
   TranscriptionError,
 } from '../../transcription.types';
-import {
-  WebkitSpeechRecognition,
-  SpeechRecognitionEvent,
-  SpeechRecognitionErrorEvent,
-} from '../../../../index';
-// import { pipeline } from '@huggingface/transformers';
+import { SpeechRecognitionErrorEvent } from '../../../../index';
 import { TRANSCRIPTION_INJECTION_TOKEN } from '../../transcription.token';
 import { WhisperModelStatusService } from '../../whisper-model-status.service';
+import {
+  AudioStreamProcessor,
+  AudioChunk,
+} from '../../audio-stream-processor.util';
+
+type WhisperPipeline = (
+  audio: Float32Array,
+  options?: { language?: string }
+) => Promise<{ text: string }>;
 
 /**
- * WebKit Speech Recognition provider
- * Uses the Web Speech API available in WebKit-based browsers (Chrome, Safari, Edge)
+ * Whisper Transcription Provider
+ * Uses Hugging Face Transformers.js to run Whisper locally in the browser
  */
 class WhisperProvider implements TranscriptionProvider {
   #platformId = inject(PLATFORM_ID);
@@ -32,21 +36,22 @@ class WhisperProvider implements TranscriptionProvider {
   readonly transcriptText = signal('');
   readonly lastError = signal<TranscriptionError | null>(null);
 
-  private recognition: WebkitSpeechRecognition | null = null;
+  private pipeline: WhisperPipeline | null = null;
   private currentOptions: TranscriptionOptions | null = null;
   private downloadCancelled = false;
+  private audioProcessor: AudioStreamProcessor | null = null;
+  private accumulatedTranscript: string[] = [];
+  private modelName = 'Xenova/whisper-tiny.en';
+  private isEnglishOnlyModel = true;
 
   private checkAvailability(): boolean {
-    return (
-      isPlatformBrowser(this.#platformId) &&
-      'webkitSpeechRecognition' in window &&
-      this.#deviceService.isDesktop()
-    );
+    // Whisper can run on desktop browsers with sufficient resources
+    return isPlatformBrowser(this.#platformId) && this.#deviceService.isDesktop();
   }
 
   async startTranscription(options: TranscriptionOptions): Promise<void> {
     if (!this.isAvailable()) {
-      throw new Error('WebKit Speech Recognition is not available');
+      throw new Error('Whisper transcription is not available');
     }
 
     if (this.isTranscribing()) {
@@ -54,118 +59,97 @@ class WhisperProvider implements TranscriptionProvider {
       return;
     }
 
+    if (!options.audioSource) {
+      throw new Error('Whisper provider requires an audioSource in TranscriptionOptions');
+    }
+
+    if (!this.pipeline) {
+      throw new Error('Whisper model not initialized. Call initialize() first.');
+    }
+
     this.currentOptions = options;
     this.lastError.set(null);
+    this.accumulatedTranscript = [];
+    this.transcriptText.set('');
 
     try {
-      this.recognition = new window.webkitSpeechRecognition!();
-      this.setupRecognition(options);
-      this.recognition.start();
+      // Create audio processor
+      this.audioProcessor = new AudioStreamProcessor({
+        chunkDurationMs: 8000, // 8 second chunks - good balance for Whisper
+        onAudioChunk: (chunk) => this.processAudioChunk(chunk),
+        onError: (error) => this.handleAudioProcessingError(error),
+      });
+
+      // Start processing audio from the stream
+      await this.audioProcessor.start(options.audioSource);
       this.isTranscribing.set(true);
+
     } catch (error) {
       this.handleStartError(error);
       throw error;
     }
   }
 
-  private setupRecognition(options: TranscriptionOptions): void {
-    if (!this.recognition) return;
+  private async processAudioChunk(chunk: AudioChunk): Promise<void> {
+    if (!this.pipeline || !this.currentOptions) {
+      return;
+    }
 
-    this.recognition.continuous = true;
-    this.recognition.interimResults = true;
-    this.recognition.lang = options.language;
-
-    this.recognition.onresult = (event: SpeechRecognitionEvent) => {
-      const transcript = Array.from(event.results)
-        .map((result) => result[0])
-        .map((alternative) => alternative.transcript)
-        .join('');
-      this.transcriptText.set(transcript);
-    };
-
-    this.recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-      console.error('Speech recognition error:', event);
-      const wasHandled = this.handleError(event);
-
-      if (!wasHandled) {
-        console.warn(`Unhandled speech recognition error: ${event.error}`);
-        this.cleanup();
+    try {
+      // Build options - only include language for multilingual models
+      const pipelineOptions: { language?: string } = {};
+      if (!this.isEnglishOnlyModel) {
+        pipelineOptions.language = this.mapLanguageCode(this.currentOptions.language);
       }
-    };
 
-    this.recognition.onend = () => {
-      console.log('Speech recognition ended');
-      this.isTranscribing.set(false);
-    };
+      // Run Whisper on the audio chunk
+      const result = await this.pipeline(chunk.audio, pipelineOptions);
+
+      // Append to accumulated transcript
+      if (result.text && result.text.trim()) {
+        this.accumulatedTranscript.push(result.text.trim());
+
+        // Update the transcript text signal
+        const fullTranscript = this.accumulatedTranscript.join(' ');
+        this.transcriptText.set(fullTranscript);
+      }
+
+    } catch (error) {
+      console.error('Error processing audio chunk with Whisper:', error);
+      this.setError(
+        'processing-error',
+        error instanceof Error ? error.message : 'Failed to process audio',
+        true // recoverable - we can continue with next chunk
+      );
+    }
+  }
+
+  private handleAudioProcessingError(error: Error): void {
+    console.error('Audio processing error:', error);
+    this.setError('audio-processing', error.message, false);
+    this.cleanup();
   }
 
   stopTranscription(): void {
-    if (this.recognition) {
-      this.recognition.stop();
-      this.isTranscribing.set(false);
+    if (this.audioProcessor) {
+      this.audioProcessor.stop();
+      this.audioProcessor = null;
     }
+    this.isTranscribing.set(false);
   }
 
   handleError(error: SpeechRecognitionErrorEvent): boolean {
-    switch (error.error) {
-      case 'no-speech':
-        console.log('No speech detected, restarting recognition...');
-        this.restartRecognition();
-        return true;
-
-      case 'audio-capture':
-        console.warn('Audio capture error, stopping transcription');
-        this.#toaster.warning(
-          'Audio capture issue detected. Transcription stopped.',
-        );
-        this.setError('audio-capture', 'Audio capture failed', false);
-        this.cleanup();
-        return true;
-
-      case 'not-allowed':
-        console.warn('Speech recognition not allowed');
-        this.#toaster.error('Speech recognition permission denied');
-        this.setError('not-allowed', 'Permission denied', false);
-        this.cleanup();
-        return true;
-
-      case 'network':
-        console.warn('Network error during speech recognition');
-        this.#toaster.warning('Network error. Transcription may be affected.');
-        this.setError('network', 'Network error occurred', true);
-        this.restartRecognition();
-        return true;
-
-      case 'aborted':
-        console.log('Speech recognition was aborted');
-        return true;
-
-      default:
-        this.setError(error.error, error.message || 'Unknown error', false);
-        return false;
-    }
-  }
-
-  private restartRecognition(): void {
-    setTimeout(() => {
-      if (this.recognition && this.isTranscribing() && this.currentOptions) {
-        try {
-          this.recognition.start();
-        } catch (e) {
-          console.warn('Failed to restart speech recognition:', e);
-          // Could implement exponential backoff here if needed
-        }
-      }
-    }, 100);
+    // Whisper doesn't use the Web Speech API, so this is primarily for interface compliance
+    // Most errors are handled through audioProcessor callbacks
+    console.warn('Whisper provider received SpeechRecognitionErrorEvent:', error);
+    this.setError(error.error, error.message || 'Unknown error', false);
+    return false;
   }
 
   cleanup(): void {
-    if (this.recognition) {
-      this.recognition.abort();
-      this.recognition.onresult = undefined!;
-      this.recognition.onerror = undefined!;
-      this.recognition.onend = undefined;
-      this.recognition = null;
+    if (this.audioProcessor) {
+      this.audioProcessor.stop();
+      this.audioProcessor = null;
     }
     this.isTranscribing.set(false);
     this.currentOptions = null;
@@ -173,16 +157,17 @@ class WhisperProvider implements TranscriptionProvider {
 
   clearTranscript(): void {
     this.transcriptText.set('');
+    this.accumulatedTranscript = [];
   }
 
   private handleStartError(error: unknown): void {
-    console.error('Failed to start speech recognition:', error);
+    console.error('Failed to start Whisper transcription:', error);
     this.isTranscribing.set(false);
 
     if (error instanceof Error) {
       this.setError('start-failed', error.message, false);
     } else {
-      this.setError('start-failed', 'Failed to start recognition', false);
+      this.setError('start-failed', 'Failed to start transcription', false);
     }
   }
 
@@ -199,7 +184,7 @@ class WhisperProvider implements TranscriptionProvider {
 
     try {
       // Check if already downloaded
-      if (this.#modelStatusService.isDownloaded()) {
+      if (this.#modelStatusService.isDownloaded() && this.pipeline) {
         callback(100);
         return;
       }
@@ -212,9 +197,16 @@ class WhisperProvider implements TranscriptionProvider {
 
       const { pipeline } = await import('@huggingface/transformers');
 
-      const model = await pipeline(
+      // Detect if model is English-only (ends with .en)
+      this.isEnglishOnlyModel = this.modelName.endsWith('.en');
+      console.log(
+        `Loading Whisper model: ${this.modelName} (${this.isEnglishOnlyModel ? 'English-only' : 'Multilingual'})`
+      );
+
+      // Load the Whisper pipeline
+      const loadedPipeline = await pipeline(
         'automatic-speech-recognition',
-        'Xenova/whisper-tiny.en', // Web-optimized English model
+        this.modelName,
         {
           progress_callback: (progressInfo) => {
             if (this.downloadCancelled) {
@@ -237,13 +229,13 @@ class WhisperProvider implements TranscriptionProvider {
         },
       );
 
+      // Store the pipeline for use during transcription
+      this.pipeline = loadedPipeline as WhisperPipeline;
+
       // Mark as downloaded when complete
       this.#modelStatusService.markAsDownloaded();
       this.#toaster.success('Whisper model downloaded successfully');
 
-      // Store reference (optional, for future use)
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const _model = model;
     } catch (error) {
       if (this.downloadCancelled) {
         this.#modelStatusService.resetStatus();
@@ -271,8 +263,17 @@ class WhisperProvider implements TranscriptionProvider {
   isModelDownloaded(): boolean {
     return this.#modelStatusService.isDownloaded();
   }
+
+  /**
+   * Map SupportedLanguageCode to Whisper language codes
+   */
+  private mapLanguageCode(languageCode: string): string {
+    // Whisper uses ISO 639-1 language codes (e.g., 'en', 'es', 'fr')
+    // Extract the first two characters if the code is longer (e.g., 'en-US' -> 'en')
+    return languageCode.split('-')[0].toLowerCase();
+  }
 }
 
-export const WHISPER_RPOVIDER: Provider[] = [
+export const WHISPER_PROVIDER: Provider[] = [
   { provide: TRANSCRIPTION_INJECTION_TOKEN, useClass: WhisperProvider },
 ];

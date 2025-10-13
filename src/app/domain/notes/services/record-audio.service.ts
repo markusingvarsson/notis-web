@@ -280,6 +280,7 @@ export class RecordAudioService implements OnDestroy {
           await this.#speechRecognitionService.initialize(() => undefined);
           await this.#speechRecognitionService.startTranscription(
             transcriptionLanguage,
+            stream, // Pass the MediaStream to transcription provider
           );
         } catch (error) {
           console.error('Failed to start transcription:', error);

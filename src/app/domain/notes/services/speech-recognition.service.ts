@@ -35,7 +35,10 @@ export class SpeechRecognitionService {
   /**
    * Start transcription with the active provider
    */
-  async startTranscription(language: SupportedLanguageCode): Promise<void> {
+  async startTranscription(
+    language: SupportedLanguageCode,
+    audioSource?: MediaStream
+  ): Promise<void> {
     if (!this.activeProvider) {
       this.#toaster.error('No transcription provider available');
       throw new Error('No transcription provider available');
@@ -43,6 +46,7 @@ export class SpeechRecognitionService {
 
     const options: TranscriptionOptions = {
       language,
+      audioSource,
     };
 
     try {

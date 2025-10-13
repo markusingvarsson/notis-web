@@ -12,7 +12,7 @@ async function main() {
         await import(
           './app/domain/notes/services/transcription/providers/whisper/whisper.provider'
         )
-      ).WHISPER_RPOVIDER
+      ).WHISPER_PROVIDER
     : (
         await import(
           './app/domain/notes/services/transcription/providers/webkit-speech/webkit-speech.provider'
