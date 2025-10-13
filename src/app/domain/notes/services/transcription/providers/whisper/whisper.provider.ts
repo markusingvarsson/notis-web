@@ -1,6 +1,5 @@
 import { inject, PLATFORM_ID, Provider, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { DeviceDetectorService } from 'ngx-device-detector';
 import { ToasterService } from '../../../../../../components/ui/toaster/toaster.service';
 import {
   TranscriptionProvider,
@@ -54,7 +53,6 @@ type WhisperPipeline = (
  */
 class WhisperProvider implements TranscriptionProvider {
   #platformId = inject(PLATFORM_ID);
-  #deviceService = inject(DeviceDetectorService);
   #toaster = inject(ToasterService);
   #modelStatusService = inject(WhisperModelStatusService);
 
@@ -79,15 +77,18 @@ class WhisperProvider implements TranscriptionProvider {
   private hasWarnedAboutLag = false;
 
   private checkAvailability(): boolean {
-    // Whisper can run on desktop browsers with sufficient resources
-    return (
-      isPlatformBrowser(this.#platformId) && this.#deviceService.isDesktop()
-    );
+    // Whisper can run in any browser with WASM support
+    // Note: Performance may vary on mobile devices
+    return isPlatformBrowser(this.#platformId);
   }
 
   async startTranscription(options: TranscriptionOptions): Promise<void> {
     if (!this.isAvailable()) {
-      throw new Error('Whisper transcription is not available');
+      const errorMessage =
+        'Whisper transcription is not available. Make sure you are running in a browser environment.';
+      this.#toaster.error('Whisper transcription is not available');
+      this.setError('not-available', errorMessage, false);
+      throw new Error(errorMessage);
     }
 
     if (this.isTranscribing()) {
@@ -321,6 +322,14 @@ class WhisperProvider implements TranscriptionProvider {
 
   async initialize(callback: (progress: number) => void): Promise<void> {
     this.downloadCancelled = false;
+
+    // Check availability before attempting download
+    if (!this.isAvailable()) {
+      const errorMessage =
+        'Cannot initialize Whisper. Make sure you are running in a browser environment.';
+      this.#toaster.error('Whisper initialization failed');
+      throw new Error(errorMessage);
+    }
 
     try {
       // Check if already downloaded
